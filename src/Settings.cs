@@ -39,25 +39,25 @@ namespace StuntYourGrowth
         public bool DisableAllCheckboxes { set { if (value) ApplyCheckboxSelection(false); } }
 
         [SettingsUISection(CheckboxGroup)] public bool Enabled { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool LegacyHold { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Growth { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Residents { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Abandonment { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Age { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Lifespan { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Health { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Wellbeing { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Happiness { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Tenants { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Condition { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool RentAmount { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Levels { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Redevelopment { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Abandonment { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Comfort { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Attractiveness { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Efficiency { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Garbage { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool RentAmount { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RentCollection { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Condition { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Attractiveness { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Comfort { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Efficiency { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Happiness { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Health { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Lifespan { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Residents { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Tenants { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Wellbeing { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool LegacyHold { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Growth { get; set; }
 
         private void ApplyCheckboxSelection(bool enabled)
         {
