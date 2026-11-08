@@ -24,14 +24,14 @@ namespace StuntYourGrowth
         [SettingsUIButton, SettingsUISection(VacancyGroup)]
         public bool ResetAbandonment { set { if (value && Enabled) Runtime.RequestReset(); } }
 
-        [SettingsUISection(ModeGroup)] public SchoolMode Schooling { get; set; }
-        [SettingsUISection(ModeGroup)] public ValueMode LandValue { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Staff { get; set; }
-        [SettingsUISection(ModeGroup)] public ValueMode Jobs { get; set; }
-        [SettingsUISection(ModeGroup)] public ValueMode Employees { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Customers { get; set; }
+        [SettingsUISection(ModeGroup)] public ValueMode Employees { get; set; }
+        [SettingsUISection(ModeGroup)] public ValueMode Jobs { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Income { get; set; }
+        [SettingsUISection(ModeGroup)] public ValueMode LandValue { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Profit { get; set; }
+        [SettingsUISection(ModeGroup)] public SchoolMode Schooling { get; set; }
 
         [SettingsUIButton, SettingsUIButtonGroup("CheckboxSelection"), SettingsUISection(BulkGroup)]
         public bool EnableAllCheckboxes { set { if (value) ApplyCheckboxSelection(true); } }
@@ -39,6 +39,7 @@ namespace StuntYourGrowth
         public bool DisableAllCheckboxes { set { if (value) ApplyCheckboxSelection(false); } }
 
         [SettingsUISection(CheckboxGroup)] public bool Enabled { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool Growth { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Abandonment { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Age { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RentAmount { get; set; }
@@ -57,7 +58,6 @@ namespace StuntYourGrowth
         [SettingsUISection(CheckboxGroup)] public bool Tenants { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Wellbeing { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool LegacyHold { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Growth { get; set; }
 
         private void ApplyCheckboxSelection(bool enabled)
         {
