@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Game;
 using Game.Buildings;
+using Game.City;
 using Game.Common;
 using Game.Prefabs;
 using Game.Simulation;
@@ -24,6 +25,8 @@ namespace StuntYourGrowth
             foreach (var owner in new[] { typeof(BuildingUpkeepSystem), typeof(DeathCheckSystem), typeof(PropertyProcessingSystem) })
                 patch.Patch(AccessTools.DeclaredMethod(owner, "OnUpdate"), transpiler:
                     new HarmonyMethod(typeof(NativeHooks), nameof(ModifyDispatch)));
+            patch.Patch(AccessTools.DeclaredMethod(typeof(CityServiceBudgetSystem), "OnUpdate"),
+                postfix: new HarmonyMethod(typeof(NativeHooks), nameof(AfterCityBudget)));
             Around<RentAdjustSystem>(patch, nameof(BeforePrice), nameof(AfterPrice));
             Around<PropertyRenterSystem>(patch, nameof(BeforeCharge), nameof(AfterCharge));
             Around<GarbageAccumulationSystem>(patch, nameof(BeforeGarbage), nameof(AfterGarbage));
@@ -35,6 +38,27 @@ namespace StuntYourGrowth
                 prefix: new HarmonyMethod(typeof(NativeHooks), nameof(BeforeHiring)),
                 finalizer: new HarmonyMethod(typeof(NativeHooks), nameof(RestoreHiring)));
         }
+        [Unity.Burst.BurstCompile]
+        private struct WaiveUpkeepJob : IJob
+        {
+            public NativeArray<int> Expenses;
+
+            public void Execute()
+            {
+                Expenses[(int)ExpenseSource.ServiceUpkeep] = 0;
+                Expenses[(int)ExpenseSource.MapTileUpkeep] = 0;
+            }
+        }
+
+        static void AfterCityBudget(CityServiceBudgetSystem __instance)
+        {
+            if (!Runtime.Playing || !Runtime.Options.UpkeepCosts) return;
+            // Join the budget pipeline before its readers calculate the treasury debit and expense statistics.
+            var expenses = __instance.GetExpenseArray(out var budgetDependencies);
+            var waiver = new WaiveUpkeepJob { Expenses = expenses }.Schedule(budgetDependencies);
+            __instance.AddArrayReader(waiver);
+        }
+
         internal static void RegisterIntegrations(Harmony patch)
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

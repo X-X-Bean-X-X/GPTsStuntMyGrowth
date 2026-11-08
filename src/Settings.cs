@@ -45,6 +45,7 @@ namespace StuntYourGrowth
         [SettingsUISection(CheckboxGroup)] public bool RentAmount { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Levels { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Redevelopment { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UpkeepCosts { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Garbage { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RentCollection { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Condition { get; set; }
@@ -54,7 +55,9 @@ namespace StuntYourGrowth
         [SettingsUISection(CheckboxGroup)] public bool Happiness { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Health { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Lifespan { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool ParkMaintenance { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Residents { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool RoadWear { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Tenants { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Wellbeing { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool LegacyHold { get; set; }
@@ -85,6 +88,9 @@ namespace StuntYourGrowth
             Comfort = enabled;
             Attractiveness = enabled;
             Efficiency = enabled;
+            ParkMaintenance = enabled;
+            RoadWear = enabled;
+            UpkeepCosts = enabled;
             Garbage = enabled;
             RentAmount = enabled;
             RentCollection = enabled;
@@ -144,6 +150,9 @@ namespace StuntYourGrowth
             Add(nameof(Settings.Attractiveness), "Protect attractiveness", "Prevent a building's attractiveness from decreasing.");
             Add(nameof(Settings.Efficiency), "Protect efficiency", "Hold building efficiency against decreases.");
             Add(nameof(Settings.LandValue), "Land value", "Hold native road-edge values and the land-value map.");
+            Add(nameof(Settings.ParkMaintenance), "Protect park maintenance", "Keep each park at its current maintenance level or higher. Repairs can still improve it.");
+            Add(nameof(Settings.RoadWear), "Protect road condition", "Prevent wear from increasing on road segments and car lanes. Maintenance vehicles can still repair them.");
+            Add(nameof(Settings.UpkeepCosts), "Pause city upkeep costs", "Waive service upkeep and map tile upkeep at the next city budget calculation. Other expenses and maintenance services continue.");
             Add(nameof(Settings.Garbage), "Pause new garbage", "Hold new building garbage generation while collection continues.");
             Add(nameof(Settings.Staff), "City-service staffing", "Protect worker assignments at service buildings.");
             Add(nameof(Settings.RentAmount), "Freeze rent amount", "Keep existing rental prices. New leases begin at their native initial price.");

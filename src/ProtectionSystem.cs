@@ -94,6 +94,11 @@ namespace StuntYourGrowth
             Track<WorkProvider>(s => (int)s.Jobs, (ref WorkProvider v, WorkProvider p, Settings s) => v.m_MaxWorkers = Policy.Protect(p.m_MaxWorkers,v.m_MaxWorkers,s.Jobs));
             Track<Household>(s => (int)s.Income, (ref Household v, Household p, Settings s) => v.m_Income = Policy.Protect(p.m_Income,v.m_Income,s.Income));
             Track<CompanyStatisticData>(s => (int)s.Customers + 4*(int)s.Income + 16*(int)s.Profit, ProtectCompany);
+            Track<Game.Buildings.Park>(s => s.ParkMaintenance ? 1 : 0, ProtectPark);
+            var carLanes = GetEntityQuery(ComponentType.ReadWrite<Game.Net.LaneCondition>(), ComponentType.ReadOnly<Game.Net.CarLane>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
+            fields.Add(new TrackedFields<Game.Net.LaneCondition>(EntityManager, carLanes, s => s.RoadWear ? 1 : 0, ProtectLane));
+            var roads = GetEntityQuery(ComponentType.ReadWrite<Game.Net.NetCondition>(), ComponentType.ReadOnly<Game.Net.Road>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
+            fields.Add(new TrackedFields<Game.Net.NetCondition>(EntityManager, roads, s => s.RoadWear ? 1 : 0, ProtectRoad));
             roster = new RosterGuard(EntityManager, QueryBuffer<Employee>());
             efficiency = new EfficiencyGuard(EntityManager, QueryBuffer<Efficiency>());
             departingResidents = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<Household>(),ComponentType.Exclude<TouristHousehold>(),ComponentType.Exclude<CommuterHousehold>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
@@ -105,6 +110,15 @@ namespace StuntYourGrowth
         EntityQuery FrameQuery<T>() => GetEntityQuery(ComponentType.ReadOnly<T>(),ComponentType.ReadOnly<UpdateFrame>(),ComponentType.Exclude<Deleted>(),ComponentType.Exclude<Temp>());
         void Track<T>(Func<Settings,int> selection, ProtectValue<T> protect) where T : unmanaged,IComponentData =>
             fields.Add(new TrackedFields<T>(EntityManager, Query<T>(), selection, protect));
+
+        static void ProtectPark(ref Game.Buildings.Park current, Game.Buildings.Park previous, Settings settings) =>
+            current.m_Maintenance = Math.Max(current.m_Maintenance, previous.m_Maintenance);
+
+        static void ProtectLane(ref Game.Net.LaneCondition current, Game.Net.LaneCondition previous, Settings settings) =>
+            current.m_Wear = Math.Min(current.m_Wear, previous.m_Wear);
+
+        static void ProtectRoad(ref Game.Net.NetCondition current, Game.Net.NetCondition previous, Settings settings) =>
+            current.m_Wear = Unity.Mathematics.math.min(current.m_Wear, previous.m_Wear);
 
         static void ProtectCitizen(ref Citizen v, Citizen p, Settings s)
         {

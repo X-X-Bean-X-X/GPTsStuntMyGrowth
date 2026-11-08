@@ -33,7 +33,7 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'ui\GPTStuntYourGrowth.mjs'),(Jo
 [ordered]@{
     title = "GPT's Stunt My Growth by X_Bean_X"
     author = 'X_Bean_X'
-    version = '1.75.629'
+    version = '1.75.630'
     runtimeTest = 'pending'
     gameAssemblySha256 = (Get-FileHash -LiteralPath (Join-Path $Managed 'Game.dll')).Hash
     referencedHarmony = [Reflection.AssemblyName]::GetAssemblyName($HarmonyPath).FullName

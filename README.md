@@ -12,7 +12,13 @@ Both reset buttons are one-time actions. Resetting clears negative condition and
 
 Choose independent protections for household growth, resident departures, age, old-age mortality, health, well-being, happiness, tenant moves, building levels, comfort, attractiveness, efficiency, garbage production, rents and staffing. Schooling has four modes. **Normal Schooling | No Admissions** lets existing students progress and graduate while pausing new admissions.
 
-The eight dropdowns appear alphabetically by their visible labels and initially select **Freeze**. **Stop population growth** sits directly below **Enable simulation controls**. The remaining 18 checkboxes follow in alphabetical order. Where available, **Prevent decreases** permits gains. Individual checkboxes remain editable after using **Enable all checkboxes** or **Disable all checkboxes**. Disable all also turns off the master switch. Customer counts, income and profit use the game's tracked statistics. Staff protections maintain real worker assignments, subject to the continuing availability of workers and workplaces.
+The eight dropdowns appear alphabetically by their visible labels and initially select **Freeze**. **Stop population growth** sits directly below **Enable simulation controls**. The remaining 21 checkboxes follow in alphabetical order. Where available, **Prevent decreases** permits gains. Individual checkboxes remain editable after using **Enable all checkboxes** or **Disable all checkboxes**. Disable all also turns off the master switch. Customer counts, income and profit use the game's tracked statistics. Staff protections maintain real worker assignments, subject to the continuing availability of workers and workplaces.
+
+## Maintenance
+
+Three independent checkboxes start off. **Protect road condition** keeps wear on road segments and car lanes from increasing. **Protect park maintenance** holds each park at its current maintenance level or higher. Both allow repairs to improve condition.
+
+**Pause city upkeep costs** waives the service upkeep and map tile upkeep entries at the next city budget calculation. Turn it off to resume charges at the next calculation. Maintenance vehicles, resource deliveries, other expenses and service budget settings continue to operate.
 
 ## Original city-specific hold
 
@@ -26,8 +32,8 @@ With the master switch and **Respect the original city-specific hold** checked, 
 
 ## Build
 
-Version **1.75.629** targets Cities: Skylines II **1.6.2f1** on Windows. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
+Version **1.75.630** targets Cities: Skylines II **1.6.2f1** on Windows. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
 
 Install the game's code-modding toolchain and run `Build.ps1 -Compiler <path-to-Roslyn-csc.exe>` in PowerShell 7. The game toolchain supplies `CSII_MANAGEDPATH`, `CSII_MODPOSTPROCESSORPATH` and `CSII_UNITYMODPROJECTPATH`. The script compiles and postprocesses the DLL and writes a package manifest in `build`.
 
-The core controls have been exercised on a Chicago GPT QA save, with temporary residents, students and workers where needed. In one 45-second 4× comparison, simulation progress was lower with the additional controls enabled. The size and cause of this difference across other cities are unverified.
+The core controls have been exercised on a Chicago GPT QA save, with temporary residents, students and workers where needed. In one 45-second 4Ã— comparison, simulation progress was lower with the additional controls enabled. The size and cause of this difference across other cities are unverified.
