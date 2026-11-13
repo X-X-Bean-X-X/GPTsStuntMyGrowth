@@ -32,8 +32,12 @@ With the master switch and **Respect The Original City-Specific Hold** checked, 
 
 ## Build
 
-Version **1.75.631** targets Cities: Skylines II **1.6.2f1** on Windows. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
+Version **1.75.632** targets Cities: Skylines II **1.6.4f1** on Windows. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
 
 Install the game's code-modding toolchain and run `Build.ps1 -Compiler <path-to-Roslyn-csc.exe>` in PowerShell 7. The game toolchain supplies `CSII_MANAGEDPATH`, `CSII_MODPOSTPROCESSORPATH` and `CSII_UNITYMODPROJECTPATH`. The script compiles and postprocesses the DLL and writes a package manifest in `build`.
 
-The core controls have been exercised on a Chicago GPT QA save, with temporary residents, students and workers where needed. In one 45-second 4Ã— comparison, simulation progress was lower with the additional controls enabled. The size and cause of this difference across other cities are unverified.
+In the previous release, the core controls were exercised on a Chicago GPT QA save, with temporary residents, students and workers where needed. In one 45-second 4Ãƒâ€” comparison, simulation progress was lower with the additional controls enabled. The size and cause of this difference across other cities are unverified.
+
+## 1.75.632 compatibility update
+
+The assembly version now matches the release and file versions instead of displaying 0.0.0.0. Rebuilt against 1.6.4f1 without changing simulation policies or saved setting keys. Runtime checks on 1.6.4f1 passed within the scope recorded in `validation-1.6.4f1.json`. The update was submitted to the existing Paradox Mods listing on November 13, 2026.

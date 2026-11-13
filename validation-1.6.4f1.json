@@ -1,0 +1,20 @@
+{
+  "version": "1.75.632",
+  "targetGame": "1.6.4f1",
+  "date": "2026-11-13",
+  "status": "Published; anonymous version 6 archive and subscriber installation verified",
+  "validation": "131 offline policy checks passed. Live controlled fixtures passed for 12 core checks, 11 people checks, four schooling modes, four household checks, six economy/service checks, six building-rule checks, and seven maintenance/upkeep checks. Fixtures exercise native game data and systems in a disposable QA save, including temporary residents, students and workers. Initial staff and school fixture assumptions were corrected before rerunning those checks; gameplay code did not change.",
+  "files": {
+    "0Harmony.dll": "d04ec5b2590dd1bbb57f0f11dc417b1a5bebbb36b1f97006d35f2d87c3a2a69f",
+    "ChicagoPopulationHold20261007.dll": "22a79548eb8a7211fc040085693aa199ddba1f31eb5dd49d03aa8d454a757535",
+    "ChicagoPopulationHold20261007_win_x86_64.dll": "362fef42ae6e1d967451c0b7b511247dcd1c7bed951096970118a2bb988da933",
+    "GPTStuntGrowthSkyline.svg": "094255214bf438128d8f6175a4ee4fef2140e40f96bfbc85554687a53b2e1f17",
+    "GPTStuntYourGrowth.mjs": "226ad9014584b57289614661f6453f222aca44657683cd70ab2aa1b126c25bdc",
+    "Harmony-LICENSE.txt": "407ddd98200c9f17f49942b5a7791e288a2bd553b59bf2f462db87dbb21c50bc"
+  },
+  "limitations": [
+    "Controlled disposable QA city; not a large populated-city soak test.",
+    "Physical keyboard shortcut not independently checked.",
+    "No broad compatibility claim for every other mod."
+  ]
+}
