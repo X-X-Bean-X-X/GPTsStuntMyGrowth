@@ -24,9 +24,7 @@ namespace StuntYourGrowth
         [SettingsUISection(MasterGroup)] public bool Enabled { get; set; }
         [SettingsUISection(MasterGroup)] public bool Growth { get; set; }
 
-        [SettingsUISection(ModeGroup)] public ValueMode Staff { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Customers { get; set; }
-        [SettingsUISection(ModeGroup)] public ValueMode Employees { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Jobs { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode Income { get; set; }
         [SettingsUISection(ModeGroup)] public ValueMode LandValue { get; set; }
@@ -38,12 +36,12 @@ namespace StuntYourGrowth
         [SettingsUIButton, SettingsUIButtonGroup("CheckboxSelection"), SettingsUISection(BulkGroup)]
         public bool DisableAllCheckboxes { set { if (value) ApplyCheckboxSelection(false); } }
 
-        [SettingsUISection(CheckboxGroup)] public bool Abandonment { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool RemoveDead { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool BoostOutsideWorkers { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Age { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RentAmount { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Levels { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Redevelopment { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool MaximumCustomers { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumResources { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumStorage { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UpkeepCosts { get; set; }
@@ -56,7 +54,6 @@ namespace StuntYourGrowth
         [SettingsUISection(CheckboxGroup)] public bool Efficiency { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Happiness { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Health { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool Lifespan { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool ParkMaintenance { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Residents { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RoadWear { get; set; }
@@ -83,12 +80,13 @@ namespace StuntYourGrowth
             Vacancy = enabled;
             Enabled = enabled;
             UnlimitedElectricity = UnlimitedSewer = UnlimitedWater = enabled;
-            MaximumCustomers = PreferPublicTransportation = enabled;
+            PreferPublicTransportation = enabled;
             MaximumResources = MaximumStorage = enabled;
             Growth = enabled;
             Residents = enabled;
+            RemoveDead = enabled;
+            BoostOutsideWorkers = enabled;
             Age = enabled;
-            Lifespan = enabled;
             Health = enabled;
             Wellbeing = enabled;
             Happiness = enabled;
@@ -96,7 +94,6 @@ namespace StuntYourGrowth
             Condition = enabled;
             Levels = enabled;
             Redevelopment = enabled;
-            Abandonment = enabled;
             Comfort = enabled;
             Attractiveness = enabled;
             Efficiency = enabled;
@@ -113,7 +110,7 @@ namespace StuntYourGrowth
         {
             SetCheckboxes(enabled);
             Schooling = enabled ? SchoolMode.Freeze : SchoolMode.Normal;
-            LandValue = Staff = Jobs = Employees = Customers = Income = Profit =
+            LandValue = Jobs = Customers = Income = Profit =
                 enabled ? ValueMode.Freeze : ValueMode.Normal;
         }
 
@@ -127,11 +124,17 @@ namespace StuntYourGrowth
         public override void SetDefaults()
         {
             SetAllOptions(true);
-            DefaultsVersion = 2;
+            DefaultsVersion = 5;
         }
 
-        // Real shopping must be allowed to update the reported customer counters.
-        internal ValueMode CustomerMode => MaximumCustomers ? ValueMode.Normal : Customers;
+        internal void PrepareUpgrade(int savedVersion)
+        {
+            if (savedVersion == 0) UseLegacyDefaults();
+            if (savedVersion < 4) RemoveDead = false;
+            if (savedVersion < 5) BoostOutsideWorkers = false;
+            if (savedVersion < 2) PreferPublicTransportation = MaximumResources = MaximumStorage = false;
+        }
+
 
     }
 
@@ -156,17 +159,17 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.EnableAllCheckboxes), "Enable All Options", "Enable Every Checkbox And Set Every Dropdown To Freeze. Includes Unlimited Utilities.");
             Add(nameof(GPTStuntGrowthSettings.DisableAllCheckboxes), "Disable All Options", "Disable Every Checkbox And Set Every Dropdown To Normal Simulation.");
             Add(nameof(GPTStuntGrowthSettings.Enabled), "Enable Mod", "Master Switch For All Simulation Controls. Turning This Off Preserves Your Individual Selections And Returns To Normal Simulation On Its Next Updates.");
+            Add(nameof(GPTStuntGrowthSettings.RemoveDead), "Automatically Remove Dead & Decaying Citizens", "Automatically Remove Deceased Citizens Awaiting Pickup In Small Batches Through Native Citizen Cleanup. Living Citizens Are Untouched. Active Pickups And Citizens In Vehicles Or Deathcare Finish Normally. Does Not Empty Cemeteries Or Transfer Bodies To Another City. Removed Bodies Cannot Be Restored By Turning This Off.");
+            Add(nameof(GPTStuntGrowthSettings.BoostOutsideWorkers), "Boost Outside Worker Recruitment", "Recruit Extra Adult Commuters In Small Batches When Vacancies Exceed The Available Workforce. Keeps Native Commuter Limits, Education And Job Matching; Does Not Enable Resident Immigration. Requires Usable Outside Connections. Existing Commuters Remain When Disabled.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedElectricity), "Unlimited Electricity", "Satisfy Building Electricity Demand Without Supply Or Network Limits. Clears Electricity Shortage Penalties. Does Not Add Power Plants Or Change Their Reported Capacity.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedWater), "Unlimited Water", "Satisfy Building Fresh Water Demand With Clean Water Without Supply Or Pipe Limits. Sewage Is Controlled Separately.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedSewer), "Unlimited Sewer", "Satisfy Building Sewage Disposal Demand Without Outlet Or Pipe Limits. Fresh Water Is Controlled Separately.");
             Add(nameof(GPTStuntGrowthSettings.Growth), "Stop Population Growth", "Pause Household Immigration And Births.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumCustomers), "Maximum Customers", "Maximize Native Shopping Chances By Removing Population-Based Shopping Reductions And Supported Time2Work Trip Gates. Uses Real Shoppers, Normal Budgets And Travel; Does Not Guarantee Full Shops. Overrides Daily Customers Freeze While Enabled. Can Increase Traffic.");
             Add(nameof(GPTStuntGrowthSettings.MaximumResources), "Maximum Resources Available", "Replenish Business Inputs, Shop Goods And City-Service Supplies Within Native Inventory Limits. Prevent Extraction From Depleting Existing Oil, Ore, Fertility And Fish Deposits. Money Is Unchanged; Does Not Create New Deposits Or Trees.");
             Add(nameof(GPTStuntGrowthSettings.MaximumStorage), "Maximum Storage", "Refill Warehouses And Cargo Storage With Their Accepted Goods Up To Their Existing Shared Capacity. Does Not Increase Capacity. Stored Goods Remain When Disabled And Resume Normal Use.");
             Add(nameof(GPTStuntGrowthSettings.PreferPublicTransportation), "Prefer Public Transportation", "Try Walking, Cycling And Available Public Transportation Before Driving Or Taxis For New Citizen Routes. If No Route Is Found, Retry With Normal Travel Choices. Existing Trips Continue.");
             Add(nameof(GPTStuntGrowthSettings.Residents), "Protect Residents", "Pause Household Departures And Death Checks While Protected.");
             Add(nameof(GPTStuntGrowthSettings.Age), "Freeze Citizen Age", "Hold Age In Days And Life-Stage Transitions.");
-            Add(nameof(GPTStuntGrowthSettings.Lifespan), "Protect Lifespan", "Suppress Old-Age Death Rolls. Illness And Injuries Retain Their Normal Checks.");
             Add(nameof(GPTStuntGrowthSettings.Health), "Protect Health", "Prevent Decreases In Resident Health.");
             Add(nameof(GPTStuntGrowthSettings.Wellbeing), "Protect Well-Being", "Prevent Decreases In Resident Well-Being.");
             Add(nameof(GPTStuntGrowthSettings.Happiness), "Protect Happiness", "Protect The Average Of Resident Health And Well-Being.");
@@ -175,21 +178,18 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.Condition), "Prevent Deterioration", "Prevent Loss Of Condition From Unpaid Upkeep.");
             Add(nameof(GPTStuntGrowthSettings.Levels), "Hold Automatic Level Changes", "Pause Automatic Transitions To A New Building Level.");
             Add(nameof(GPTStuntGrowthSettings.Redevelopment), "Hold Automatic Redevelopment", "Suspend Automatic Zoned Construction On Vacant Lots.");
-            Add(nameof(GPTStuntGrowthSettings.Abandonment), "Freeze Abandonment", "Hold The Condition-Based Abandonment Decision And Pause The Collapse Clock For Abandoned Buildings.");
             Add(nameof(GPTStuntGrowthSettings.Comfort), "Protect Comfort", "Protect The Native Comfort Factor At Stops, Stations And Parking Facilities.");
             Add(nameof(GPTStuntGrowthSettings.Attractiveness), "Protect Attractiveness", "Prevent A Building's Attractiveness From Decreasing.");
-            Add(nameof(GPTStuntGrowthSettings.Efficiency), "Protect Efficiency", "Hold Building Efficiency Against Decreases.");
+            Add(nameof(GPTStuntGrowthSettings.Efficiency), "Protect Efficiency", "Protect Existing Weather And City-Bonus Efficiency Factors Against Decreases. Current Utility, Staffing, Budget, Materials And Service Penalties Still Apply. Never Restores Removed Factors Or Overrides A Closed, Destroyed, Burning Or Abandoned Building.");
             Add(nameof(GPTStuntGrowthSettings.LandValue), "Land Value", "Hold Native Road-Edge Values And The Land-Value Map.");
             Add(nameof(GPTStuntGrowthSettings.ParkMaintenance), "Protect Park Maintenance", "Keep Each Park At Its Current Maintenance Level Or Higher. Repairs Can Still Improve It.");
             Add(nameof(GPTStuntGrowthSettings.RoadWear), "Protect Road Condition", "Prevent Wear From Increasing On Road Segments And Car Lanes. Maintenance Vehicles Can Still Repair Them.");
             Add(nameof(GPTStuntGrowthSettings.UpkeepCosts), "Pause City Upkeep Costs", "Waive Service Upkeep And Map Tile Upkeep At The Next City Budget Calculation. Other Expenses And Maintenance Services Continue.");
             Add(nameof(GPTStuntGrowthSettings.Garbage), "Pause New Garbage", "Hold New Building Garbage Generation While Collection Continues.");
-            Add(nameof(GPTStuntGrowthSettings.Staff), "City-Service Staffing", "Protect Worker Assignments At Service Buildings.");
             Add(nameof(GPTStuntGrowthSettings.RentAmount), "Freeze Rent Amount", "Keep Existing Rental Prices. New Leases Begin At Their Native Initial Price.");
             Add(nameof(GPTStuntGrowthSettings.RentCollection), "Pause Rent Collection", "Pause The Periodic Rent Deduction While Tenant Housekeeping Continues.");
             Add(nameof(GPTStuntGrowthSettings.Jobs), "Employment Levels", "Protect The Number Of Jobs Offered By Employers.");
-            Add(nameof(GPTStuntGrowthSettings.Employees), "Employee Count", "Protect Actual Worker Assignments At Workplaces.");
-            Add(nameof(GPTStuntGrowthSettings.Customers), "Daily Customers", "Protect The Company's Reported Daily Customer Count. Maximum Customers Overrides This Selection While Enabled So Real Purchases Can Update The Count.");
+            Add(nameof(GPTStuntGrowthSettings.Customers), "Daily Customers", "Protect The Company's Reported Daily Customer Count. This Holds A Statistic; It Does Not Generate Shopping Trips.");
             Add(nameof(GPTStuntGrowthSettings.Income), "Income", "Protect Company Income And Household Income Statistics.");
             Add(nameof(GPTStuntGrowthSettings.Profit), "Profit", "Protect The Company's Reported Profit.");
             Add(nameof(GPTStuntGrowthSettings.Vacancy), "Protect Vacant Buildings", "Prevent Condition-Triggered Abandonment On Empty Properties And Freeze Their Existing Abandonment-To-Collapse Timer.");

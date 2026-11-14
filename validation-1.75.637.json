@@ -1,0 +1,852 @@
+{
+  "version": "1.75.637",
+  "targetGame": "1.6.4f1",
+  "verifiedAtUtc": "2026-11-14T07:10:24.085106+00:00",
+  "build": "C# plus official IL/Burst postprocess passed",
+  "offlineChecks": 5259,
+  "policyChecks": 131,
+  "maintenanceRegression": "passed",
+  "nativeFixtures": {
+    "SafetyTrials637": {
+      "passed": true,
+      "checks": [
+        "Paused game",
+        "QA branch",
+        "Version637",
+        "29 checkboxes and6 dropdowns",
+        "Removed control: Staff",
+        "Removed control: Employees",
+        "Removed control: MaximumCustomers",
+        "Removed control: HireAllAvailableJobs",
+        "Removed control: Lifespan",
+        "Removed control: Abandonment",
+        "RosterGuard removed",
+        "Enable All enables checkboxes",
+        "Enable All freezes dropdowns",
+        "Disable All disables checkboxes",
+        "Disable All normalizes dropdowns",
+        "Shutdown remains zero and clears bonus baseline",
+        "Restart uses fresh native baseline",
+        "Weather protected while electricity shortage remains",
+        "Removed factors stay removed and live penalties change",
+        "Off clears efficiency baseline",
+        "Cleanup switch off",
+        "Cleanup master off",
+        "Eligible corpse marked Deleted",
+        "Dead flag retained and transport retired",
+        "Unsafe or living citizen skipped: 99645",
+        "Unsafe or living citizen skipped: 99687",
+        "Unsafe or living citizen skipped: 100474",
+        "Unsafe or living citizen skipped: 100490",
+        "Unsafe or living citizen skipped: 100532",
+        "Native household membership cleanup",
+        "Native occupant and student cleanup",
+        "Native job seeker cleanup",
+        "Native visible creature cleanup",
+        "Unassigned pickup request detached",
+        "64 corpse batch cap",
+        "Backlog drains on following pass",
+        "ResetVacancy resets vacant property",
+        "ResetVacancy respects occupied scope",
+        "ResetAbandonment resets vacant property",
+        "ResetAbandonment respects occupied scope"
+      ]
+    },
+    "CommuterTrials637": {
+      "passed": true,
+      "nativeEligiblePrefabs": 3,
+      "outsideConnections": 340,
+      "cases": [
+        {
+          "mode": "off",
+          "households": 0,
+          "adultWorkers": 0,
+          "passed": true
+        },
+        {
+          "mode": "master-off",
+          "households": 0,
+          "adultWorkers": 0,
+          "passed": true
+        },
+        {
+          "mode": "wrong-frame",
+          "households": 0,
+          "adultWorkers": 0,
+          "passed": true
+        },
+        {
+          "mode": "boost",
+          "households": 7,
+          "adultWorkers": 8,
+          "passed": true
+        },
+        {
+          "mode": "pending-cap",
+          "households": 0,
+          "adultWorkers": 0,
+          "passed": true
+        },
+        {
+          "mode": "native-reservation",
+          "households": 11,
+          "adultWorkers": 20,
+          "passed": true
+        }
+      ],
+      "scope": "Real native spawn job plus production wrapper and Burst boost scheduled sequentially against isolated household archetypes; current native prefabs and connections used"
+    },
+    "HiringTrials637": {
+      "passed": true,
+      "checks": [
+        {
+          "service": true,
+          "commuter": false,
+          "hired": true,
+          "restored": false,
+          "passed": true
+        },
+        {
+          "service": true,
+          "commuter": true,
+          "hired": true,
+          "restored": false,
+          "passed": true
+        },
+        {
+          "service": false,
+          "commuter": false,
+          "hired": true,
+          "restored": false,
+          "passed": true
+        },
+        {
+          "service": false,
+          "commuter": true,
+          "hired": true,
+          "restored": false,
+          "passed": true
+        }
+      ],
+      "scope": "Native FindJobSystem accepts supplied successful route results for residents and commuters; service and business hires proceed with every remaining control enabled; departed employee is not resurrected"
+    },
+    "UtilityTrials637": {
+      "passed": true,
+      "cases": [
+        {
+          "supply": -1,
+          "mask": 0,
+          "master": true,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 2,
+          "master": true,
+          "power": 0,
+          "fresh": 100,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 4,
+          "master": true,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 0,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 6,
+          "master": true,
+          "power": 0,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 8,
+          "master": false,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 0,
+          "master": true,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 2,
+          "master": true,
+          "power": 25,
+          "fresh": 100,
+          "sewer": 25,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 25,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 4,
+          "master": true,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 25,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 6,
+          "master": true,
+          "power": 25,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 8,
+          "master": false,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 0,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 2,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 4,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 6,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 8,
+          "master": false,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        }
+      ],
+      "frame": 4507530,
+      "scope": "Native patched dispatch and Burst jobs with isolated fixture query; disconnected, constrained and sufficient flow; independent controls and master bypass; timers, efficiency and ordered icon commands"
+    },
+    "DomainTrials": {
+      "passed": true,
+      "checks": 20,
+      "frame": 4507530,
+      "scope": "Native ECS stock fixtures and patched transit queue lifecycle; isolated from city entities and restored"
+    },
+    "ExtractionTrials": {
+      "passed": true,
+      "cases": [
+        {
+          "enabled": false,
+          "on": false,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": false,
+          "on": true,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": false,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": true,
+          "production": 1,
+          "oreUsed": 0,
+          "oilUsed": 0,
+          "passed": true
+        }
+      ],
+      "scope": "Real Unity job scheduler through production extraction wrapper; map-copy isolation, output continuity and master/individual bypass. Deterministic probe job, not real extractor production."
+    },
+    "NativeExtractionTrial": {
+      "passed": true,
+      "cases": [
+        {
+          "enabled": false,
+          "on": false,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": false,
+          "on": true,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": false,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": true,
+          "oreUsed": 0,
+          "extractionDebt": 0.0,
+          "passed": true
+        }
+      ],
+      "scope": "Real native ExtractResourcesJob scheduled through production hook against isolated area, deposit map and city modifiers"
+    }
+  },
+  "coreRegression": {
+    "building-rules": {
+      "checks": [
+        {
+          "option": "Condition",
+          "held": true,
+          "after": 0,
+          "passed": true
+        },
+        {
+          "option": "Condition",
+          "held": false,
+          "after": -4,
+          "passed": true
+        },
+        {
+          "option": "Levels",
+          "held": true,
+          "after": 100,
+          "pending": true,
+          "passed": true
+        },
+        {
+          "option": "Levels",
+          "held": false,
+          "after": 0,
+          "pending": false,
+          "passed": true
+        },
+        {
+          "option": "Redevelopment",
+          "held": true,
+          "deleted": 0,
+          "passed": true
+        },
+        {
+          "option": "Redevelopment",
+          "held": false,
+          "deleted": 15,
+          "passed": true
+        }
+      ]
+    },
+    "fixtures": {
+      "checks": [
+        {
+          "option": "Health",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Wellbeing",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Happiness",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Comfort",
+          "mode": null,
+          "before": 56,
+          "down": 56,
+          "up": 57,
+          "off": 55,
+          "passed": true
+        },
+        {
+          "option": "LandValue",
+          "mode": "PreventDecreases",
+          "before": 523,
+          "down": 523,
+          "up": 524,
+          "off": 522,
+          "passed": true
+        },
+        {
+          "option": "Attractiveness",
+          "mode": null,
+          "before": 3,
+          "down": 3,
+          "up": 4,
+          "off": 2,
+          "passed": true
+        },
+        {
+          "option": "Jobs",
+          "mode": "Freeze",
+          "before": 11,
+          "down": 11,
+          "up": 11,
+          "off": 10,
+          "passed": true
+        },
+        {
+          "option": "Jobs",
+          "mode": "PreventDecreases",
+          "before": 11,
+          "down": 11,
+          "up": 12,
+          "off": 10,
+          "passed": true
+        },
+        {
+          "option": "Profit",
+          "mode": "Freeze",
+          "before": -8,
+          "down": -8,
+          "up": -8,
+          "off": -9,
+          "passed": true
+        },
+        {
+          "option": "Income",
+          "mode": "PreventDecreases",
+          "before": 0,
+          "down": 0,
+          "up": 1,
+          "off": -1,
+          "passed": true
+        },
+        {
+          "option": "Customers",
+          "mode": "Freeze",
+          "lower": 16,
+          "higher": 16,
+          "passed": true
+        },
+        {
+          "option": "Customers",
+          "mode": "PreventDecreases",
+          "lower": 16,
+          "higher": 22,
+          "passed": true
+        }
+      ]
+    },
+    "household-fixture": {
+      "checks": [
+        {
+          "option": "Growth",
+          "held": true,
+          "before": 1,
+          "after": 1,
+          "passed": true
+        },
+        {
+          "option": "Growth",
+          "held": false,
+          "before": 1,
+          "after": 2,
+          "passed": true
+        },
+        {
+          "option": "Tenants",
+          "held": true,
+          "moved": false,
+          "passed": true
+        },
+        {
+          "option": "Tenants",
+          "held": false,
+          "moved": true,
+          "passed": true
+        }
+      ]
+    },
+    "service-fixture": {
+      "checks": [
+        {
+          "option": "RentCollection",
+          "held": true,
+          "before": 25000,
+          "after": 25000,
+          "passed": true
+        },
+        {
+          "option": "RentCollection",
+          "held": false,
+          "before": 25000,
+          "after": 24000,
+          "passed": true
+        },
+        {
+          "option": "RentAmount",
+          "held": true,
+          "before": 16000,
+          "after": 16000,
+          "passed": true
+        },
+        {
+          "option": "RentAmount",
+          "held": false,
+          "before": 16000,
+          "after": 1107,
+          "passed": true
+        },
+        {
+          "option": "Garbage",
+          "held": true,
+          "before": 100,
+          "after": 100,
+          "passed": true
+        },
+        {
+          "option": "Garbage",
+          "held": false,
+          "before": 100,
+          "after": 2100,
+          "passed": true
+        }
+      ]
+    },
+    "vacancy-collapse": {
+      "passed": true,
+      "checks": [
+        {
+          "vacancyEnabled": true,
+          "abandoned": false,
+          "passed": true
+        },
+        {
+          "vacancyEnabled": false,
+          "abandoned": true,
+          "passed": true
+        },
+        {
+          "protectedEvents": 0,
+          "protectedAgeStart": 0,
+          "resetStart": 4517319,
+          "frame": 4517319,
+          "offEvents": 1,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "ui": {
+    "passed": true,
+    "toolbarOpensModOptions": true,
+    "masterThenGrowth": true,
+    "sixAlphabeticalDropdowns": true,
+    "newCheckboxLabelsVisible": true,
+    "checkboxOrderVerified": true,
+    "removedControlsAbsent": true,
+    "vacancyAndResetsAtBottom": true,
+    "enableAllButtonCheckedControlsAndFrozeDropdowns": true,
+    "disableAllButtonUncheckedControlsAndNormalizedDropdowns": true,
+    "savedUserSelectionsRestored": true
+  },
+  "settingsPersistence": {
+    "passed": true,
+    "version": "1.75.637",
+    "coldStartPreservedExistingSelections": true,
+    "newSwitchesOffOnUpgrade": true,
+    "checks": [
+      "Master switch saved immediately while game was running",
+      "New switches and schooling selection survived city reload"
+    ],
+    "restoredUserSelections": true
+  },
+  "logReview": {
+    "passed": true,
+    "reviewedLogs": [
+      "GPTStuntYourGrowth.log",
+      "Simulation.log",
+      "ChicagoBuildBridge.log",
+      "SceneFlow.log"
+    ],
+    "stuntGrowthAndSimulationErrors": 0,
+    "optionalTime2WorkResidentHookRegistered": true,
+    "unrelatedStartupIssue": "ChicagoCoverageCache disabled itself because its required ServiceCoverageFix version was not present; original service mod retained. Asset duplicate and geometry warnings also occurred."
+  },
+  "performance": [
+    {
+      "newControls": false,
+      "speed": 1.0,
+      "initial": 4507530,
+      "first": 4508646,
+      "last": 4511236,
+      "seconds": 45.0020142,
+      "count": 1988,
+      "median": 20.93505859375,
+      "p95": 31.219482421875,
+      "p99": 58.9599609375,
+      "worst": 101.287841796875,
+      "over50": 33,
+      "over100": 1,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControls": true,
+      "speed": 1.0,
+      "initial": 4507530,
+      "first": 4508677,
+      "last": 4511285,
+      "seconds": 45.0021057,
+      "count": 2027,
+      "median": 20.5078125,
+      "p95": 30.242919921875,
+      "p99": 57.55615234375,
+      "worst": 121.917724609375,
+      "over50": 30,
+      "over100": 1,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControls": false,
+      "speed": 4.0,
+      "initial": 4507530,
+      "first": 4510448,
+      "last": 4517540,
+      "seconds": 45.00775,
+      "count": 1218,
+      "median": 33.5693359375,
+      "p95": 75.13427734375,
+      "p99": 102.294921875,
+      "worst": 136.16943359375,
+      "over50": 96,
+      "over100": 17,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControls": true,
+      "speed": 4.0,
+      "initial": 4507530,
+      "first": 4510380,
+      "last": 4517319,
+      "seconds": 45.0238037,
+      "count": 1227,
+      "median": 33.447265625,
+      "p95": 71.59423828125,
+      "p99": 103.45458984375,
+      "worst": 114.44091796875,
+      "over50": 92,
+      "over100": 16,
+      "source": "Unity rendered coroutine intervals"
+    }
+  ],
+  "performanceScope": "One 45-second measurement after20-second warmup per configuration, reloading the same QA checkpoint. New corpse cleanup and outside-worker recruitment are the variables. Other controls retain the existing user selections. Render intervals are not simulation-frame latency; this small populated city does not establish large-city performance.",
+  "limitations": [
+    "Commuter recruitment does not guarantee a skill mix or a hire. Targeted native hiring tests supply a successful route result; normal city simulation also ran with Time2Work active.",
+    "Cleanup skips active pickups, vehicle passengers, bodies in deathcare and malformed citizens. No long-duration cemetery backlog or large-city stress test.",
+    "Resource tests exercise native ore extraction and isolated supply/storage fixtures. Other deposits have scheduler/isolation tests; no long-duration economy test.",
+    "Overlapping protections and frozen statistics retain the interactions explained in README. No claim of compatibility with every external mod."
+  ],
+  "testTooling": "A temporary QA component was rejected by Unity. The fixture was corrected to use native components and then passed; no production mod change was required.",
+  "files": {
+    "0Harmony.dll": "d04ec5b2590dd1bbb57f0f11dc417b1a5bebbb36b1f97006d35f2d87c3a2a69f",
+    "ChicagoPopulationHold20261007.dll": "dc7652b39b06eea366d2b267607d3d5cfdd967f015c0e0a33d07e2afbdc38ba6",
+    "ChicagoPopulationHold20261007_win_x86_64.dll": "e73cdcc77165854ad105187a69cece78bffb33462e29d4627f58a11fdaf9334b",
+    "GPTStuntGrowthSkyline.svg": "094255214bf438128d8f6175a4ee4fef2140e40f96bfbc85554687a53b2e1f17",
+    "GPTStuntYourGrowth.mjs": "4f8a0f5170ebabc3248b3ab0fd2513efa53c411b4d8fa433a8ffc6f714163dc4",
+    "Harmony-LICENSE.txt": "407ddd98200c9f17f49942b5a7791e288a2bd553b59bf2f462db87dbb21c50bc"
+  }
+}

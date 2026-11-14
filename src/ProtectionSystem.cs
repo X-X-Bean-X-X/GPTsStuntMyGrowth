@@ -70,7 +70,6 @@ namespace StuntYourGrowth
         readonly List<ITrackedFields> fields = new List<ITrackedFields>();
         SimulationSystem sim;
         EntityQuery time, citizens, abandoned, conditions, garbage, rentalBuildings, departingResidents, departingTenants;
-        RosterGuard roster;
         EfficiencyGuard efficiency;
         ResourceStockGuard stocks;
         int? lastAgeDay;
@@ -94,13 +93,12 @@ namespace StuntYourGrowth
             Track<Game.Net.LandValue>(s => (int)s.LandValue, (ref Game.Net.LandValue v, Game.Net.LandValue p, GPTStuntGrowthSettings s) => v.m_LandValue = Policy.Protect(p.m_LandValue,v.m_LandValue,s.LandValue));
             Track<WorkProvider>(s => (int)s.Jobs, (ref WorkProvider v, WorkProvider p, GPTStuntGrowthSettings s) => v.m_MaxWorkers = Policy.Protect(p.m_MaxWorkers,v.m_MaxWorkers,s.Jobs));
             Track<Household>(s => (int)s.Income, (ref Household v, Household p, GPTStuntGrowthSettings s) => v.m_Income = Policy.Protect(p.m_Income,v.m_Income,s.Income));
-            Track<CompanyStatisticData>(s => (int)s.CustomerMode + 4*(int)s.Income + 16*(int)s.Profit, ProtectCompany);
+            Track<CompanyStatisticData>(s => (int)s.Customers + 4*(int)s.Income + 16*(int)s.Profit, ProtectCompany);
             Track<Game.Buildings.Park>(s => s.ParkMaintenance ? 1 : 0, ProtectPark);
             var carLanes = GetEntityQuery(ComponentType.ReadWrite<Game.Net.LaneCondition>(), ComponentType.ReadOnly<Game.Net.CarLane>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
             fields.Add(new TrackedFields<Game.Net.LaneCondition>(EntityManager, carLanes, s => s.RoadWear ? 1 : 0, ProtectLane));
             var roads = GetEntityQuery(ComponentType.ReadWrite<Game.Net.NetCondition>(), ComponentType.ReadOnly<Game.Net.Road>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
             fields.Add(new TrackedFields<Game.Net.NetCondition>(EntityManager, roads, s => s.RoadWear ? 1 : 0, ProtectRoad));
-            roster = new RosterGuard(EntityManager, QueryBuffer<Employee>());
             efficiency = new EfficiencyGuard(EntityManager, QueryBuffer<Efficiency>());
             stocks = new ResourceStockGuard(EntityManager, World.GetOrCreateSystemManaged<Game.Prefabs.ResourceSystem>());
             departingResidents = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<Household>(),ComponentType.Exclude<TouristHousehold>(),ComponentType.Exclude<CommuterHousehold>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
@@ -133,12 +131,12 @@ namespace StuntYourGrowth
         {
             v.m_Income = Policy.Protect(p.m_Income, v.m_Income, s.Income);
             v.m_Profit = Policy.Protect(p.m_Profit, v.m_Profit, s.Profit);
-            if (s.CustomerMode != ValueMode.Normal)
+            if (s.Customers != ValueMode.Normal)
             {
                 var clock = Current.World.GetExistingSystemManaged<TimeSystem>();
                 float t = clock.normalizedTime;
                 int reported(CompanyStatisticData data) => (int)Math.Round(data.m_MonthlyCustomerCount*(1.0-t)+data.m_CurrentNumberOfCustomers*t);
-                int held = Policy.Protect(reported(p),reported(v),s.CustomerMode);
+                int held = Policy.Protect(reported(p),reported(v),s.Customers);
                 // The displayed count interpolates these counters; keep the protected result time-independent.
                 v.m_MonthlyCustomerCount = held;
                 v.m_CurrentNumberOfCustomers = held;
@@ -155,7 +153,6 @@ namespace StuntYourGrowth
                 EntityManager.RemoveComponent<Game.Agents.MovingAway>(departingResidents);
             if (s.Tenants && !departingTenants.IsEmptyIgnoreFilter)
                 EntityManager.RemoveComponent<Game.Agents.MovingAway>(departingTenants);
-            roster.Tick(s,prune);
             efficiency.Tick(s.Efficiency,prune);
             stocks.Tick(s, sim.frameIndex);
             UpdateBirthdays(s);
@@ -193,16 +190,16 @@ namespace StuntYourGrowth
         void UpdateClocks(GPTStuntGrowthSettings s)
         {
             uint now=sim.frameIndex;
-            if (!(s.Abandonment || s.Vacancy || resetAll || resetVacant)) { lastClock=null; return; }
+            if (!(s.Vacancy || resetAll || resetVacant)) { lastClock=null; return; }
             uint prior = lastClock ?? now;
-            lastClock = s.Abandonment || s.Vacancy ? now : (uint?)null;
+            lastClock = s.Vacancy ? now : (uint?)null;
             using (var list=abandoned.ToEntityArray(Allocator.Temp)) foreach (var e in list)
             {
                 var a = EntityManager.GetComponentData<Abandoned>(e);
                 bool empty = (s.Vacancy || resetVacant) && Empty(EntityManager,e);
                 uint start = a.m_AbandonmentTime;
                 if (resetAll || (resetVacant && empty)) a.m_AbandonmentTime = now;
-                else if (s.Abandonment || (s.Vacancy && empty))
+                else if (s.Vacancy && empty)
                     a.m_AbandonmentTime = start + Math.Min(now - start, now - prior);
                 if (a.m_AbandonmentTime != start) EntityManager.SetComponentData(e,a);
             }
@@ -218,7 +215,7 @@ namespace StuntYourGrowth
         void ClearState()
         {
             foreach (var f in fields) f.Clear();
-            roster?.Clear(); efficiency?.Clear();
+            efficiency?.Clear();
             stocks?.Clear();
             lastClock=null; lastAgeDay=null; resetAll=resetVacant=wasActive=false;
         }

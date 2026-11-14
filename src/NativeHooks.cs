@@ -18,11 +18,9 @@ namespace StuntYourGrowth
     internal static class NativeHooks
     {
         static readonly FieldInfo DownQueue = AccessTools.Field(typeof(BuildingUpkeepSystem), "m_LeveldownQueue");
-        // The default curve has an empty sample buffer. The null-curve constructor fills it with zeroes.
-        static readonly Colossal.Collections.AnimationCurve1 ZeroDeathRate = new Colossal.Collections.AnimationCurve1(null);
         internal static void Register(Harmony patch)
         {
-            foreach (var owner in new[] { typeof(BuildingUpkeepSystem), typeof(DeathCheckSystem), typeof(PropertyProcessingSystem) })
+            foreach (var owner in new[] { typeof(BuildingUpkeepSystem), typeof(PropertyProcessingSystem) })
                 patch.Patch(AccessTools.DeclaredMethod(owner, "OnUpdate"), transpiler:
                     new HarmonyMethod(typeof(NativeHooks), nameof(ModifyDispatch)));
             patch.Patch(AccessTools.DeclaredMethod(typeof(CityServiceBudgetSystem), "OnUpdate"),
@@ -34,9 +32,6 @@ namespace StuntYourGrowth
             patch.Patch(AccessTools.DeclaredMethod(typeof(DestroyAbandonedSystem), "OnUpdate"),
                 prefix: new HarmonyMethod(typeof(NativeHooks), nameof(BeforeCollapse)),
                 finalizer: new HarmonyMethod(typeof(NativeHooks), nameof(AfterCollapse)));
-            patch.Patch(AccessTools.DeclaredMethod(typeof(FindJobSystem), "OnUpdate"),
-                prefix: new HarmonyMethod(typeof(NativeHooks), nameof(BeforeHiring)),
-                finalizer: new HarmonyMethod(typeof(NativeHooks), nameof(RestoreHiring)));
         }
         [Unity.Burst.BurstCompile]
         private struct WaiveUpkeepJob : IJob
@@ -67,9 +62,8 @@ namespace StuntYourGrowth
                 if (replacement == null) continue;
                 var method=AccessTools.DeclaredMethod(replacement,"OnUpdate");
                 if (Harmony.GetPatchInfo(method)?.Owners.Contains(patch.Id)==true) return;
-                patch.Patch(method, prefix:new HarmonyMethod(typeof(NativeHooks),nameof(AllowResidentMortality)),
-                    transpiler:new HarmonyMethod(typeof(NativeHooks),nameof(ModifyDispatch)));
-                Runtime.Log.Info("Registered Time2Work lifespan and resident controls.");
+                patch.Patch(method, prefix:new HarmonyMethod(typeof(NativeHooks),nameof(AllowResidentMortality)));
+                Runtime.Log.Info("Registered Time2Work resident controls.");
                 return;
             }
         }
@@ -105,14 +99,13 @@ namespace StuntYourGrowth
                     edits++;
                 }
                 yield return instruction;
-                if (m?.Name == "GetSingleton" && (t == typeof(BuildingConfigurationData) || t == typeof(HealthcareParameterData)))
+                if (m?.Name == "GetSingleton" && t == typeof(BuildingConfigurationData))
                 {
-                    yield return CodeInstruction.Call(typeof(NativeHooks), t == typeof(BuildingConfigurationData) ? nameof(ConditionRates) : nameof(DeathRates));
+                    yield return CodeInstruction.Call(typeof(NativeHooks), nameof(ConditionRates));
                     edits++;
                 }
             }
-            int expected = __originalMethod.DeclaringType == typeof(BuildingUpkeepSystem) ? 3 :
-                __originalMethod.DeclaringType == typeof(DeathCheckSystem) ? 2 : 1;
+            int expected = __originalMethod.DeclaringType == typeof(BuildingUpkeepSystem) ? 3 : 1;
             if (edits != expected) throw new InvalidOperationException($"Unsupported native dispatch in {__originalMethod.DeclaringType}: {edits}/{expected} hooks");
         }
 
@@ -122,15 +115,6 @@ namespace StuntYourGrowth
             return value;
         }
         static bool AllowResidentMortality() => !Runtime.Playing || !Runtime.Options.Residents;
-        static HealthcareParameterData DeathRates(HealthcareParameterData value)
-        {
-            if (Runtime.Playing && Runtime.Options.Lifespan)
-            {
-                value.m_DeathRate = ZeroDeathRate;
-                value.m_LegacyDeathRate = ZeroDeathRate;
-            }
-            return value;
-        }
         static JobHandle ScheduleLevelMaterials<T>(T job, EntityQuery query, JobHandle dependency) where T : struct, IJobChunk
         {
             return Runtime.Playing && Runtime.Options.Levels ? dependency : job.ScheduleParallel(query, dependency);
@@ -138,14 +122,14 @@ namespace StuntYourGrowth
         static JobHandle FilterAbandonment(JobHandle dependency, BuildingUpkeepSystem system)
         {
             var s = Runtime.Options;
-            if (!Runtime.Playing || !(s.Levels || s.Abandonment || s.Vacancy || s.Tenants)) return dependency;
+            if (!Runtime.Playing || !(s.Levels || s.Vacancy || s.Tenants)) return dependency;
             dependency.Complete();
             var queue = (NativeQueue<Entity>)DownQueue.GetValue(system);
             int count = queue.Count;
             while (count-- > 0 && queue.TryDequeue(out var building))
             {
                 bool empty = ProtectionSystem.Empty(system.EntityManager, building);
-                if (!(s.Levels || s.Abandonment || (empty ? s.Vacancy : s.Tenants))) queue.Enqueue(building);
+                if (!(s.Levels || (empty ? s.Vacancy : s.Tenants))) queue.Enqueue(building);
             }
             return dependency;
         }
@@ -197,7 +181,6 @@ namespace StuntYourGrowth
         {
             __state=null;
             if (!Runtime.Playing) return true;
-            if (Runtime.Options.Abandonment) return false;
             if (!Runtime.Options.Vacancy) return true;
             var em=__instance.EntityManager;
             uint frame=__instance.World.GetExistingSystemManaged<SimulationSystem>().frameIndex;
@@ -219,31 +202,6 @@ namespace StuntYourGrowth
             foreach(var pair in __state)
                 if (__instance.EntityManager.HasComponent<Abandoned>(pair.Key))
                     __instance.EntityManager.SetComponentData(pair.Key,pair.Value);
-        }
-        static void BeforeHiring(FindJobSystem __instance, out Dictionary<Entity,Game.Companies.FreeWorkplaces> __state)
-        {
-            __state = null;
-            if (!Runtime.Playing || (Runtime.Options.Employees != ValueMode.Freeze && Runtime.Options.Staff != ValueMode.Freeze)) return;
-            var em = __instance.EntityManager;
-            __state = new Dictionary<Entity,Game.Companies.FreeWorkplaces>();
-            using (var query = em.CreateEntityQuery(ComponentType.ReadWrite<Game.Companies.FreeWorkplaces>(),ComponentType.Exclude<Deleted>()))
-            using (var entities = query.ToEntityArray(Allocator.Temp))
-                foreach (var e in entities)
-                {
-                    if (RosterGuard.Mode(em,e,Runtime.Options) != ValueMode.Freeze) continue;
-                    var slots = em.GetComponentData<Game.Companies.FreeWorkplaces>(e);
-                    if (slots.Count == 0) continue;
-                    __state.Add(e,slots);
-                    em.SetComponentData(e, default(Game.Companies.FreeWorkplaces));
-                }
-        }
-        static void RestoreHiring(FindJobSystem __instance, Dictionary<Entity,Game.Companies.FreeWorkplaces> __state)
-        {
-            if (__state == null) return;
-            __instance.World.GetExistingSystemManaged<EndFrameBarrier>().producerHandle.Complete();
-            var em = __instance.EntityManager;
-            foreach(var pair in __state)
-                if (em.HasComponent<Game.Companies.FreeWorkplaces>(pair.Key)) em.SetComponentData(pair.Key,pair.Value);
         }
         static bool BeforeLand(LandValueSystem __instance, out float[] __state)
         {

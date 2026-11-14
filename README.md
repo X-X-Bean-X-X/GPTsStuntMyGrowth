@@ -4,23 +4,33 @@ A Cities: Skylines II code mod for Windows. Use the skyline-and-pause button in 
 
 ## Buildings
 
-**Protect Vacant Buildings** guards empty rentable buildings against abandonment caused by poor condition. If a property has already been abandoned, the setting holds its countdown to demolition. **Freeze Abandonment** also covers occupied buildings. **Prevent Deterioration** protects condition during building upkeep.
+**Protect Vacant Buildings** guards empty rentable buildings against abandonment caused by poor condition. If a property has already been abandoned, the setting holds its countdown to demolition. **Prevent Deterioration** protects condition during building upkeep.
 
 The **Vacancy And Abandonment** section appears at the bottom of the Options page. **Reset Vacant Buildings** and **Reset Abandonment** run once per click and can be used repeatedly in the same city or session. Resetting clears negative condition and restarts eligible demolition timers. Fire, disasters and manual bulldozing have separate effects. A reset does not return an already-abandoned property to service.
 
 ## Population and services
 
-Choose independent protections for household growth, resident departures, age, old-age mortality, health, well-being, happiness, tenant moves, building levels, comfort, attractiveness, efficiency, garbage production, rents and staffing. Schooling has four modes. **Normal Schooling | No Admissions** lets existing students progress and graduate while pausing new admissions.
+Choose independent protections for household growth, resident departures, age, health, well-being, happiness, tenant moves, building levels, comfort, attractiveness, efficiency, garbage production, rents and employment capacity. Schooling has four modes. **Normal Schooling | No Admissions** lets existing students progress and graduate while pausing new admissions.
 
 **Enable Mod** is the first checkbox, followed by **Stop Population Growth**. The master switch suspends all controls while retaining individual selections. Native simulation resumes on its next updates.
 
-On a first installation, all 30 checkboxes are enabled and all eight alphabetically ordered dropdowns select **Freeze** (schooling uses **Freeze Schooling As Is**). Existing saved choices are migrated without turning omitted old false settings on. Newly added controls start off for upgrading users until selected. **Enable All Options** turns on every checkbox and selects Freeze in every dropdown. **Disable All Options** clears every checkbox and selects Normal in every dropdown. The reset buttons are not triggered by either bulk action.
+On a first installation, all 29 checkboxes are enabled and all six alphabetically ordered dropdowns select **Freeze** (schooling uses **Freeze Schooling As Is**). Existing saved choices are migrated without turning omitted old false settings on. Newly added controls start off for upgrading users until selected. **Enable All Options** turns on every checkbox and selects Freeze in every dropdown. **Disable All Options** clears every checkbox and selects Normal in every dropdown. The reset buttons are not triggered by either bulk action.
 
-Where available, **Prevent Decreases** permits gains. Customer counts, income and profit use the game's tracked statistics. Staff protections maintain real worker assignments, subject to the continuing availability of workers and workplaces.
+Where available, **Prevent Decreases** permits gains. Customer counts, income and profit use the game's tracked statistics. Service staffing and worker assignments use the native simulation; City-Service Staffing has been removed.
+
+## Outside Worker Recruitment
+
+**Boost Outside Worker Recruitment** adds a bounded commuter-recruitment pass while native spawning continues. It checks vacancies across all five education levels against the available workforce. More-qualified available workers can cover lower-level openings; workers cannot cover jobs above their qualifications. Incoming commuters still receive their education through the native initializer. This is not worker training and does not guarantee a particular skill mix or successful hire.
+
+At most 16 extra adult workers are recruited per 256 simulation frames. The boost reserves room for the native planned batch and commuters still waiting for work; it stops adding workers when that waiting/reserved pool reaches 64. It retains the native commuter-to-worker limit and only uses eligible adult-only household prefabs and native outside-connection selection. No suitable prefab, usable connection or remaining room means no extra recruitment. Vanilla recruitment is unchanged by these boost limits.
+
+Stop Population Growth can remain enabled because commuters are separate from resident immigration. The checkbox does not modify residents, schooling, offered job capacity, employee rosters or efficiency factors. Native routing and job matching still decide hires. The removed City-Service Staffing control no longer blocks service hires. Added commuters can increase traffic and simulation work. Disabling the boost stops new extra batches; existing commuters remain in normal simulation. An already scheduled batch can finish.
+
+Fresh defaults and Enable All Options include this checkbox. Existing settings below schema 5 keep it off until selected. Live tests exercised the native spawn job and production recruitment wrapper, timing gates, waiting limits and native service/business hiring. Three eligible native household prefabs were available in the tested playset. Hiring tests supplied successful route results; they do not guarantee usable routes or a particular qualification mix in every city.
 
 ## Customers, travel and resources
 
-**Maximum Customers** removes population-based reductions from native household shopping chances. Supported Time2Work shopping trip gates and household cooldowns are bypassed while enabled. Existing citizens make real shopping requests: money, household needs, work/school schedules, sleep, shop access and native purchase rules still apply. It does not spawn people or guarantee every shop is full. It overrides the **Daily Customers** dropdown while enabled so real purchases can update the reported count; the dropdown selection is retained for when this checkbox is turned off.
+The Employee Count, Maximum Customers, Hire All Available Jobs, Protect Lifespan, Freeze Abandonment and City-Service Staffing controls have been removed. Old saved keys are ignored. Shopping and ordinary business hiring use their normal game behavior; Daily Customers still controls the reported customer statistic. Worker training and a workforce status panel are not included.
 
 **Prefer Public Transportation** tries available public transport, walking and cycling before driving or taxis for new citizen routes. If that route search fails, the exact original route choices are tried once. Vehicle/service/freight path requests are excluded. Existing trips continue. This does not create routes, vehicles or capacity, and routes with no suitable transit can require a second path search.
 
@@ -28,7 +38,15 @@ Where available, **Prevent Decreases** permits gains. Customer counts, income an
 
 **Maximum Storage** periodically refills warehouses and cargo storage with their accepted physical goods up to existing shared capacity, including warehouse level/lot size and active storage upgrades. It does not enlarge storage. Turning either inventory checkbox off stops replenishment; goods already added remain and can be used or sold normally. Artificial supplies can change imports, exports and traffic.
 
-## Maintenance
+## Automatic Corpse Cleanup
+
+**Automatically Remove Dead & Decaying Citizens** removes deceased citizens awaiting pickup through the game's native citizen-deletion cleanup. It does not transfer bodies to a neighboring city, spawn hearses or change service-import policy. The game has a Dead flag rather than a separate Decaying classification; the control targets that flag together with RequireTransport.
+
+Cleanup runs during simulation, with at most 64 removals and 2,048 candidate checks per 256 simulation frames. It leaves living citizens, active pickups, citizens inside vehicles and bodies already traveling to or held in deathcare alone. Those existing trips continue normally. It does not empty cemetery storage counters. Citizens missing the household/job-seeker components required by native cleanup are skipped. Death statistics are not fabricated or counted again.
+
+Turning this checkbox or Enable Mod off stops future cleanup; already removed bodies cannot be restored by switching it off. Fresh installation/reset and Enable All Options turn it on. Existing settings below schema 4 leave it off until selected; other choices are preserved. Protect Residents can prevent new deaths, but does not prevent cleanup of citizens who were already dead.
+
+## Maintenance Controls
 
 Three independent checkboxes control maintenance. **Protect Road Condition** keeps wear on road segments and car lanes from increasing. **Protect Park Maintenance** holds each park at its current maintenance level or higher. Both allow repairs to improve condition.
 
@@ -44,20 +62,36 @@ The old city-specific hold option and its automatic configuration-file controlle
 
 ## Build
 
-Version **1.75.633** targets Cities: Skylines II **1.6.4f1** on Windows. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
+Version **1.75.637** targets Cities: Skylines II **1.6.4f1** on Windows. It passed offline and in-game validation on a separate Chicago GPT test save. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
 
 Install the game's code-modding toolchain and run `Build.ps1 -Compiler <path-to-Roslyn-csc.exe>` in PowerShell 7. The game toolchain supplies `CSII_MANAGEDPATH`, `CSII_MODPOSTPROCESSORPATH` and `CSII_UNITYMODPROJECTPATH`. The script compiles and postprocesses the DLL and writes a package manifest in `build`.
 
-In the previous release, the core controls were exercised on a Chicago GPT QA save, with temporary residents, students and workers where needed. In one 45-second 4x comparison, simulation progress was lower with the additional controls enabled. The size and cause of this difference across other cities are unverified.
+Validation included 5,259 offline checks, the maintenance regression and 131 policy cases; native corpse cleanup, efficiency penalties, recruitment/hiring, utilities, resources, transit fallback, building protections and repeatable reset tests; settings migration/persistence and visible Options checks. See `validation-1.75.637.json` for evidence and scope.
+
+Matched simulation runs reloaded the same populated test save for each configuration, warmed up for 20 seconds and measured 45 seconds. With the new cleanup/recruitment controls off/on, normal speed advanced 2,590/2,608 frames; 4x advanced 7,092/6,939 frames. No mod or simulation exceptions appeared in the reviewed logs. One comparison in a small city cannot establish large-city or long-duration performance. The playset also logged an unrelated ChicagoCoverageCache compatibility disable and asset warnings.
 
 ## 1.75.632 compatibility update
 
 The assembly version now matches the release and file versions instead of displaying 0.0.0.0. Rebuilt against 1.6.4f1 without changing simulation policies or saved setting keys. Runtime checks on 1.6.4f1 passed within the scope recorded in `validation-1.6.4f1.json`. The update was submitted to the existing Paradox Mods listing on November 13, 2026.
 
-## Validation - 1.75.633
+## Efficiency Protection
 
-The C# build and official Windows/Burst postprocessing pass against the installed 1.6.4f1 game assemblies. Run `tests/Test.ps1` after `Build.ps1` for settings, utility, shopping, routing, inventory-boundary and native scheduler checks, plus maintenance regression and 131 policy cases. The local run passed 951 checks with `STUNT_TIME2WORK_PATH` set to the installed Time2Work DLL; the optional Time2Work checks are skipped when that environment variable is absent. The settings type has a unique name so the game's immediate-save lookup does not select another mod with a generic `Settings` class.
+**Protect Efficiency** now holds individual weather and city-bonus/specialization factors against decreases. It never replaces the entire efficiency-factor list. Electricity, water, sewage, dirty water, staffing, employee health/happiness, budget, fees, garbage, telecom, mail and material/resource shortages retain their current native factors. Unknown future factors are also left alone. Removed factors stay removed; a closed, destroyed, burning or abandoned building resets its bonus baseline. After turning off an unlimited utility, its native shortage penalty can take effect even while Protect Efficiency remains enabled.
 
-In a separate Chicago GPT QA save, native dispatch passed 27 utility cases covering disconnected, insufficient and sufficient supply, independent switches and master bypass. Live stock fixtures verified native capacities, industrial output room, money exclusion and normal consumption after disabling replenishment. The actual native ore-extraction job completed its bookkeeping while preserving the deposit only when enabled. The other deposit channels passed a scheduled isolation probe and offline dispatch checks.
+This intentionally narrows efficiency protection: total efficiency can fall when an operational requirement is not met. Weather factors retained by this control are wind speed, water depth and sunlight. City-modifier and specialization bonuses are protected only while the factor still exists.
 
-The live transit run completed 243 preferred searches and 22 successful fallbacks to original routing. Other searches remained unreachable after fallback; this control cannot repair an inaccessible destination. The test does not establish a citywide public-transport ridership percentage. Core resident, building, rent, health, staffing and all four schooling modes passed regression fixtures. Maximum Customers retains native eligibility and schedules; these checks do not promise full shops or a particular sales increase. See `validation-1.75.633.json` for the recorded scope and performance measurements.
+## Remaining Interactions
+
+- City-Service Staffing and its hiring/roster-retention hooks are removed. Native service hiring and departures can proceed; Employment Levels still protects the number of jobs offered.
+- Stop Population Growth, frozen age and frozen schooling can limit the future supply of qualified workers. Employment Levels = Freeze holds offered job capacity.
+- Protect Residents still pauses death checks and household departures. Removing Protect Lifespan does not disable that broader protection.
+- Protect Happiness can raise health or well-being to maintain happiness even if their individual protections are off.
+- Hold Automatic Level Changes, Protect Tenants, Prevent Deterioration and Protect Vacant Buildings overlap in avoiding condition-related abandonment. Removing Freeze Abandonment does not remove these separate safeguards. Existing occupied abandoned buildings no longer receive the removed blanket collapse-timer freeze; the repeatable Reset Abandonment button remains.
+- Daily Customers, Income and Profit protect reported statistics; Freeze can hide changes in actual shopping and economic activity. Resource/storage replenishment can change production, trade and traffic.
+- Enable All Options selects Freeze in every remaining dropdown, including schooling. Disable All Options selects Normal.
+
+## Validation - 1.75.637 Offline Candidate
+
+The C# build and official Windows/Burst postprocessing pass. The offline suite passes 5,259 checks, including every known efficiency factor, mixed utility/staffing/bonus changes, factor removal/reordering, shutdown/reopening, retained settings, ignored retired keys, corpse-cleanup eligibility across all health flags and pickup/vehicle/deathcare exclusions. All 29 checkboxes and six dropdowns pass defaults, bulk-action and alphabetical-order checks. Maintenance regression and 131 policy cases pass. Native scheduler hooks match the installed 1.6.4f1 assembly. Commuter tests also cover qualification matching, native batch reservations, pending-worker limits, native ratio limits, household eligibility and overflow boundaries.
+
+This candidate has not been installed, tested in-game or published. Earlier candidate 1.75.633 had live utility, inventory, extraction, routing, core-control and UI checks, but those results do not establish this revised build's live behavior. Automatic corpse cleanup needs in-game confirmation of household/occupant/request/icon cleanup, active-hearse exclusions, deaths inside vehicles, large backlogs, settings-off behavior, save/reload and Time2Work coexistence. The revised efficiency guard, native service hiring, abandonment coverage and settings persistence also require a new QA handoff. Current source is an offline candidate; the user is still testing the installed earlier build.

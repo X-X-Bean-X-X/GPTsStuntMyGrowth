@@ -41,12 +41,10 @@ namespace StuntYourGrowth
                 existing = true;
                 savedVersion = saved.DefaultsVersion;
             });
-            if (existing && savedVersion == 0) Options.UseLegacyDefaults();
-            if (existing && savedVersion < 2) Options.MaximumCustomers = Options.PreferPublicTransportation = false;
-            if (existing && savedVersion < 2) Options.MaximumResources = Options.MaximumStorage = false;
+            if (existing) Options.PrepareUpgrade(savedVersion);
             // A zero baseline forces the version marker to be saved even with default selections.
             AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
-            Options.DefaultsVersion = 2;
+            Options.DefaultsVersion = 5;
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);
@@ -66,11 +64,12 @@ namespace StuntYourGrowth
                 RegisterGate<CompanyMoveAwaySystem>();
                 NativeHooks.Register(patches);
                 UtilityHooks.Register(patches);
-                CustomerHooks.Register(patches);
                 TransitHooks.Register(patches);
                 ResourceHooks.Register(patches);
+                CommuterHooks.Register(patches);
                 GameManager.instance.onWorldReady += OnWorldReady;
                 update.UpdateBefore<ProtectionSystem>(SystemUpdatePhase.GameSimulation);
+                update.UpdateBefore<DeadCitizenCleanupSystem>(SystemUpdatePhase.GameSimulation);
                 update.UpdateAt<ToolbarSystem>(SystemUpdatePhase.UIUpdate);
                 Log.Info(Title + " registered native settings and simulation controls.");
             }
@@ -83,7 +82,6 @@ namespace StuntYourGrowth
         static void OnWorldReady()
         {
             if(patches!=null) NativeHooks.RegisterIntegrations(patches);
-            if(patches!=null) CustomerHooks.RegisterIntegrations(patches);
         }
         static void RegisterGate<T>() where T : GameSystemBase
         {
