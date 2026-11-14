@@ -1,3 +1,5 @@
 build/
 *.pdb
 tests/bin/
+tests/*.exe
+tests/*.runtimeconfig.json
