@@ -20,7 +20,20 @@
     ],
     "noClippingObserved": true,
     "settingsUnchanged": true,
-    "simulationFrameUnchanged": 4235241
+    "simulationFrameUnchanged": 4235241,
+    "previewCleanup": {
+      "cause": "Private localization preview cleanup removed the original source, then AddSource skipped that same already-registered object. Subscriber runtime code was not responsible.",
+      "repair": "Registered a fresh original locale instance and preserved original registration during future previews.",
+      "restoredEntries": 132,
+      "previewApplyRemoveRegressionPassed": true,
+      "reopenedOptionsLabelsVerified": true,
+      "settingsUnchanged": true,
+      "frameUnchanged": 4235241,
+      "speed": 0.0,
+      "candidateInstalled": false,
+      "published": false,
+      "recordedUtc": "2026-11-14T19:44:36.617766+00:00"
+    }
   },
   "published": false,
   "candidateInstalled": false,
