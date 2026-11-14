@@ -3,7 +3,7 @@
  *
  * Id: GPTStuntYourGrowth
  * Author: X_Bean_X
- * Version: 1.75.637
+ * Version: 1.75.638
  * Dependencies:
  */
 const { createElement } = window.React;
@@ -15,11 +15,16 @@ function GrowthToolbarButton() {
     return createElement(Tooltip, { tooltip: title },
         createElement(Button, {
             variant: "floating",
-            src: "coui://ui-mods/GPTStuntGrowthSkyline.svg",
+            style: { padding: 0, backgroundColor: "transparent", overflow: "hidden" },
             "aria-label": title,
             tooltipLabel: title,
             onSelect: () => trigger("GPTStuntYourGrowth", "openSettings")
-        }));
+        }, createElement("img", {
+            src: "coui://ui-mods/GPTStuntGrowthRiverGlow.png",
+            alt: "",
+            draggable: false,
+            style: { width: "100%", height: "100%", display: "block", objectFit: "contain", pointerEvents: "none" }
+        })));
 }
 
 export const hasCSS = false;

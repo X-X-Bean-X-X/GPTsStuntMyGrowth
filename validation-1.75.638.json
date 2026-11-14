@@ -1,0 +1,37 @@
+{
+  "version": "1.75.638",
+  "targetGame": "1.6.4f1",
+  "verifiedAtUtc": "2026-11-14T14:42:47.430350+00:00",
+  "build": "C# and official IL/Burst postprocess passed in working project and public source checkout",
+  "simulationSourceUnchanged": true,
+  "uiModuleContract": "Passed registration, full-color image, accessible label and openSettings callback checks",
+  "liveIcon": {
+    "passed": true,
+    "fullColorVisible": true,
+    "normalToolbarSizeChecked": true,
+    "clickOpenedCorrectOptions": true,
+    "transparentCorners": true,
+    "textureSize": [
+      256,
+      256
+    ],
+    "screenshot": "river-glow-in-game.jpg"
+  },
+  "settingsUnchanged": true,
+  "cityFrameUnchanged": 4235241,
+  "checkpoint": "Chicago GPT - Stunt Growth QA 20261114-143443-0b968c6a",
+  "logErrors": {
+    "GPTStuntYourGrowth.log": [],
+    "UI.log": []
+  },
+  "gameplayRegression": "Not repeated for artwork-only change; unchanged simulation source and 1.75.637 validation retained.",
+  "files": {
+    "0Harmony.dll": "d04ec5b2590dd1bbb57f0f11dc417b1a5bebbb36b1f97006d35f2d87c3a2a69f",
+    "ChicagoPopulationHold20261007.dll": "3a2fc028715d5c6e014d23e20a27f121b61464712ce3a685253031963f3b4ca6",
+    "ChicagoPopulationHold20261007_win_x86_64.dll": "e5a294db1c2e1f4b55036de662323664b5eb34abd50e182e6bfd87d267c82791",
+    "GPTStuntGrowthRiverGlow.png": "079132b95c39bed02107269ce4793752f94eebdfe40a9f5f326b1c30df41052a",
+    "GPTStuntGrowthSkyline.svg": "094255214bf438128d8f6175a4ee4fef2140e40f96bfbc85554687a53b2e1f17",
+    "GPTStuntYourGrowth.mjs": "f6053e6a55c53449eb017ac68ede609e028692797d9390e399babd12031efebb",
+    "Harmony-LICENSE.txt": "407ddd98200c9f17f49942b5a7791e288a2bd553b59bf2f462db87dbb21c50bc"
+  }
+}

@@ -1,6 +1,6 @@
 # GPT's Stunt My Growth by X_Bean_X
 
-A Cities: Skylines II code mod for Windows. Use the skyline-and-pause button in the upper-left toolbar to open **GPT's Stunt My Growth** in Options.
+A Cities: Skylines II code mod for Windows. Use the full-color **River Glow** skyline-and-pause button in the upper-left toolbar to open **GPT's Stunt My Growth** in Options.
 
 ## Buildings
 
@@ -62,11 +62,11 @@ The old city-specific hold option and its automatic configuration-file controlle
 
 ## Build
 
-Version **1.75.637** targets Cities: Skylines II **1.6.4f1** on Windows. It passed offline and in-game validation on a separate Chicago GPT test save. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
+Version **1.75.638** targets Cities: Skylines II **1.6.4f1** on Windows. This update replaces the toolbar icon with the approved navy-and-gold River Glow artwork. Clicking it still opens this mod's Options page. Simulation code and saved setting keys are unchanged from 1.75.637. See `validation-1.75.638.json` for icon-update verification and `validation-1.75.637.json` for the preceding gameplay validation. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
 
 Install the game's code-modding toolchain and run `Build.ps1 -Compiler <path-to-Roslyn-csc.exe>` in PowerShell 7. The game toolchain supplies `CSII_MANAGEDPATH`, `CSII_MODPOSTPROCESSORPATH` and `CSII_UNITYMODPROJECTPATH`. The script compiles and postprocesses the DLL and writes a package manifest in `build`.
 
-Validation included 5,259 offline checks, the maintenance regression and 131 policy cases; native corpse cleanup, efficiency penalties, recruitment/hiring, utilities, resources, transit fallback, building protections and repeatable reset tests; settings migration/persistence and visible Options checks. See `validation-1.75.637.json` for evidence and scope.
+Gameplay validation for 1.75.637 included 5,259 offline checks, the maintenance regression and 131 policy cases; native corpse cleanup, efficiency penalties, recruitment/hiring, utilities, resources, transit fallback, building protections and repeatable reset tests; settings migration/persistence and visible Options checks. See `validation-1.75.637.json` for evidence and scope.
 
 Matched simulation runs reloaded the same populated test save for each configuration, warmed up for 20 seconds and measured 45 seconds. With the new cleanup/recruitment controls off/on, normal speed advanced 2,590/2,608 frames; 4x advanced 7,092/6,939 frames. No mod or simulation exceptions appeared in the reviewed logs. One comparison in a small city cannot establish large-city or long-duration performance. The playset also logged an unrelated ChicagoCoverageCache compatibility disable and asset warnings.
 
@@ -89,9 +89,3 @@ This intentionally narrows efficiency protection: total efficiency can fall when
 - Hold Automatic Level Changes, Protect Tenants, Prevent Deterioration and Protect Vacant Buildings overlap in avoiding condition-related abandonment. Removing Freeze Abandonment does not remove these separate safeguards. Existing occupied abandoned buildings no longer receive the removed blanket collapse-timer freeze; the repeatable Reset Abandonment button remains.
 - Daily Customers, Income and Profit protect reported statistics; Freeze can hide changes in actual shopping and economic activity. Resource/storage replenishment can change production, trade and traffic.
 - Enable All Options selects Freeze in every remaining dropdown, including schooling. Disable All Options selects Normal.
-
-## Validation - 1.75.637 Offline Candidate
-
-The C# build and official Windows/Burst postprocessing pass. The offline suite passes 5,259 checks, including every known efficiency factor, mixed utility/staffing/bonus changes, factor removal/reordering, shutdown/reopening, retained settings, ignored retired keys, corpse-cleanup eligibility across all health flags and pickup/vehicle/deathcare exclusions. All 29 checkboxes and six dropdowns pass defaults, bulk-action and alphabetical-order checks. Maintenance regression and 131 policy cases pass. Native scheduler hooks match the installed 1.6.4f1 assembly. Commuter tests also cover qualification matching, native batch reservations, pending-worker limits, native ratio limits, household eligibility and overflow boundaries.
-
-This candidate has not been installed, tested in-game or published. Earlier candidate 1.75.633 had live utility, inventory, extraction, routing, core-control and UI checks, but those results do not establish this revised build's live behavior. Automatic corpse cleanup needs in-game confirmation of household/occupant/request/icon cleanup, active-hearse exclusions, deaths inside vehicles, large backlogs, settings-off behavior, save/reload and Time2Work coexistence. The revised efficiency guard, native service hiring, abandonment coverage and settings persistence also require a new QA handoff. Current source is an offline candidate; the user is still testing the installed earlier build.
