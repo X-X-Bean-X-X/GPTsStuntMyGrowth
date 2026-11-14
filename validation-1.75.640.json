@@ -1,5 +1,7 @@
 {
   "version": "1.75.640",
+  "baselineCommit": "458a043",
+  "baselineLocalTime": "2026-11-14 13:06:34 -0600",
   "visibleDescriptions": 43,
   "allDescriptionEntries": 48,
   "labelsUnchanged": true,
@@ -12,32 +14,24 @@
   "policyCasesPassed": 365,
   "gameLayoutCheck": {
     "passed": true,
-    "method": "Temporary English localization preview in the running 1.75.639 Options page, using exactly the 1.75.640 description strings and bullet formatter. Preview removed afterward.",
+    "method": "Cold-started the actual installed 1.75.640 package, loaded a separate paused checkpoint, checked live locale entries and visually inspected Options. No temporary localization preview was applied.",
+    "localeEntriesVerified": 132,
+    "descriptionsVerified": 48,
     "views": [
       "Schooling",
       "Daily Customers",
       "Civic output (longest description)"
     ],
     "noClippingObserved": true,
+    "closeAndReopenPassed": true,
     "settingsUnchanged": true,
     "simulationFrameUnchanged": 4235241,
-    "previewCleanup": {
-      "cause": "Private localization preview cleanup removed the original source, then AddSource skipped that same already-registered object. Subscriber runtime code was not responsible.",
-      "repair": "Registered a fresh original locale instance and preserved original registration during future previews.",
-      "restoredEntries": 132,
-      "previewApplyRemoveRegressionPassed": true,
-      "reopenedOptionsLabelsVerified": true,
-      "settingsUnchanged": true,
-      "frameUnchanged": 4235241,
-      "speed": 0.0,
-      "candidateInstalled": false,
-      "published": false,
-      "recordedUtc": "2026-11-14T19:44:36.617766+00:00"
-    }
+    "checkpoint": "Chicago GPT - Stunt Growth QA 20261114-195028-42cacc88"
   },
   "published": false,
-  "candidateInstalled": false,
+  "candidateInstalled": true,
   "readyForApproval": true,
-  "recordedUtc": "2026-11-14T19:36:31.819859+00:00",
-  "candidateDllSha256": "b2a06fe70c7037f18c6a6e4daf834acc243576632d6d59a88f5b74a7a870c691"
+  "candidateDllSha256": "13979c69bb4fc196c76e5aea976d2c2931496cfe83db14d216ecd105c5f14a40",
+  "recordedUtc": "2026-11-14T20:00:53.052961+00:00",
+  "scope": "Text-only update. No new gameplay or performance changes; prior 1.75.639 gameplay validation remains separate. Other-mod compatibility audit remains deferred."
 }

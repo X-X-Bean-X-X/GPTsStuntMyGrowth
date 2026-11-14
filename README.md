@@ -100,12 +100,6 @@ These switches bypass supply/network limits for building consumers. They do not 
 
 The old city-specific hold option and its automatic configuration-file controller have been retired. Use **City Growth > Freeze Population Growth** in any city.
 
-## Clearer Options help (1.75.640 candidate)
-
-Every option now uses short bullet points, blank lines and normal sentence capitalization. Dropdown help explains each choice in plain language. Bulk-button help correctly explains the two output controls that stay off under Freeze Population Growth. Labels, saved settings and simulation behavior are unchanged from 1.75.639.
-
-This candidate is local and awaiting review before publication. Compilation, the official postprocessor, 4,854 existing checks, maintenance regression and 365 policy cases passed. A temporary in-game preview confirmed readable bullet spacing and no clipping in the longest help panel. The preview was removed; the installed mod remains 1.75.639. The 1.75.639 gameplay results below apply to the unchanged simulation code; they are not new gameplay runs for this text-only update.
-
 ## Release validation status
 
 Version 1.75.639 passed 4,854 offline checks, the maintenance regression, 365 policy cases and the toolbar contract. The installed release DLL passed 44 live fixture assertions and visible Options checks, including output checkbox transitions with Enable Mod off. Income and Protect Efficiency are absent. Schooling and output limitations are shown in Options.
@@ -118,7 +112,7 @@ See validation-1.75.639.json for exact scope and remaining interactions. Compati
 
 ## Build
 
-Version **1.75.640** targets Cities: Skylines II **1.6.4f1** on Windows. Renamed to GPT's Puppet Master, with the approved riverfront icon and T2 thumbnail. Internal mod identity and saved setting keys are retained. Three numeric dropdowns have Maximize targets; employment has recruitment/hold modes; Income and Protect Efficiency are removed. Land Value adds Reset to ZERO & Freeze Rent. Schooling is unchanged. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
+Version **1.75.639** targets Cities: Skylines II **1.6.4f1** on Windows. Renamed to GPT's Puppet Master, with the approved riverfront icon and T2 thumbnail. Internal mod identity and saved setting keys are retained. Three numeric dropdowns have Maximize targets; employment has recruitment/hold modes; Income and Protect Efficiency are removed. Land Value adds Reset to ZERO & Freeze Rent. Schooling is unchanged. The package includes Harmony 2.2.2 from the official Lib.Harmony NuGet package. Its license is in `dependencies/Harmony-LICENSE.txt`. Time2Work is optional. The personal ChicagoBuildBridge is not a subscriber requirement.
 
 Install the game's code-modding toolchain and run `Build.ps1 -Compiler <path-to-Roslyn-csc.exe>` in PowerShell 7. The game toolchain supplies `CSII_MANAGEDPATH`, `CSII_MODPOSTPROCESSORPATH` and `CSII_UNITYMODPROJECTPATH`. The script compiles and postprocesses the DLL and writes a package manifest in `build`.
 
@@ -146,3 +140,7 @@ Protect Efficiency and its weather/bonus baseline writer have been removed. Effi
 - Building-level, tenant, deterioration and vacancy safeguards overlap. Repeatable resets remain; they do not restore already-abandoned buildings to operation.
 - Resource/storage replenishment can change production, trade and traffic.
 - Other mods may write the same values. A separate compatibility audit remains deferred until after publication and a new user handoff; no universal compatibility claim is made.
+
+## Local 1.75.640 description update
+
+Rebuilt from verified 1.75.639 source (458a043). Only Options description strings and release version metadata changed. Labels, defaults, option behavior and simulation code are unchanged. Descriptions use plain language and separate bullets. The candidate is installed locally. Cold-start, live text audit (132 entries and 48 descriptions), visible bullet spacing, longest-description fit, and closing/reopening Options passed. User settings and the paused simulation frame were unchanged. Publication requires the user's approval.
