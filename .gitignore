@@ -3,3 +3,4 @@ build/
 tests/bin/
 tests/*.exe
 tests/*.runtimeconfig.json
+Library/

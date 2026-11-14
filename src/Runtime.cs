@@ -14,8 +14,8 @@ namespace StuntYourGrowth
     internal static class Runtime
     {
         internal const string Id = "GPTStuntYourGrowth";
-        internal const string Title = "GPT's Stunt My Growth by X_Bean_X";
-        internal const string OptionsTitle = "GPT's Stunt My Growth";
+        internal const string Title = "GPT's Puppet Master by X_Bean_X";
+        internal const string OptionsTitle = "GPT's Puppet Master";
         internal static GPTStuntGrowthSettings Options;
         internal static bool Disposed { get; private set; }
         internal static readonly ILog Log = LogManager.GetLogger(Id);
@@ -44,7 +44,7 @@ namespace StuntYourGrowth
             if (existing) Options.PrepareUpgrade(savedVersion);
             // A zero baseline forces the version marker to be saved even with default selections.
             AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
-            Options.DefaultsVersion = 5;
+            Options.FinishUpgrade(existing ? savedVersion : 6);
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);
@@ -67,9 +67,13 @@ namespace StuntYourGrowth
                 TransitHooks.Register(patches);
                 ResourceHooks.Register(patches);
                 CommuterHooks.Register(patches);
+                CoverageHooks.Register(patches);
+                ShoppingHooks.Register(patches);
                 GameManager.instance.onWorldReady += OnWorldReady;
                 update.UpdateBefore<ProtectionSystem>(SystemUpdatePhase.GameSimulation);
                 update.UpdateBefore<DeadCitizenCleanupSystem>(SystemUpdatePhase.GameSimulation);
+                update.UpdateBefore<CoverageControlSystem>(SystemUpdatePhase.GameSimulation);
+                update.UpdateBefore<OccupancyControlSystem>(SystemUpdatePhase.GameSimulation);
                 update.UpdateAt<ToolbarSystem>(SystemUpdatePhase.UIUpdate);
                 Log.Info(Title + " registered native settings and simulation controls.");
             }
@@ -92,7 +96,8 @@ namespace StuntYourGrowth
         {
             if (!Playing) return true;
             var s = Options;
-            if (__instance is HouseholdSpawnSystem || __instance is BirthSystem) return !s.Growth;
+            if (__instance is HouseholdSpawnSystem) return OccupancyPolicy.AllowNativeImmigration(s.Growth,s.MaximumOccupancy);
+            if (__instance is BirthSystem) return !s.Growth;
             if (__instance is FindSchoolSystem || __instance is ApplyToSchoolSystem) return Policy.Admissions(s.Schooling);
             if (__instance is GraduationSystem) return Policy.Education(s.Schooling);
             if (__instance is AgingSystem) return !s.Age;

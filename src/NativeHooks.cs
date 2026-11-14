@@ -154,7 +154,7 @@ namespace StuntYourGrowth
             return dependency;
         }
         static void BeforePrice(RentAdjustSystem __instance, out Dictionary<Entity,int> __state) =>
-            __state = Runtime.Playing && Runtime.Options.RentAmount ? ProtectionSystem.Leases(__instance, false) : null;
+            __state = Runtime.Playing && Runtime.Options.FreezeRent ? ProtectionSystem.Leases(__instance, false) : null;
         static void AfterPrice(RentAdjustSystem __instance, Dictionary<Entity,int> __state) =>
             ProtectionSystem.RestoreLeases(__instance, __state, false);
         static void BeforeCharge(PropertyRenterSystem __instance, out Dictionary<Entity,int> __state) =>
@@ -206,8 +206,13 @@ namespace StuntYourGrowth
         static bool BeforeLand(LandValueSystem __instance, out float[] __state)
         {
             __state = null;
-            if (!Runtime.Playing || Runtime.Options.LandValue == ValueMode.Normal) return true;
-            if (Runtime.Options.LandValue == ValueMode.Freeze) return false;
+            if (!Runtime.Playing || Runtime.Options.LandControl == ValueMode.Normal) return true;
+            if (Runtime.Options.LandControl == ValueMode.Freeze) return false;
+            if (Policy.IsOverride(Runtime.Options.LandControl))
+            {
+                ProtectionSystem.SetLandMap(__instance, Runtime.Options);
+                return false;
+            }
             var values = __instance.GetMap(true, out var dep);
             dep.Complete();
             __state = new float[values.Length];

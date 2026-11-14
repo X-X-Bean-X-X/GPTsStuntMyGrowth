@@ -1,0 +1,1 @@
+Numeric639.cs is the in-game QA fixture for the private ChicagoBuildBridge test harness. It runs only in a paused disposable QA save, restores option selections, and deletes its synthetic entities. It is not part of the subscriber mod or an additional runtime dependency. See the release validation JSON for observed results.

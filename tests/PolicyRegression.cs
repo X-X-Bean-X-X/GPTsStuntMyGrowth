@@ -16,6 +16,18 @@ class PolicyTests
             Check(Policy.Protect(baseline,current,ValueMode.PreventDecreases)==Math.Max(baseline,current));
             Check(Policy.Protect(baseline+0.25f,current+0.25f,ValueMode.PreventDecreases)==Math.Max(baseline,current)+0.25f);
         }
+        Check((int)ValueMode.Normal==0 && (int)ValueMode.Freeze==1 && (int)ValueMode.PreventDecreases==2);
+        var keys = new System.Collections.Generic.HashSet<int>();
+        foreach(ValueMode a in Enum.GetValues(typeof(ValueMode)))
+        foreach(ValueMode b in Enum.GetValues(typeof(ValueMode)))
+        foreach(ValueMode c in Enum.GetValues(typeof(ValueMode))) Check(keys.Add(Policy.ModeKey(a,b,c)));
+        foreach(int value in new[]{int.MinValue,-1,0,1,100,int.MaxValue})
+        foreach(int target in new[]{int.MinValue,-1,0,1,100,int.MaxValue})
+        {
+            Check(Policy.Target(value,ValueMode.Zero,target,1000000)==0);
+            Check(Policy.Target(value,ValueMode.Maximize,target,1000000)==Math.Max(0,Math.Min(target,1000000)));
+            Check(Policy.Target(value,ValueMode.Normal,target,1000000)==value);
+        }
         foreach(SchoolMode mode in Enum.GetValues(typeof(SchoolMode)))
         {
             Check(Policy.Admissions(mode)==(mode==SchoolMode.Normal || mode==SchoolMode.EnrollmentOnly));

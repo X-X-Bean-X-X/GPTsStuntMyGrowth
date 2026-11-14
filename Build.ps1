@@ -29,11 +29,11 @@ $post = @('PostProcess',$target,'-u',$env:CSII_UNITYMODPROJECTPATH) + @($refs | 
 if ($LASTEXITCODE) { throw 'Official postprocessor failed. See build/raw/postprocess.log' }
 Copy-Item -LiteralPath $HarmonyPath,(Join-Path $PSScriptRoot 'dependencies/Harmony-LICENSE.txt') -Destination $package -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'thumbnail.png') -Destination $package -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'ui\GPTStuntYourGrowth.mjs'),(Join-Path $PSScriptRoot 'ui\GPTStuntGrowthSkyline.svg'),(Join-Path $PSScriptRoot 'ui\GPTStuntGrowthRiverGlow.png') -Destination $package -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'ui\GPTStuntYourGrowth.mjs'),(Join-Path $PSScriptRoot 'ui\GPTStuntGrowthSkyline.svg'),(Join-Path $PSScriptRoot 'ui\GPTPuppetMasterRiverfront.png') -Destination $package -Force
 [ordered]@{
-    title = "GPT's Stunt My Growth by X_Bean_X"
+    title = "GPT's Puppet Master by X_Bean_X"
     author = 'X_Bean_X'
-    version = '1.75.638'
+    version = '1.75.639'
     runtimeTest = 'pending'
     gameAssemblySha256 = (Get-FileHash -LiteralPath (Join-Path $Managed 'Game.dll')).Hash
     referencedHarmony = [Reflection.AssemblyName]::GetAssemblyName($HarmonyPath).FullName

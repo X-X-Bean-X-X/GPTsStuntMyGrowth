@@ -117,7 +117,7 @@ namespace StuntYourGrowth
 
         static JobHandle Schedule<T>(T job, JobHandle dependency, CommuterSpawnSystem system) where T : struct, IJob
         {
-            if (!Runtime.Playing || !Runtime.Options.BoostOutsideWorkers) return job.Schedule(dependency);
+            if (!Runtime.Playing || !Runtime.Options.RecruitOutsideWorkers) return job.Schedule(dependency);
             object native = job;
             uint frame = (uint)Fields<T>.Frame.GetValue(native);
             if (frame % CommuterPolicy.Interval != 0) return job.Schedule(dependency);

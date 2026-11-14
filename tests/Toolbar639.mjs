@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+let registered,selected;
+globalThis.window={React:{createElement:(type,props,...children)=>({type,props,children})},'cs2/ui':{Button:'Button',Tooltip:'Tooltip'},'cs2/api':{trigger:(...args)=>{selected=args;}}};
+const module=await import('../ui/GPTStuntYourGrowth.mjs');
+module.default({append:(point,component)=>{assert.equal(point,'GameTopLeft');registered=component;}});
+const tree=registered(),button=tree.children[0],icon=button.children[0];
+assert.equal(button.type,'Button');assert.equal(button.props.variant,'floating');
+assert.equal(icon.type,'img');assert.equal(icon.props.src,'coui://ui-mods/GPTPuppetMasterRiverfront.png');
+assert.equal(icon.props.style.pointerEvents,'none');assert.equal(button.props['aria-label'],"GPT's Puppet Master");
+button.props.onSelect();assert.deepEqual(selected,['GPTStuntYourGrowth','openSettings']);
+console.log('Toolbar image, tooltip, accessibility and Options action passed.');

@@ -1,0 +1,62 @@
+{
+  "version": "1.75.639",
+  "title": "GPT's Puppet Master by X_Bean_X",
+  "recordedUtc": "2026-11-14T17:03:32.673525+00:00",
+  "status": "offline candidate; not published; not installed into running game",
+  "candidateDllSha256": "8c2cd8164eacc921a9625d66b24891458a631fc5abf439ae7b182bf4b8b72487",
+  "offline": {
+    "compiled": true,
+    "officialPostprocessor": true,
+    "checks": 5852,
+    "policyCases": 365,
+    "maintenanceRegression": true,
+    "toolbarContract": true,
+    "visibleCheckboxes": 32,
+    "dropdowns": 6
+  },
+  "liveIcon": {
+    "passed": false,
+    "status": "pending",
+    "scope": "Revised options ordering, enum selections, disabled sliders and approved icon"
+  },
+  "numericFixture": {
+    "passed": false,
+    "status": "pending",
+    "scope": "Updated numeric modes; zero employment excludes outside connections; combined land/rent mode"
+  },
+  "coverageFixture": {
+    "passed": false,
+    "status": "pending",
+    "scope": "Police/fire buffer isolation, communications map, off/recalculation, save/reload and matched performance"
+  },
+  "occupancyRuntime": {
+    "passed": false,
+    "status": "pending",
+    "scope": "Bounded native tenant initialization, successful placements, backlog/capacity, growth priority and off behavior"
+  },
+  "shoppingRuntime": {
+    "passed": false,
+    "status": "pending",
+    "scope": "Native shopping job copy, affordability, trips, real transactions, off behavior and traffic/performance"
+  },
+  "simulationRunsPassed": false,
+  "compatibilityAudit": {
+    "status": "deferred",
+    "instruction": "Ask user to begin only after implementation, release tests and both uploads are complete."
+  },
+  "gameControl": "User is playing; offline-only instruction active. No game control or live installation in this turn.",
+  "publication": {
+    "github": false,
+    "paradox": false
+  },
+  "interactions": [
+    "Maximum Occupancy overrides Stop Population Growth for immigration, not births.",
+    "Occupancy plus Zero Employment can create residents without available jobs.",
+    "Maximize Shopping Activity uses real native purchases; held statistics can hide activity.",
+    "Household Income also affects shopping preferences; Zero Income can undermine shopping activity.",
+    "Police/fire coverage benefits do not replace operational staff, dispatch or road access.",
+    "Frozen age/schooling can limit future qualified workers.",
+    "Recruitment and Zero Employment are mutually exclusive; Employment Maximize is removed.",
+    "Rent freeze exists only in Land Value ZeroFreezeRent; targets require active Maximize."
+  ]
+}
