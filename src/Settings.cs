@@ -99,10 +99,22 @@ namespace StuntYourGrowth
         [SettingsUISection(CheckboxGroup)] public bool RoadWear { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Tenants { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Wellbeing { get; set; }
+        [SettingsUIHidden] public bool UnlimitedPublicTransportVehicles { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedAirlines { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedBuses { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedElectricity { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool UnlimitedPublicTransportVehicles { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedFerries { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedSewer { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedShips { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedSubways { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedTrains { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool UnlimitedTrams { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedWater { get; set; }
+
+        internal bool AnyTransportFleet => UnlimitedAirlines || UnlimitedBuses || UnlimitedFerries ||
+            UnlimitedShips || UnlimitedSubways || UnlimitedTrains || UnlimitedTrams;
+        private void SetTransportFleets(bool enabled) => UnlimitedAirlines = UnlimitedBuses = UnlimitedFerries =
+            UnlimitedShips = UnlimitedSubways = UnlimitedTrains = UnlimitedTrams = enabled;
 
         [SettingsUISection(VacancyGroup)] public bool Vacancy { get; set; }
         [SettingsUIButton, SettingsUISection(VacancyGroup)]
@@ -121,7 +133,9 @@ namespace StuntYourGrowth
             Vacancy = enabled;
             Enabled = enabled;
             UnlimitedElectricity = UnlimitedSewer = UnlimitedWater = enabled;
-            PreferPublicTransportation = UnlimitedPublicTransportVehicles = enabled;
+            PreferPublicTransportation = enabled;
+            SetTransportFleets(enabled);
+            UnlimitedPublicTransportVehicles = false; // Retired combined switch; migration input only.
             MaximumResources = MaximumStorage = enabled;
             MaximumShopping = false;
             MaxIndustrialOutput = MaxCivicOutput = enabled;
@@ -174,13 +188,15 @@ namespace StuntYourGrowth
             CustomerTarget = 1000;
             ProfitTarget = 10000;
             LandValueTarget = 100;
-            DefaultsVersion = 8;
+            DefaultsVersion = 9;
         }
 
         internal void PrepareUpgrade(int savedVersion)
         {
             if (savedVersion == 0) UseLegacyDefaults();
-            if (savedVersion < 8) UnlimitedPublicTransportVehicles = false;
+            // Schema 8 omitted true because the combined switch defaulted to true.
+            // Earlier versions did not have fleet control. Read the legacy value before splitting it.
+            if (savedVersion < 9) UnlimitedPublicTransportVehicles = savedVersion == 8;
             if (savedVersion == 6) MaximumOccupancy = MaximumShopping = true;
             if (savedVersion < 7) CityGrowth = CityGrowthMode.Freeze;
             if (savedVersion < 6) MaximumCommunications = MaximumFireCoverage = MaximumPoliceCoverage = MaximumOccupancy = false;
@@ -195,6 +211,8 @@ namespace StuntYourGrowth
 
         internal void FinishUpgrade(int savedVersion)
         {
+            if (savedVersion < 9) SetTransportFleets(savedVersion == 8 && UnlimitedPublicTransportVehicles);
+            UnlimitedPublicTransportVehicles = false;
             if (savedVersion < 6)
             {
                 // Explicit Zero wins over the retired independent recruitment flag.
@@ -212,7 +230,7 @@ namespace StuntYourGrowth
             if (!Enum.IsDefined(typeof(EmploymentMode), Jobs)) Jobs = EmploymentMode.Normal;
             if (!Enum.IsDefined(typeof(LandValueMode), LandValue)) LandValue = LandValueMode.Normal;
             BoostOutsideWorkers = RentAmount = false;
-            DefaultsVersion = 8;
+            DefaultsVersion = 9;
         }
 
     }
@@ -242,7 +260,13 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.RemoveDead), "Remove the Dead & Decaying", "\u2022 Remove dead citizens who are waiting to be picked up, a few at a time.\n\n\u2022 Leave living citizens alone.\n\n\u2022 Let current hearses and deathcare services finish their work.\n\n\u2022 Do not empty cemeteries or send bodies to another city.\n\n\u2022 Removed bodies do not come back when you turn this off.");
             Add(nameof(GPTStuntGrowthSettings.BoostOutsideWorkers), "Boost Outside Worker Recruitment", "\u2022 Invite extra adult workers from other cities when jobs are open.\n\n\u2022 They need an outside connection and a suitable job.\n\n\u2022 This does not train workers or guarantee that jobs will be filled.\n\n\u2022 Turning this off stops extra invitations. Existing commuters stay in the simulation.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedElectricity), "Unlimited Electricity", "\u2022 Give buildings all the electricity they need.\n\n\u2022 Ignore shortages in power supply and connections.\n\n\u2022 Do not add power plants or raise their listed capacity.");
-            Add(nameof(GPTStuntGrowthSettings.UnlimitedPublicTransportVehicles), "Unlimited Public Transport Vehicles", "\u2022 Let working depots supply the vehicles your passenger lines request.\n\n\u2022 Covers buses, trains, trams, subways, ships, ferries and planes.\n\n\u2022 Keep your line vehicle targets and schedules. Do not keep spawning extra vehicles.\n\n\u2022 Lines still need working depots, suitable vehicles and reachable stops. Vehicle servicing continues.\n\n\u2022 Frozen schooling or job counts can limit depot staffing. This does not override them.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep their normal limits.\n\n\u2022 More vehicles can increase traffic and slow the game.\n\n\u2022 Turn this off to restore normal fleet limits. Extra vehicles may be withdrawn as the game updates.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedAirlines), "Unlimited Airline Vehicles", "\u2022 Supply the vehicles requested by your airline lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedBuses), "Unlimited Buses", "\u2022 Supply the vehicles requested by your bus lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedFerries), "Unlimited Ferries", "\u2022 Supply the vehicles requested by your ferry lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedShips), "Unlimited Ships", "\u2022 Supply the vehicles requested by your passenger ship lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedSubways), "Unlimited Subways", "\u2022 Supply the vehicles requested by your subway lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedTrains), "Unlimited Trains", "\u2022 Supply the vehicles requested by your passenger train lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedTrams), "Unlimited Trams", "\u2022 Supply the vehicles requested by your tram lines.\n\n\u2022 Only affects this transport type. Other transport switches work separately.\n\n\u2022 Keep line targets and schedules. Supply requested vehicles, not endless extras.\n\n\u2022 Needs working providers, suitable vehicles and reachable stops. Servicing continues.\n\n\u2022 Frozen schooling or job counts can limit staffing.\n\n\u2022 Shared cargo providers and vehicle-making upgrades keep normal limits.\n\n\u2022 Extra vehicles can increase traffic and slow the game.\n\n\u2022 Turn off to restore normal limits. Surplus vehicles may be withdrawn.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedWater), "Unlimited Water", "\u2022 Give buildings all the clean water they need.\n\n\u2022 Ignore shortages in water supply and pipe connections.\n\n\u2022 Sewage is handled by Unlimited Sewer.");
             Add(nameof(GPTStuntGrowthSettings.UnlimitedSewer), "Unlimited Sewer", "\u2022 Handle all sewage produced by buildings.\n\n\u2022 Ignore limits on sewage outlets and pipe connections.\n\n\u2022 Clean water is handled by Unlimited Water.");
             Add(nameof(GPTStuntGrowthSettings.Growth), "Stop Population Growth", "\u2022 This older checkbox has been replaced by City Growth.\n\n\u2022 Use Freeze Population Growth to pause new residents and births.");

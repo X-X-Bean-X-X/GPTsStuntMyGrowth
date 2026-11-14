@@ -46,6 +46,22 @@ namespace StuntYourGrowth
             type==TransportType.Tram || type==TransportType.Subway || type==TransportType.Ship ||
             type==TransportType.Ferry || type==TransportType.Airplane;
 
+        internal static bool EnabledFor(GPTStuntGrowthSettings settings,TransportType type)
+        {
+            if(!settings.Enabled)return false;
+            switch(type)
+            {
+                case TransportType.Airplane:return settings.UnlimitedAirlines;
+                case TransportType.Bus:return settings.UnlimitedBuses;
+                case TransportType.Ferry:return settings.UnlimitedFerries;
+                case TransportType.Ship:return settings.UnlimitedShips;
+                case TransportType.Subway:return settings.UnlimitedSubways;
+                case TransportType.Train:return settings.UnlimitedTrains;
+                case TransportType.Tram:return settings.UnlimitedTrams;
+                default:return false;
+            }
+        }
+
         // Keep one dispatch slot beyond existing vehicles and the native maintenance reserve.
         // Actual line requests, not this number, decide how many vehicles are spawned.
         internal static int ReserveCapacity(int original,int owned,float maintenance,float efficiency)
@@ -60,13 +76,13 @@ namespace StuntYourGrowth
 
         static JobHandle ScheduleDepots<T>(T job,EntityQuery query,JobHandle dependency,GameSystemBase system) where T:struct,IJobChunk
         {
-            if(!Runtime.Playing || !Runtime.Options.UnlimitedPublicTransportVehicles)return job.ScheduleParallel(query,dependency);
+            if(!Runtime.Playing || !Runtime.Options.AnyTransportFleet)return job.ScheduleParallel(query,dependency);
             var em=system.EntityManager;
             // Native Burst code reads shared depot data. Complete readers before changing it,
             // complete this one native job, then restore it before any other system can run.
             // No save, UI, another system, or later frame may observe the temporary values.
             dependency.Complete();em.CompleteAllTrackedJobs();
-            var changes=Prepare(em,query);
+            var changes=Prepare(em,query,Runtime.Options);
             JobHandle dispatched=default;
             try
             {
@@ -87,7 +103,7 @@ namespace StuntYourGrowth
             }
         }
 
-        internal static Dictionary<Entity,(TransportDepotData original,TransportDepotData modified)> Prepare(EntityManager em,EntityQuery query)
+        internal static Dictionary<Entity,(TransportDepotData original,TransportDepotData modified)> Prepare(EntityManager em,EntityQuery query,GPTStuntGrowthSettings settings)
         {
             var changes=new Dictionary<Entity,(TransportDepotData original,TransportDepotData modified)>();
             var blocked=new HashSet<Entity>();
@@ -97,7 +113,7 @@ namespace StuntYourGrowth
                 var prefab=em.GetComponentData<PrefabRef>(depot).m_Prefab;
                 if(!em.HasComponent<TransportDepotData>(prefab))continue;
                 var data=em.GetComponentData<TransportDepotData>(prefab);
-                if(!Supported(data.m_TransportType))continue;
+                if(!EnabledFor(settings,data.m_TransportType))continue;
                 // An upgrade can add its own manufacturing loop after the base values combine.
                 // Keep that provider native rather than create an expanding parked fleet.
                 bool manufactures=false;

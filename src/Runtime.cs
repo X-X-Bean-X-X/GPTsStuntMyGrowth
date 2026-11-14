@@ -44,7 +44,7 @@ namespace StuntYourGrowth
             if (existing) Options.PrepareUpgrade(savedVersion);
             // A zero baseline forces the version marker to be saved even with default selections.
             AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
-            Options.FinishUpgrade(existing ? savedVersion : 8);
+            Options.FinishUpgrade(existing ? savedVersion : 9);
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);

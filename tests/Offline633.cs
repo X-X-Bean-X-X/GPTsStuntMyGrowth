@@ -52,7 +52,7 @@ class Offline633
         var asm=typeof(GPTStuntGrowthSettings).Assembly;
         Check(!asm.GetReferencedAssemblies().Any(a=>a.Name=="ChangeCompany"),"Change Company stays optional; no assembly dependency");
         Check(typeof(GPTStuntGrowthSettings).Name=="GPTStuntGrowthSettings","Unique native settings save lookup key");
-        Check(asm.GetName().Version.ToString()=="1.75.641.0","Assembly version");
+        Check(asm.GetName().Version.ToString()=="1.75.642.0","Assembly version");
         foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff","Income","IncomeTarget","Efficiency"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(removed)==null,"Retired setting absent: "+removed);
         Check(asm.GetType("StuntYourGrowth.CustomerHooks")==null && asm.GetType("StuntYourGrowth.HiringGuard")==null,"Retired simulation hooks absent");
@@ -81,7 +81,7 @@ class Offline633
         var toggles=Controls.Where(p=>p.CanRead && p.PropertyType==typeof(bool)).ToArray();
         var modes=Controls.Where(p=>p.PropertyType.IsEnum).ToArray();
         Check(modes.Length==6,"Six dropdowns after Income removal");
-        Check(toggles.Length==31,"31 checkboxes including public transport fleet");
+        Check(toggles.Length==37,"37 checkboxes including seven independent transport fleets");
         foreach(var p in toggles) Check((bool)p.GetValue(s)==(p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"First-load toggle with freeze-growth interlock "+p.Name);
         foreach(var p in modes) Check(p.GetValue(s).ToString()=="Freeze","First-load dropdown "+p.Name);
         Check(typeof(GPTStuntGrowthSettings).GetProperty("LegacyHold")==null,"Retired city hold still exposed");
@@ -154,7 +154,7 @@ class Offline633
             var expectedJob=jobs==4?EmploymentMode.Normal:boost?EmploymentMode.BoostOutsideWorkers:jobs==3?EmploymentMode.Normal:(EmploymentMode)jobs;
             Check(old.Jobs==expectedJob,"Removed employment Zero migrates to Normal");
             Check(old.LandValue==(rent && land==4?LandValueMode.ZeroFreezeRent:(LandValueMode)land),"Rent migration preserves land choice without silently zeroing it");
-            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==8,"Legacy switches cannot remain active");
+            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==9,"Legacy switches cannot remain active");
         }
         foreach(var mode in Enum.GetValues(typeof(ValueMode)).Cast<ValueMode>())
         {
@@ -392,6 +392,36 @@ class Offline633
             typeof(GPTStuntGrowthSettings).GetMethod("PrepareUpgrade",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(upgrade,new object[]{version});
             Check(!upgrade.UnlimitedPublicTransportVehicles,"Existing users opt into fleet control, schema "+version);
         }
+        Check(!Controls.Any(p=>p.Name=="UnlimitedPublicTransportVehicles"),"Combined fleet switch is migration-only");
+        var fleetNames=new[]{"UnlimitedBuses","UnlimitedTrains","UnlimitedTrams","UnlimitedSubways","UnlimitedShips","UnlimitedFerries","UnlimitedAirlines"};
+        var fleetTypes=new[]{TransportType.Bus,TransportType.Train,TransportType.Tram,TransportType.Subway,TransportType.Ship,TransportType.Ferry,TransportType.Airplane};
+        var enabledFor=(Func<GPTStuntGrowthSettings,TransportType,bool>)Delegate.CreateDelegate(typeof(Func<GPTStuntGrowthSettings,TransportType,bool>),fleet.GetMethod("EnabledFor",hidden));
+        var prepareUpgrade=typeof(GPTStuntGrowthSettings).GetMethod("PrepareUpgrade",BindingFlags.Instance|BindingFlags.NonPublic);
+        // Every combination must affect exactly its selected modes, including master-off.
+        for(int mask=0;mask<128;mask++)
+        {
+            var split=NewSettings();
+            for(int i=0;i<7;i++)typeof(GPTStuntGrowthSettings).GetProperty(fleetNames[i]).SetValue(split,(mask&(1<<i))!=0);
+            foreach(bool master in new[]{true,false})
+            {
+                split.Enabled=master;
+                for(int i=0;i<7;i++)Check(enabledFor(split,fleetTypes[i])==(master && (mask&(1<<i))!=0),"Independent transport selection "+mask+" "+fleetTypes[i]+" master "+master);
+                Check(!enabledFor(split,TransportType.Taxi),"Taxi remains native");
+            }
+        }
+        foreach(int version in new[]{0,1,5,6,7,8}) foreach(string legacy in new[]{"{}","{\"UnlimitedPublicTransportVehicles\":true}","{\"UnlimitedPublicTransportVehicles\":false}"})
+        {
+            var migrated=NewSettings();prepareUpgrade.Invoke(migrated,new object[]{version});
+            JSON.WriteInto(JSON.Load(legacy),ref migrated);finishUpgrade.Invoke(migrated,new object[]{version});
+            bool expected=version==8 && !legacy.Contains("false");
+            foreach(string name in fleetNames)Check((bool)typeof(GPTStuntGrowthSettings).GetProperty(name).GetValue(migrated)==expected,"Split migration "+version+" "+legacy+" "+name);
+            Check(!migrated.UnlimitedPublicTransportVehicles && migrated.DefaultsVersion==9,"Legacy fleet switch cleared after migration");
+        }
+        var reloaded=NewSettings();prepareUpgrade.Invoke(reloaded,new object[]{9});
+        JSON.WriteInto(JSON.Load("{\"UnlimitedBuses\":false,\"UnlimitedFerries\":false,\"UnlimitedPublicTransportVehicles\":true}"),ref reloaded);
+        finishUpgrade.Invoke(reloaded,new object[]{9});
+        Check(!reloaded.UnlimitedBuses && !reloaded.UnlimitedFerries && reloaded.UnlimitedTrains && reloaded.UnlimitedAirlines,"New schema preserves separate choices and omitted true defaults");
+        Check(!reloaded.UnlimitedPublicTransportVehicles,"Old key cannot reactivate a new-schema switch");
         var transit=asm.GetType("StuntYourGrowth.TransitHooks");
         var prefer=transit.GetMethod("TryPrefer",hidden);
         foreach(PathMethod time in new[]{PathMethod.PublicTransportDay,PathMethod.PublicTransportNight})

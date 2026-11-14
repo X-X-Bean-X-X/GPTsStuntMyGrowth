@@ -9,3 +9,5 @@ Cases: ordinary Freeze/Prevent Decreases; custom counts above/below baseline and
 Transit641.cs checks reserve preparation against synthetic native ECS depots for all seven supported passenger modes, cargo guards, manufacturing-upgrade guards, and preserved maintenance/type data. It does not by itself prove actual passenger vehicle dispatch. Follow it with real-line runs, original-depot-data comparisons and matched performance checks.
 
 BuildFleet641.ps1 compiles Transit641.cs and the read-only ObserveFleet641.cs observer. The observer captures depot capacity, production, maintenance, owned/disabled vehicles, and line vehicle counts. These helpers stay outside the subscriber package. Compare matching QA-save reloads at normal and maximum simulation speed with the fleet switch off/on; restore the QA baseline and user settings afterward.
+
+Transit642.cs extends the native ECS depot fixture with independent type selection, all-off and master-off checks. Build with BuildFleet642.ps1. It uses local settings and synthetic depots; it does not change user selections. The older 641 fixture remains as historical evidence for that release.

@@ -154,14 +154,15 @@ Rebuilt from verified 1.75.639 source (458a043). Only Options description string
 - Employment Levels and industrial output help now explain this priority. Existing settings and defaults are unchanged.
 - Live checks with Change Company 4.2.2 passed ordinary holds, custom counts above and below the baseline, zero, override removal, and industrial output targeting. The integration has no hard dependency on Change Company.
 
-## Unlimited Public Transport Vehicles (1.75.641)
+## Independent transport vehicle controls (1.75.642)
 
 - Supplies the fleet requested by passenger lines for buses, trains, trams, subways, ships, ferries and planes. Line targets, intervals, ticket prices, and job counts stay unchanged.
 - Uses native vehicle dispatch and vehicle models. It does not invent routes or put vehicles on disconnected tracks, roads, waterways or runways. Working providers and access are still required.
 - Gives working depots dispatch room beyond their existing vehicles and servicing reserve. Vehicle servicing still runs. Extra parked manufacturing is suppressed during the native dispatch calculation.
 - Shared providers carrying cargo or handling cargo requests retain native limits. Providers with upgrades that add a vehicle-manufacturing loop also retain native limits. This protects cargo behavior and prevents an expanding parked fleet.
 - Prefer Public Transportation still affects travel choices separately. Frozen jobs or schooling can limit staffing; the fleet switch does not override them. Change Company retains priority over custom job counts.
-- The new checkbox is off when upgrading an existing installation. Fresh defaults and Enable All Options turn it on; Disable All Options and Enable Mod off disable its effect.
+- Seven alphabetized checkboxes control Airline Vehicles, Buses, Ferries, Ships, Subways, Trains and Trams independently. The combined checkbox is removed.
+- Upgrading from 1.75.641 copies the old combined choice to all seven switches. Earlier installations start them off. New installations and Enable All Options turn all seven on; Disable All Options turns them off. Enable Mod off suspends every effect without changing individual choices.
 - Turning it off restores native fleet limits on subsequent updates; surplus vehicles may be withdrawn. More active vehicles can increase congestion and simulation cost.
 - Implementation temporarily adjusts depot data only while its native job completes and restores the original data immediately, including exception paths. No permanent prefab edits or shared vehicle capacity edits are saved. Completing this job synchronously can add simulation cost; see the release validation record for measured performance and its limits.
 

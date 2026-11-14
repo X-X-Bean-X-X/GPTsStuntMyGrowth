@@ -1,8 +1,8 @@
 GPT's Puppet Master by X_Bean_X
 
-Control growth, buildings, services and city life. Click the riverfront toolbar icon to open GPT's Puppet Master in Options.
+Control your city. Open Options with the riverfront icon.
 
-For Windows. Version 1.75.641 supports Cities: Skylines II 1.6.4f1.
+For Windows. Version 1.75.642 supports Cities: Skylines II 1.6.4f1.
 
 GETTING STARTED
 
@@ -103,7 +103,7 @@ TRAVEL, RESOURCES AND STORAGE
 
 Prefer Public Transportation tries transit, walking and cycling before driving or taxis on new citizen routes, then retries normal choices if needed. Existing trips and service/freight requests stay unchanged. It adds no routes or vehicles; failed searches add routing work.
 
-Unlimited Public Transport Vehicles supplies passenger-line requests for buses, trains, trams, subways, ships, ferries and planes. It keeps line targets and schedules. Working providers, suitable vehicles and access are required; servicing continues. Shared cargo providers and vehicle-making upgrades keep native limits. Extra vehicles can increase traffic and simulation cost. Turning it off restores native limits and may withdraw surplus vehicles. It starts off for existing users; fresh defaults and Enable All Options turn it on.
+Separate Unlimited switches supply Airline Vehicles, Buses, Ferries, Ships, Subways, Trains and Trams. It keeps line targets and schedules. Working providers, suitable vehicles and access are required; servicing continues. Shared cargo providers and vehicle-making upgrades keep native limits. Extra vehicles can increase traffic and simulation cost. Turning it off restores native limits and may withdraw surplus vehicles. Switches inherit the old combined choice. Older versions start them off; new defaults and Enable All Options turn them on.
 
 Maximum Resources Available replenishes business materials, shop goods and city-service supplies within normal inventory limits. Industrial inputs leave room for output. It also prevents extraction from depleting existing oil, ore, fertile land and fish resources. It does not add money, create deposits, regrow trees or remove pollution effects.
 
