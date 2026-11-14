@@ -44,7 +44,7 @@ namespace StuntYourGrowth
             if (existing) Options.PrepareUpgrade(savedVersion);
             // A zero baseline forces the version marker to be saved even with default selections.
             AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
-            Options.FinishUpgrade(existing ? savedVersion : 6);
+            Options.FinishUpgrade(existing ? savedVersion : 7);
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);
@@ -96,8 +96,8 @@ namespace StuntYourGrowth
         {
             if (!Playing) return true;
             var s = Options;
-            if (__instance is HouseholdSpawnSystem) return OccupancyPolicy.AllowNativeImmigration(s.Growth,s.MaximumOccupancy);
-            if (__instance is BirthSystem) return !s.Growth;
+            if (__instance is HouseholdSpawnSystem) return false; // City Growth owns bounded immigration while the mod is enabled.
+            if (__instance is BirthSystem) return s.GrowPopulation;
             if (__instance is FindSchoolSystem || __instance is ApplyToSchoolSystem) return Policy.Admissions(s.Schooling);
             if (__instance is GraduationSystem) return Policy.Education(s.Schooling);
             if (__instance is AgingSystem) return !s.Age;

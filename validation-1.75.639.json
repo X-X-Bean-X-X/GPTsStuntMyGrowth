@@ -1,62 +1,249 @@
 {
   "version": "1.75.639",
   "title": "GPT's Puppet Master by X_Bean_X",
-  "recordedUtc": "2026-11-14T17:03:32.673525+00:00",
-  "status": "offline candidate; not published; not installed into running game",
-  "candidateDllSha256": "8c2cd8164eacc921a9625d66b24891458a631fc5abf439ae7b182bf4b8b72487",
+  "recordedUtc": "2026-11-14T18:44:57.510213+00:00",
+  "status": "Installed candidate; offline and functional live checks passed within recorded scope; final matched performance verification pending; not published",
+  "candidateDllSha256": "476c2841f728f87c58ee6f8107b2221d9eccc51d52939a6a24eab153d5ac13b7",
   "offline": {
     "compiled": true,
     "officialPostprocessor": true,
-    "checks": 5852,
+    "checks": 4830,
     "policyCases": 365,
     "maintenanceRegression": true,
     "toolbarContract": true,
-    "visibleCheckboxes": 32,
+    "visibleCheckboxes": 30,
     "dropdowns": 6
   },
   "liveIcon": {
-    "passed": false,
-    "status": "pending",
-    "scope": "Revised options ordering, enum selections, disabled sliders and approved icon"
+    "passed": true,
+    "scope": "Approved toolbar icon opens the named Options page; six dropdowns, Income absent, schooling warning readable; Freeze disables output checkboxes, another growth mode enables them unchecked; both can be selected.",
+    "screenshots": [
+      "options-schooling-warning.png",
+      "options-output-disabled.png",
+      "options-output-enabled.png",
+      "options-output-selected.png"
+    ]
   },
   "numericFixture": {
-    "passed": false,
-    "status": "pending",
-    "scope": "Updated numeric modes; zero employment excludes outside connections; combined land/rent mode"
+    "passed": true,
+    "checks": 41,
+    "receipt": "validation/command-6eb4929aa8f240059ff07876dc68a654.json",
+    "scope": "Numeric zero/targets, income untouched, native staffing scopes/upgrades/school enrollment, growth interlocks, combined zero land and rent hold, master-off and Normal behavior."
   },
   "coverageFixture": {
-    "passed": false,
-    "status": "pending",
-    "scope": "Police/fire buffer isolation, communications map, off/recalculation, save/reload and matched performance"
+    "passed": true,
+    "scope": "Synthetic road buffers verified independent police/fire definitions, other slots untouched, off permits native writes; telecom map endpoints verified full quality and off leaves writes alone. Actual emergency response and full other-mod compatibility are not certified.",
+    "receipt": "validation/command-6eb4929aa8f240059ff07876dc68a654.json"
   },
   "occupancyRuntime": {
-    "passed": false,
-    "status": "pending",
-    "scope": "Bounded native tenant initialization, successful placements, backlog/capacity, growth priority and off behavior"
+    "passed": true,
+    "scope": "Combined growth with industrial/civic output on: real native tenants initialized and acquired leases; native-capacity/interlock assertions in live fixture. This is not a guarantee all properties can fill.",
+    "observed": {
+      "homes": {
+        "before": 1082,
+        "after": 1244,
+        "new": 175,
+        "newLeased": 165,
+        "newEmpty": 0
+      },
+      "shopping": {
+        "householdsWithIncreasedShoppedValue": 248,
+        "increasedShoppedValue": 36766,
+        "cashChangedAmongThem": 247
+      },
+      "companies": {
+        "before": 455,
+        "after": 539,
+        "new": 84,
+        "newLeased": 84,
+        "newEmpty": 0
+      },
+      "beforeReceipt": "command-e5242bcfc02f439abcb10387a93c0ba7.json",
+      "afterReceipt": "command-be1d118ec5a14140a8bf3d62d072c93b.json"
+    }
   },
   "shoppingRuntime": {
-    "passed": false,
-    "status": "pending",
-    "scope": "Native shopping job copy, affordability, trips, real transactions, off behavior and traffic/performance"
+    "passed": true,
+    "scope": "Native household system enabled with shopping transpiler installed; shopping mode leaves statistics native; existing households recorded purchases and changed cash during normal simulation. This is not an isolated measurement of the shopping boost or a guarantee of sales.",
+    "householdsWithIncreasedShoppedValue": 248,
+    "cashChangedAmongThem": 247
   },
   "simulationRunsPassed": false,
   "compatibilityAudit": {
     "status": "deferred",
     "instruction": "Ask user to begin only after implementation, release tests and both uploads are complete."
   },
-  "gameControl": "User is playing; offline-only instruction active. No game control or live installation in this turn.",
+  "gameControl": "User explicitly handed over paused CS2 on November 14; original preserved in separate checkpoint before restart.",
   "publication": {
     "github": false,
-    "paradox": false
+    "paradox": false,
+    "publishingIdentity": "Publisher account check currently does not match X_Bean_X; no upload attempted."
   },
   "interactions": [
-    "Maximum Occupancy overrides Stop Population Growth for immigration, not births.",
-    "Occupancy plus Zero Employment can create residents without available jobs.",
-    "Maximize Shopping Activity uses real native purchases; held statistics can hide activity.",
-    "Household Income also affects shopping preferences; Zero Income can undermine shopping activity.",
-    "Police/fire coverage benefits do not replace operational staff, dispatch or road access.",
-    "Frozen age/schooling can limit future qualified workers.",
-    "Recruitment and Zero Employment are mutually exclusive; Employment Maximize is removed.",
-    "Rent freeze exists only in Land Value ZeroFreezeRent; targets require active Maximize."
-  ]
+    "Freeze growth clears and disables both output controls",
+    "Scoped native staffing targets take priority over Employment Freeze",
+    "Frozen schooling can limit qualified workers; recruitment cannot guarantee required education",
+    "Profit overrides can hide real shopping results",
+    "Other inventory/utility controls retain their documented effects",
+    "Other-mod compatibility audit deferred until after release"
+  ],
+  "completedLatestRevision": [
+    "Four City Growth modes and output interlocks",
+    "Shopping is an exclusive Daily Customers mode",
+    "Native industrial/civic staffing capacity using real workers and supplies",
+    "Income and Protect Efficiency removed from UI and runtime",
+    "Employment Zero removed",
+    "Schooling workforce warning in all four relevant descriptions"
+  ],
+  "checkpoint": {
+    "name": "Chicago GPT - Stunt Growth QA 20261114-182033-da669889",
+    "receipt": "validation/da66988972e246a9bbadfd6f332283a4.json",
+    "frame": 4235241
+  },
+  "performance": {
+    "status": "pending repeat",
+    "resolution": [
+      3840,
+      2160
+    ],
+    "warmupSeconds": 20,
+    "measurementSeconds": 45,
+    "recorder": "Unity coroutine intervals, not presented frames",
+    "runs": [
+      {
+        "label": "baseline 1x",
+        "receipt": "validation/c83da31b0a334b18bb1394e39f1dba09.json",
+        "initialFocus": false,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4507530,
+        "first": 4508658,
+        "last": 4511223,
+        "seconds": 45.01938,
+        "count": 2346,
+        "median": 16.937255859375,
+        "p95": 34.97314453125,
+        "p99": 55.023193359375,
+        "worst": 84.716796875,
+        "over50": 30,
+        "over100": 0,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "enabled 1x",
+        "receipt": "validation/b71a4ae7d4f04b18ac14408519c93036.json",
+        "initialFocus": false,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4507530,
+        "first": 4508696,
+        "last": 4511337,
+        "seconds": 45.0196533,
+        "count": 2438,
+        "median": 17.02880859375,
+        "p95": 25.5126953125,
+        "p99": 43.39599609375,
+        "worst": 149.35302734375,
+        "over50": 20,
+        "over100": 1,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "baseline 4x; rejected request during measurement",
+        "receipt": "validation/dda0750298cf46598ebaaaca9b4a647a.json",
+        "initialFocus": false,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4507530,
+        "first": 4510379,
+        "last": 4517174,
+        "seconds": 45.00769,
+        "count": 1424,
+        "median": 26.91650390625,
+        "p95": 69.9462890625,
+        "p99": 88.9892578125,
+        "worst": 116.39404296875,
+        "over50": 151,
+        "over100": 8,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "enabled 4x",
+        "receipt": "validation/c9147b7bd70644049b77ffc1360975d9.json",
+        "initialFocus": false,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4507530,
+        "first": 4510699,
+        "last": 4518144,
+        "seconds": 45.0231934,
+        "count": 1326,
+        "median": 31.1279296875,
+        "p95": 65.36865234375,
+        "p99": 93.8720703125,
+        "worst": 109.130859375,
+        "over50": 86,
+        "over100": 6,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "excluded: focus changed",
+        "receipt": "validation/ee2251980f5843759e9c7b69ecd6e300.json",
+        "initialFocus": false,
+        "focusChanges": 1,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4507530,
+        "first": 4510367,
+        "last": 4514526,
+        "seconds": 45.0114746,
+        "count": 1824,
+        "median": 18.98193359375,
+        "p95": 56.396484375,
+        "p99": 84.04541015625,
+        "worst": 183.41064453125,
+        "over50": 117,
+        "over100": 8,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "excluded: simulation stopped advancing",
+        "receipt": "validation/1fc6fa089f4d4e56afcfce6407490605.json",
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4507530,
+        "first": 4508783,
+        "last": 4508783,
+        "seconds": 45.0031738,
+        "count": 2942,
+        "median": 14.16015625,
+        "p95": 21.240234375,
+        "p99": 34.423828125,
+        "worst": 77.2705078125,
+        "over50": 12,
+        "over100": 0,
+        "source": "Unity rendered coroutine intervals"
+      },
+      {
+        "label": "excluded: speed changed during warmup",
+        "receipt": "validation/0f64e513a47342b3b5b6556b397033a2.json",
+        "aborted": true,
+        "reason": "Speed changed during warm-up",
+        "requested": 4.0,
+        "actual": 0.0
+      }
+    ]
+  }
 }

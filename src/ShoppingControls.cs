@@ -44,7 +44,7 @@ namespace StuntYourGrowth
         }
         static JobHandle Schedule<T>(T job,EntityQuery query,JobHandle dependency) where T:struct,IJobChunk
         {
-            if(Runtime.Playing && Runtime.Options.MaximumShopping)
+            if(Runtime.Playing && Runtime.Options.ShoppingActivity)
             {
                 object copy=job;
                 var parameters=(EconomyParameterData)Fields<T>.Parameters.GetValue(copy);

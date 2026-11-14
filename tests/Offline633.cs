@@ -52,44 +52,21 @@ class Offline633
         var asm=typeof(GPTStuntGrowthSettings).Assembly;
         Check(typeof(GPTStuntGrowthSettings).Name=="GPTStuntGrowthSettings","Unique native settings save lookup key");
         Check(asm.GetName().Version.ToString()=="1.75.639.0","Assembly version");
-        foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff"})
+        foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff","Income","IncomeTarget","Efficiency"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(removed)==null,"Retired setting absent: "+removed);
         Check(asm.GetType("StuntYourGrowth.CustomerHooks")==null && asm.GetType("StuntYourGrowth.HiringGuard")==null,"Retired simulation hooks absent");
         Check(asm.GetType("StuntYourGrowth.RosterGuard")==null,"Service roster retention removed");
         foreach(var key in new[]{"Levels","Tenants","Condition","Vacancy","ResetVacancy","ResetAbandonment"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(key)!=null,"Requested building protection/reset retained: "+key);
-        var ep=asm.GetType("StuntYourGrowth.EfficiencyPolicy",true);
-        var reconcile=ep.GetMethod("Reconcile",hidden);
-        Func<Efficiency[],Efficiency[],Efficiency[]> hold=(old,current)=>(Efficiency[])reconcile.Invoke(null,new object[]{old,current});
-        Func<EfficiencyFactor,float,Efficiency> factor=(kind,value)=>new Efficiency {m_Factor=kind,m_Efficiency=value};
-        var protectedKinds=new[]{EfficiencyFactor.WindSpeed,EfficiencyFactor.WaterDepth,EfficiencyFactor.SunIntensity,
-            EfficiencyFactor.CityModifierSoftware,EfficiencyFactor.CityModifierElectronics,EfficiencyFactor.CityModifierIndustrialEfficiency,
-            EfficiencyFactor.CityModifierOfficeEfficiency,EfficiencyFactor.CityModifierHospitalEfficiency,EfficiencyFactor.SpecializationBonus,
-            EfficiencyFactor.CityModifierFishInput,EfficiencyFactor.CityModifierFishHub};
-        foreach(EfficiencyFactor kind in Enum.GetValues(typeof(EfficiencyFactor)))
-            foreach(float previous in new[]{0f,0.5f,1f,1.5f})foreach(float current in new[]{0f,0.25f,1f,2f})
-            {
-                var before=new[]{factor(kind,previous)};var now=new[]{factor(kind,current)};
-                var result=hold(before,now);
-                float expected=protectedKinds.Contains(kind)?Math.Max(previous,current):current;
-                Check(result.Length==1 && result[0].m_Factor==kind && result[0].m_Efficiency==expected,"Efficiency factor isolation: "+kind);
-                Check(now[0].m_Efficiency==current && before[0].m_Efficiency==previous,"Input snapshots unchanged");
-            }
-        var oldMix=new[]{factor(EfficiencyFactor.ElectricitySupply,1),factor(EfficiencyFactor.NotEnoughEmployees,1),factor(EfficiencyFactor.SpecializationBonus,1.5f)};
-        var newMix=new[]{factor(EfficiencyFactor.SpecializationBonus,1),factor(EfficiencyFactor.NotEnoughEmployees,0.4f),factor(EfficiencyFactor.ElectricitySupply,0)};
-        var mix=hold(oldMix,newMix);
-        Check(mix[0].m_Efficiency==1.5f && mix[1].m_Efficiency==0.4f && mix[2].m_Efficiency==0,"Bonus protection cannot mask staffing/electricity failure after factor reorder");
-        var restored=hold(mix,new[]{factor(EfficiencyFactor.ElectricitySupply,1),factor(EfficiencyFactor.NotEnoughEmployees,0.8f)});
-        Check(restored.Length==2 && restored[0].m_Efficiency==1 && restored[1].m_Efficiency==0.8f,"Recovered supplies and removed bonus remain native");
-        Check(hold(oldMix,Array.Empty<Efficiency>()).Length==0,"Never recreate removed factors");
-        foreach(var gate in new[]{EfficiencyFactor.Disabled,EfficiencyFactor.Destroyed,EfficiencyFactor.Fire,EfficiencyFactor.Abandoned})
-        {
-            var closed=new[]{factor(gate,0),factor(EfficiencyFactor.SpecializationBonus,0.5f)};
-            Check(hold(oldMix,closed)[1].m_Efficiency==0.5f,"Closed building resets bonus hold");
-            Check(hold(closed,new[]{factor(EfficiencyFactor.SpecializationBonus,0.2f)})[0].m_Efficiency==0.2f,"Reopened building starts fresh");
-        }
-        Check(hold(new[]{factor(EfficiencyFactor.SpecializationBonus,float.PositiveInfinity)},new[]{factor(EfficiencyFactor.SpecializationBonus,1)})[0].m_Efficiency==1,"Invalid previous factor cannot poison new value");
-        Check(hold(new[]{factor((EfficiencyFactor)250,2)},new[]{factor((EfficiencyFactor)250,0.1f)})[0].m_Efficiency==0.1f,"Unknown factors stay native");
+        Check(asm.GetType("StuntYourGrowth.EfficiencyPolicy")==null && asm.GetType("StuntYourGrowth.EfficiencyGuard")==null,"Efficiency protection implementation removed");
+        Check(asm.GetType("StuntYourGrowth.IncomeMode")==null,"Income mode implementation removed");
+        var nativeIncome=NewSettings();nativeIncome.Customers=CustomerMode.Normal;nativeIncome.Profit=ValueMode.Freeze;
+        var companyNow=new Game.Companies.CompanyStatisticData{m_Income=17,m_Profit=3};
+        var companyBefore=new Game.Companies.CompanyStatisticData{m_Income=999,m_Profit=8};
+        object[] companyArgs={companyNow,companyBefore,nativeIncome};
+        asm.GetType("StuntYourGrowth.ProtectionSystem").GetMethod("ProtectCompany",hidden).Invoke(null,companyArgs);
+        var protectedCompany=(Game.Companies.CompanyStatisticData)companyArgs[0];
+        Check(protectedCompany.m_Income==17 && protectedCompany.m_Profit==8,"Profit freeze leaves current income untouched");
         var hooks=asm.GetType("StuntYourGrowth.NativeHooks",true);
         Check(hooks.GetMethod("DeathRates",hidden)==null,"Removed lifespan has no mortality-rate modifier");
         foreach(var type in new[]{typeof(BuildingUpkeepSystem),typeof(PropertyProcessingSystem)})
@@ -102,15 +79,15 @@ class Offline633
         var s=NewSettings();
         var toggles=Controls.Where(p=>p.CanRead && p.PropertyType==typeof(bool)).ToArray();
         var modes=Controls.Where(p=>p.PropertyType.IsEnum).ToArray();
-        Check(modes.Length==6,"Six dropdowns");
-        Check(toggles.Length==32,"32 checkboxes including occupancy, shopping and three coverage controls");
-        foreach(var p in toggles) Check((bool)p.GetValue(s),"First-load toggle "+p.Name);
+        Check(modes.Length==6,"Six dropdowns after Income removal");
+        Check(toggles.Length==30,"30 checkboxes after efficiency removal");
+        foreach(var p in toggles) Check((bool)p.GetValue(s)==(p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"First-load toggle with freeze-growth interlock "+p.Name);
         foreach(var p in modes) Check(p.GetValue(s).ToString()=="Freeze","First-load dropdown "+p.Name);
         Check(typeof(GPTStuntGrowthSettings).GetProperty("LegacyHold")==null,"Retired city hold still exposed");
         var ordered=Controls.ToArray();
-        Check(ordered[0].Name=="Enabled" && ordered[1].Name=="Customers","Master then dropdown order");
+        Check(ordered[0].Name=="Enabled" && ordered[1].Name=="CityGrowth","Master then dropdown order");
         Check(ordered[0].CustomAttributes.Any(a=>a.AttributeType.Name=="SettingsUISectionAttribute" && (string)a.ConstructorArguments[0].Value=="MasterControls"),"Master section");
-        Check(Array.FindIndex(ordered,p=>p.Name=="RemoveDead")==Array.FindIndex(ordered,p=>p.Name=="Growth")+1,"Growth immediately before deathcare");
+        Check(!Controls.Any(p=>p.Name=="Growth" || p.Name=="MaximumOccupancy" || p.Name=="MaximumShopping"),"Replaced checkboxes are hidden migration inputs only");
         var groups=typeof(GPTStuntGrowthSettings).CustomAttributes.Single(a=>a.AttributeType.Name=="SettingsUIGroupOrderAttribute");
         var groupList=(IEnumerable<CustomAttributeTypedArgument>)groups.ConstructorArguments[0].Value;
         Check((string)groupList.First().Value=="MasterControls","First section");
@@ -118,8 +95,8 @@ class Offline633
         foreach(bool enabled in new[]{false,true,false,true})
         {
             SetAll(s,enabled);
-            foreach(var p in toggles) Check((bool)p.GetValue(s)==enabled,"Bulk toggle "+p.Name);
-            foreach(var p in modes) Check(p.GetValue(s).ToString()==(enabled?"Freeze":"Normal"),"Bulk mode "+p.Name);
+            foreach(var p in toggles) Check((bool)p.GetValue(s)==(enabled && p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"Bulk toggles respect freeze-growth interlocks "+p.Name);
+            foreach(var p in modes) Check(p.GetValue(s).ToString()==(p.Name=="CityGrowth" || enabled?"Freeze":"Normal"),"Bulk mode "+p.Name);
         }
         var values=Controls.Where(p=>p.CanRead && p.Name!="Enabled").ToDictionary(p=>p.Name,p=>p.GetValue(s));
         s.Enabled=false;
@@ -160,8 +137,8 @@ class Offline633
             Check(!migrated.Levels && migrated.Tenants && !migrated.Condition && migrated.Vacancy && migrated.Jobs==EmploymentMode.Normal,"Retired staffing values preserve building choices and employment capacity");
         }
         var numericSettings=NewSettings();
-        JSON.WriteInto(JSON.Load("{\"Customers\":4,\"Jobs\":3,\"IncomeTarget\":23400,\"Schooling\":3}"),ref numericSettings);
-        Check(numericSettings.Customers==ValueMode.Zero && (int)numericSettings.Jobs==3 && numericSettings.IncomeTarget==23400 && numericSettings.Schooling==SchoolMode.NoAdmissions,"New numeric selections persist without changing schooling");
+        JSON.WriteInto(JSON.Load("{\"Customers\":4,\"Jobs\":3,\"CustomerTarget\":23400,\"Schooling\":3}"),ref numericSettings);
+        Check(numericSettings.Customers==CustomerMode.Zero && (int)numericSettings.Jobs==3 && numericSettings.CustomerTarget==23400 && numericSettings.Schooling==SchoolMode.NoAdmissions,"New numeric selections persist without changing schooling");
         var finishUpgrade=typeof(GPTStuntGrowthSettings).GetMethod("FinishUpgrade",BindingFlags.Instance|BindingFlags.NonPublic);
         finishUpgrade.Invoke(numericSettings,new object[]{5});
         Check(numericSettings.Jobs==EmploymentMode.Normal,"Retired employment Maximize migrates to Normal");
@@ -173,29 +150,45 @@ class Offline633
             var old=NewSettings();
             JSON.WriteInto(JSON.Load("{\"Jobs\":"+jobs+",\"BoostOutsideWorkers\":"+boost.ToString().ToLowerInvariant()+",\"LandValue\":"+land+",\"RentAmount\":"+rent.ToString().ToLowerInvariant()+"}"),ref old);
             finishUpgrade.Invoke(old,new object[]{5});
-            var expectedJob=jobs==4?EmploymentMode.Zero:boost?EmploymentMode.BoostOutsideWorkers:jobs==3?EmploymentMode.Normal:(EmploymentMode)jobs;
-            Check(old.Jobs==expectedJob,"Migration cannot combine recruitment and Zero");
+            var expectedJob=jobs==4?EmploymentMode.Normal:boost?EmploymentMode.BoostOutsideWorkers:jobs==3?EmploymentMode.Normal:(EmploymentMode)jobs;
+            Check(old.Jobs==expectedJob,"Removed employment Zero migrates to Normal");
             Check(old.LandValue==(rent && land==4?LandValueMode.ZeroFreezeRent:(LandValueMode)land),"Rent migration preserves land choice without silently zeroing it");
-            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==6,"Legacy switches cannot remain active");
+            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==7,"Legacy switches cannot remain active");
         }
         foreach(var mode in Enum.GetValues(typeof(ValueMode)).Cast<ValueMode>())
         {
-            numericSettings.Customers=numericSettings.Income=numericSettings.Profit=mode;
+            numericSettings.Customers=(CustomerMode)(int)mode;
+            numericSettings.Profit=mode;
             numericSettings.LandValue=(LandValueMode)(int)mode;
             foreach(bool enabled in new[]{false,true})
             {
                 numericSettings.Enabled=enabled;
                 bool disabled=!enabled || mode!=ValueMode.Maximize;
-                Check(numericSettings.CustomerTargetDisabled()==disabled && numericSettings.IncomeTargetDisabled()==disabled && numericSettings.LandValueTargetDisabled()==disabled && numericSettings.ProfitTargetDisabled()==disabled,"Targets enabled only with active Maximize");
+                Check(numericSettings.CustomerTargetDisabled()==disabled && numericSettings.LandValueTargetDisabled()==disabled && numericSettings.ProfitTargetDisabled()==disabled,"Targets enabled only with active Maximize");
             }
         }
-        foreach(var pair in new[]{new[]{"Customers","CustomerTarget"},new[]{"Income","IncomeTarget"},new[]{"LandValue","LandValueTarget"},new[]{"Profit","ProfitTarget"}})
+        foreach(var pair in new[]{new[]{"Customers","CustomerTarget"},new[]{"LandValue","LandValueTarget"},new[]{"Profit","ProfitTarget"}})
             Check(Array.FindIndex(ordered,p=>p.Name==pair[1])==Array.FindIndex(ordered,p=>p.Name==pair[0])+1,"Target follows corresponding dropdown");
         SetAll(numericSettings,true);
-        Check(numericSettings.IncomeTarget==23400 && numericSettings.Customers==ValueMode.Freeze,"Enable all preserves custom targets and uses Freeze");
+        Check(numericSettings.CustomerTarget==23400 && numericSettings.Customers==CustomerMode.Freeze,"Enable all preserves custom targets and uses Freeze");
+        Check(!Enum.GetNames(typeof(EmploymentMode)).Contains("Zero"),"Employment does not offer Zero");
+        var retiredZero=NewSettings();
+        JSON.WriteInto(JSON.Load("{\"Jobs\":4,\"Income\":4,\"Profit\":4}"),ref retiredZero);
+        finishUpgrade.Invoke(retiredZero,new object[]{6});
+        Check(retiredZero.Jobs==EmploymentMode.Normal && retiredZero.Profit==ValueMode.Zero,"Removed Zero choices migrate without changing Profit");
+        foreach(int income in new[]{0,1,2,3,4})
+        {
+            var retired=NewSettings();
+            JSON.WriteInto(JSON.Load("{\"Income\":"+income+",\"IncomeTarget\":999999,\"Efficiency\":true,\"Profit\":2,\"Schooling\":3}"),ref retired);
+            finishUpgrade.Invoke(retired,new object[]{7});
+            Check(retired.Profit==ValueMode.PreventDecreases && retired.Schooling==SchoolMode.NoAdmissions,"Retired income and efficiency keys do not change other settings");
+        }
         var localeType=asm.GetType("StuntYourGrowth.Locale");
         var labels=((IEnumerable<KeyValuePair<string,string>>)localeType.GetMethod("ReadEntries").Invoke(Activator.CreateInstance(localeType,new object[]{s}),new object[]{null,null})).ToDictionary(x=>x.Key,x=>x.Value);
         Func<string,string> label=n=>labels[s.GetOptionLabelLocaleID(n)];
+        foreach(string option in new[]{"Schooling","Jobs","MaxIndustrialOutput","MaxCivicOutput"})
+            Check(labels[s.GetOptionDescLocaleID(option)].Contains("Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education."),"Schooling warning visible in "+option);
+
         Check(label("Enabled")=="Enable Mod","Master label");
         Check(label("ResetVacancy")=="Reset Vacant Buildings" && label("ResetAbandonment")=="Reset Abandonment","Repeatable reset labels");
         Check(label("EnableAllCheckboxes")=="Enable All Options" && label("DisableAllCheckboxes")=="Disable All Options","Bulk labels");
@@ -211,8 +204,41 @@ class Offline633
             Check(count>=0 && count<=pair[0],"Occupancy bounded batch");
             Check(pending>=0 && pending<pair[1] && free>pending ? count<=free-pending && count<=pair[1]-pending : count==0,"Occupancy reserves pending tenants and stops at capacity/backlog");
         }
-        foreach(bool stop in new[]{false,true}) foreach(bool maximum in new[]{false,true})
-            Check((bool)occupancy.GetMethod("AllowNativeImmigration",hidden).Invoke(null,new object[]{stop,maximum})==(!stop && !maximum),"Occupancy owns immigration while enabled; no duplicate native batch");
+        var states=NewSettings();
+        foreach(CityGrowthMode growth in Enum.GetValues(typeof(CityGrowthMode)))
+        {
+            states.CityGrowth=growth;states.MaxIndustrialOutput=states.MaxCivicOutput=true;
+            bool active=growth!=CityGrowthMode.Freeze;
+            Check(states.MaxIndustrialOutput==active && states.MaxCivicOutput==active,"Output setters cannot bypass Freeze");
+            Check(states.OutputControlsDisabled()==!active,"Output UI availability follows City Growth");
+            int expectedLimit=growth==CityGrowthMode.Freeze?0:growth==CityGrowthMode.Occupancy?4:16;
+            Check((int)occupancy.GetMethod("HouseholdLimit",hidden).Invoke(null,new object[]{growth})==expectedLimit,"Each growth mode uses its specified recruitment bound");
+            states.CityGrowth=CityGrowthMode.Freeze;
+            Check(!states.MaxIndustrialOutput && !states.MaxCivicOutput,"Freeze immediately clears both output controls");
+            states.CityGrowth=CityGrowthMode.Population;
+            Check(!states.MaxIndustrialOutput && !states.MaxCivicOutput && !states.OutputControlsDisabled(),"Leaving Freeze makes controls selectable without silently rechecking");
+        }
+        foreach(string json in new[]{"{\"MaxIndustrialOutput\":true,\"MaxCivicOutput\":true,\"CityGrowth\":0}","{\"CityGrowth\":0,\"MaxIndustrialOutput\":true,\"MaxCivicOutput\":true}"})
+        {
+            states.CityGrowth=CityGrowthMode.Population;JSON.WriteInto(JSON.Load(json),ref states);
+            Check(!states.MaxIndustrialOutput && !states.MaxCivicOutput,"JSON property order cannot bypass Freeze interlock");
+        }
+        var customerControl=typeof(GPTStuntGrowthSettings).GetProperty("CustomerControl",BindingFlags.Instance|BindingFlags.NonPublic);
+        var shoppingActivity=typeof(GPTStuntGrowthSettings).GetProperty("ShoppingActivity",BindingFlags.Instance|BindingFlags.NonPublic);
+        foreach(CustomerMode customer in Enum.GetValues(typeof(CustomerMode)))
+        {
+            states.Customers=customer;
+            Check((bool)shoppingActivity.GetValue(states)==(customer==CustomerMode.Shopping),"Shopping runs only for its exclusive dropdown choice");
+            Check((ValueMode)customerControl.GetValue(states)==(customer==CustomerMode.Shopping?ValueMode.Normal:(ValueMode)(int)customer),"Shopping never holds the customer statistic");
+            if(customer==CustomerMode.Shopping)Check(states.CustomerTargetDisabled(),"Shopping disables the statistic target");
+        }
+        foreach(bool growth in new[]{false,true}) foreach(bool occupancyFlag in new[]{false,true}) foreach(bool shoppingFlag in new[]{false,true})
+        {
+            var prior=NewSettings();prior.Growth=growth;prior.MaximumOccupancy=occupancyFlag;prior.MaximumShopping=shoppingFlag;
+            finishUpgrade.Invoke(prior,new object[]{6});
+            Check(prior.CityGrowth==(occupancyFlag?(growth?CityGrowthMode.Occupancy:CityGrowthMode.PopulationAndOccupancy):CityGrowthMode.Freeze),"Old growth/occupancy migration is explicit");
+            Check(prior.Customers==(shoppingFlag?CustomerMode.Shopping:CustomerMode.Freeze),"Old shopping checkbox migrates into Daily Customers");
+        }
         var fullTelecom=new TelecomCoverage{m_SignalStrength=255,m_NetworkLoad=127};
         Check(fullTelecom.networkQuality==255,"Communications uses maximum native quality without overflow");
         var shopping=asm.GetType("StuntYourGrowth.ShoppingHooks",true);
@@ -375,7 +401,7 @@ class Offline633
         var areaUpdate=AccessTools.DeclaredMethod(typeof(AreaLotSimulationSystem),"OnUpdate");
         var extraction=((IEnumerable<CodeInstruction>)resourceHooks.GetMethod("ModifyDispatch",hidden).Invoke(null,new object[]{ReadIL(areaUpdate)})).ToArray();
         Check(extraction.Count(x=>(x.operand as MethodInfo)?.DeclaringType==resourceHooks)==1,"Native extraction scheduler hook");
-        Console.WriteLine("PASS: "+checks+" checks; "+toggles.Length+" checkboxes, 6 dropdowns; defaults, migration, removed controls, efficiency isolation, utilities, transit policies and native scheduler hooks.");
+        Console.WriteLine("PASS: "+checks+" checks; "+toggles.Length+" checkboxes, "+modes.Length+" dropdowns; defaults, migration, removed controls, removed-control isolation, utilities, transit policies and native scheduler hooks.");
     }
 }
 class Launcher

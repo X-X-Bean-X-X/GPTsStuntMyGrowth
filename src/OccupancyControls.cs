@@ -18,9 +18,10 @@ namespace StuntYourGrowth
     internal static class OccupancyPolicy
     {
         internal const int HouseholdBatch=4, CompanyBatch=2, HouseholdBacklog=64, CompanyBacklog=16;
+        internal const int GrowthBatch=16;
         internal static int Budget(int vacant,int pending,int batch,int backlog) =>
             vacant<=0 || pending<0 || pending>=backlog ? 0 : (int)Math.Max(0,Math.Min(batch,Math.Min((long)vacant-pending,(long)backlog-pending)));
-        internal static bool AllowNativeImmigration(bool stopGrowth,bool maximumOccupancy) => !stopGrowth && !maximumOccupancy;
+        internal static int HouseholdLimit(CityGrowthMode mode) => mode==CityGrowthMode.Freeze ? 0 : mode==CityGrowthMode.Occupancy ? HouseholdBatch : GrowthBatch;
     }
 
     // Create real native tenants, then let native initialization and property search place them.
@@ -48,19 +49,19 @@ namespace StuntYourGrowth
         }
         protected override void OnUpdate()
         {
-            if (!Runtime.Playing || !Runtime.Options.MaximumOccupancy) return;
+            if (!Runtime.Playing || Runtime.Options.FreezeGrowth) return;
             Dependency.Complete();
             var random=new Unity.Mathematics.Random(math.max(1u,simulation.frameIndex));
             var commands=barrier.CreateCommandBuffer();
             AddHouseholds(commands,ref random);
-            AddCompanies(commands,ref random);
+            if(Runtime.Options.FillCommercial || Runtime.Options.MaxIndustrialOutput) AddCompanies(commands,ref random);
         }
         void AddHouseholds(EntityCommandBuffer commands,ref Unity.Mathematics.Random random)
         {
             if(demands.CalculateEntityCount()!=1 || houses.IsEmptyIgnoreFilter || connections.IsEmptyIgnoreFilter) return;
             int3 free=residentialCount.FreeProperties;
             int vacant=(int)Math.Min(int.MaxValue,(long)Math.Max(0,free.x)+Math.Max(0,free.y)+Math.Max(0,free.z));
-            int budget=OccupancyPolicy.Budget(vacant,waitingHomes.CalculateEntityCount(),OccupancyPolicy.HouseholdBatch,OccupancyPolicy.HouseholdBacklog);
+            int budget=OccupancyPolicy.Budget(vacant,waitingHomes.CalculateEntityCount(),OccupancyPolicy.HouseholdLimit(Runtime.Options.CityGrowth),OccupancyPolicy.HouseholdBacklog);
             if(budget==0) return;
             using(var choices=houses.ToEntityArray(Allocator.Temp))
             using(var external=new NativeList<Entity>(Allocator.Temp))
@@ -123,7 +124,8 @@ namespace StuntYourGrowth
                         bool commercial=EntityManager.HasComponent<CommercialCompanyData>(prefab);
                         bool storage=EntityManager.HasComponent<StorageCompanyData>(prefab);
                         bool industrial=EntityManager.HasComponent<IndustrialCompanyData>(prefab);
-                        var allowed=commercial?data.m_AllowedSold:storage?data.m_AllowedStored:industrial?data.m_AllowedManufactured:Resource.NoResource;
+                        var allowed=commercial && Runtime.Options.FillCommercial ? data.m_AllowedSold :
+                            Runtime.Options.MaxIndustrialOutput ? (storage?data.m_AllowedStored:industrial?data.m_AllowedManufactured:Resource.NoResource) : Resource.NoResource;
                         if((allowed & output)==Resource.NoResource) continue;
                         var e=commands.CreateEntity(EntityManager.GetComponentData<ArchetypeData>(prefab).m_Archetype);
                         commands.SetComponent(e,new PrefabRef{m_Prefab=prefab});
@@ -139,6 +141,9 @@ namespace StuntYourGrowth
             var prefab=EntityManager.GetComponentData<PrefabRef>(property).m_Prefab;
             if(!EntityManager.HasComponent<BuildingPropertyData>(prefab)) return false;
             data=EntityManager.GetComponentData<BuildingPropertyData>(prefab);
+            if(!Runtime.Options.FillCommercial) data.m_AllowedSold=Resource.NoResource;
+            if(!Runtime.Options.MaxIndustrialOutput || EntityManager.HasComponent<OfficeProperty>(property))
+                data.m_AllowedManufactured=data.m_AllowedStored=Resource.NoResource;
             if((data.m_AllowedSold|data.m_AllowedManufactured|data.m_AllowedStored)==Resource.NoResource) return false;
             var tenants=EntityManager.GetBuffer<Renter>(property,true);
             foreach(var tenant in tenants)

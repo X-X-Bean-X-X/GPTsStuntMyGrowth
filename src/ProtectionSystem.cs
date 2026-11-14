@@ -70,7 +70,6 @@ namespace StuntYourGrowth
         readonly List<ITrackedFields> fields = new List<ITrackedFields>();
         SimulationSystem sim;
         EntityQuery time, citizens, abandoned, conditions, garbage, rentalBuildings, departingResidents, departingTenants;
-        EfficiencyGuard efficiency;
         ResourceStockGuard stocks;
         int? lastAgeDay;
         bool resetAll, resetVacant, wasActive;
@@ -91,15 +90,13 @@ namespace StuntYourGrowth
             Track<TransportStation>(s => s.Comfort?1:0, (ref TransportStation v, TransportStation p, GPTStuntGrowthSettings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
             Track<ParkingFacility>(s => s.Comfort?1:0, (ref ParkingFacility v, ParkingFacility p, GPTStuntGrowthSettings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
             Track<Game.Net.LandValue>(s => (int)Policy.BaselineMode(s.LandControl), (ref Game.Net.LandValue v, Game.Net.LandValue p, GPTStuntGrowthSettings s) => v.m_LandValue = Policy.Protect(p.m_LandValue,v.m_LandValue,s.LandControl));
-            Track<WorkProvider>(s => (int)Policy.BaselineMode(s.JobControl), (ref WorkProvider v, WorkProvider p, GPTStuntGrowthSettings s) => v.m_MaxWorkers = Policy.Protect(p.m_MaxWorkers,v.m_MaxWorkers,s.JobControl));
-            Track<Household>(s => (int)Policy.BaselineMode(s.Income), (ref Household v, Household p, GPTStuntGrowthSettings s) => v.m_Income = Policy.Protect(p.m_Income,v.m_Income,s.Income));
-            Track<CompanyStatisticData>(s => Policy.ModeKey(Policy.BaselineMode(s.Customers), Policy.BaselineMode(s.Income), Policy.BaselineMode(s.Profit)), ProtectCompany);
+            InitWorkplaces();
+            Track<CompanyStatisticData>(s => Policy.ModeKey(Policy.BaselineMode(s.CustomerControl), ValueMode.Normal, Policy.BaselineMode(s.Profit)), ProtectCompany);
             Track<Game.Buildings.Park>(s => s.ParkMaintenance ? 1 : 0, ProtectPark);
             var carLanes = GetEntityQuery(ComponentType.ReadWrite<Game.Net.LaneCondition>(), ComponentType.ReadOnly<Game.Net.CarLane>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
             fields.Add(new TrackedFields<Game.Net.LaneCondition>(EntityManager, carLanes, s => s.RoadWear ? 1 : 0, ProtectLane));
             var roads = GetEntityQuery(ComponentType.ReadWrite<Game.Net.NetCondition>(), ComponentType.ReadOnly<Game.Net.Road>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
             fields.Add(new TrackedFields<Game.Net.NetCondition>(EntityManager, roads, s => s.RoadWear ? 1 : 0, ProtectRoad));
-            efficiency = new EfficiencyGuard(EntityManager, QueryBuffer<Efficiency>());
             stocks = new ResourceStockGuard(EntityManager, World.GetOrCreateSystemManaged<Game.Prefabs.ResourceSystem>());
             departingResidents = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<Household>(),ComponentType.Exclude<TouristHousehold>(),ComponentType.Exclude<CommuterHousehold>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
             departingTenants = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<PropertyRenter>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
@@ -130,14 +127,13 @@ namespace StuntYourGrowth
         }
         static void ProtectCompany(ref CompanyStatisticData v, CompanyStatisticData p, GPTStuntGrowthSettings s)
         {
-            v.m_Income = Policy.Protect(p.m_Income, v.m_Income, s.Income);
             v.m_Profit = Policy.Protect(p.m_Profit, v.m_Profit, s.Profit);
-            if (s.Customers == ValueMode.Freeze || s.Customers == ValueMode.PreventDecreases)
+            if (s.CustomerControl == ValueMode.Freeze || s.CustomerControl == ValueMode.PreventDecreases)
             {
                 var clock = Current.World.GetExistingSystemManaged<TimeSystem>();
                 float t = clock.normalizedTime;
                 int reported(CompanyStatisticData data) => (int)Math.Round(data.m_MonthlyCustomerCount*(1.0-t)+data.m_CurrentNumberOfCustomers*t);
-                int held = Policy.Protect(reported(p),reported(v),s.Customers);
+                int held = Policy.Protect(reported(p),reported(v),s.CustomerControl);
                 // The displayed count interpolates these counters; keep the protected result time-independent.
                 v.m_MonthlyCustomerCount = held;
                 v.m_CurrentNumberOfCustomers = held;
@@ -155,7 +151,7 @@ namespace StuntYourGrowth
             if (s.Tenants && !departingTenants.IsEmptyIgnoreFilter)
                 EntityManager.RemoveComponent<Game.Agents.MovingAway>(departingTenants);
             UpdateNumeric(s);
-            efficiency.Tick(s.Efficiency,prune);
+            UpdateWorkplaces(s,prune);
             stocks.Tick(s, sim.frameIndex);
             UpdateBirthdays(s);
             UpdateClocks(s);
@@ -216,9 +212,9 @@ namespace StuntYourGrowth
         }
         void ClearState()
         {
+            ClearWorkplaces();
             foreach (var f in fields) f.Clear();
             ClearNumeric();
-            efficiency?.Clear();
             stocks?.Clear();
             lastClock=null; lastAgeDay=null; resetAll=resetVacant=wasActive=false;
         }

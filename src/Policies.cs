@@ -4,7 +4,9 @@ namespace StuntYourGrowth
 {
     public enum ValueMode { Normal = 0, Freeze = 1, PreventDecreases = 2, Maximize = 3, Zero = 4 }
     // Preserve serialized ordinals; 3 was the retired employment Maximize mode.
-    public enum EmploymentMode { Normal = 0, Freeze = 1, PreventDecreases = 2, Zero = 4, BoostOutsideWorkers = 5 }
+    public enum EmploymentMode { Normal = 0, Freeze = 1, PreventDecreases = 2, BoostOutsideWorkers = 5 }
+    public enum CustomerMode { Normal = 0, Freeze = 1, PreventDecreases = 2, Maximize = 3, Zero = 4, Shopping = 5 }
+    public enum CityGrowthMode { Freeze = 0, Population = 1, PopulationAndOccupancy = 2, Occupancy = 3 }
     public enum LandValueMode { Normal = 0, Freeze = 1, PreventDecreases = 2, Maximize = 3, Zero = 4, ZeroFreezeRent = 5 }
     public enum SchoolMode { Normal, Freeze, EnrollmentOnly, NoAdmissions }
 
