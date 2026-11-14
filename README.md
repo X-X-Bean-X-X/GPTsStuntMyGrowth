@@ -141,6 +141,6 @@ Protect Efficiency and its weather/bonus baseline writer have been removed. Effi
 - Resource/storage replenishment can change production, trade and traffic.
 - Other mods may write the same values. A separate compatibility audit remains deferred until after publication and a new user handoff; no universal compatibility claim is made.
 
-## Local 1.75.640 description update
+## 1.75.640 description update
 
-Rebuilt from verified 1.75.639 source (458a043). Only Options description strings and release version metadata changed. Labels, defaults, option behavior and simulation code are unchanged. Descriptions use plain language and separate bullets. The candidate is installed locally. Cold-start, live text audit (132 entries and 48 descriptions), visible bullet spacing, longest-description fit, and closing/reopening Options passed. User settings and the paused simulation frame were unchanged. Publication requires the user's approval.
+Rebuilt from verified 1.75.639 source (458a043). Only Options description strings and release version metadata changed. Labels, defaults, option behavior and simulation code are unchanged. Descriptions use plain language and separate bullets. The candidate is installed locally. Cold-start, live text audit (132 entries and 48 descriptions), visible bullet spacing, longest-description fit, and closing/reopening Options passed. User settings and the paused simulation frame were unchanged. Publication was approved by the user after reviewing the changes.
