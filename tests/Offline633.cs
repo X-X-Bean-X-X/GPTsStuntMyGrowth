@@ -51,7 +51,7 @@ class Offline633
     {
         var asm=typeof(GPTStuntGrowthSettings).Assembly;
         Check(typeof(GPTStuntGrowthSettings).Name=="GPTStuntGrowthSettings","Unique native settings save lookup key");
-        Check(asm.GetName().Version.ToString()=="1.75.639.0","Assembly version");
+        Check(asm.GetName().Version.ToString()=="1.75.640.0","Assembly version");
         foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff","Income","IncomeTarget","Efficiency"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(removed)==null,"Retired setting absent: "+removed);
         Check(asm.GetType("StuntYourGrowth.CustomerHooks")==null && asm.GetType("StuntYourGrowth.HiringGuard")==null,"Retired simulation hooks absent");
@@ -187,7 +187,7 @@ class Offline633
         var labels=((IEnumerable<KeyValuePair<string,string>>)localeType.GetMethod("ReadEntries").Invoke(Activator.CreateInstance(localeType,new object[]{s}),new object[]{null,null})).ToDictionary(x=>x.Key,x=>x.Value);
         Func<string,string> label=n=>labels[s.GetOptionLabelLocaleID(n)];
         foreach(string option in new[]{"Schooling","Jobs","MaxIndustrialOutput","MaxCivicOutput"})
-            Check(labels[s.GetOptionDescLocaleID(option)].Contains("Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education."),"Schooling warning visible in "+option);
+            Check(labels[s.GetOptionDescLocaleID(option)].Contains("Recruitment cannot promise workers with the right education."),"Schooling warning visible in "+option);
 
         Check(label("Enabled")=="Enable Mod","Master label");
         Check(label("ResetVacancy")=="Reset Vacant Buildings" && label("ResetAbandonment")=="Reset Abandonment","Repeatable reset labels");

@@ -1,0 +1,30 @@
+{
+  "version": "1.75.640",
+  "visibleDescriptions": 43,
+  "allDescriptionEntries": 48,
+  "labelsUnchanged": true,
+  "settingsLogicUnchanged": true,
+  "simulationCodeUnchanged": true,
+  "compiled": true,
+  "officialPostprocessor": true,
+  "existingChecksPassed": 4854,
+  "maintenanceRegression": true,
+  "policyCasesPassed": 365,
+  "gameLayoutCheck": {
+    "passed": true,
+    "method": "Temporary English localization preview in the running 1.75.639 Options page, using exactly the 1.75.640 description strings and bullet formatter. Preview removed afterward.",
+    "views": [
+      "Schooling",
+      "Daily Customers",
+      "Civic output (longest description)"
+    ],
+    "noClippingObserved": true,
+    "settingsUnchanged": true,
+    "simulationFrameUnchanged": 4235241
+  },
+  "published": false,
+  "candidateInstalled": false,
+  "readyForApproval": true,
+  "recordedUtc": "2026-11-14T19:36:31.819859+00:00",
+  "candidateDllSha256": "b2a06fe70c7037f18c6a6e4daf834acc243576632d6d59a88f5b74a7a870c691"
+}

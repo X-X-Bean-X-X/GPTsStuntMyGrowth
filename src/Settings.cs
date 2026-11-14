@@ -229,59 +229,237 @@ namespace StuntYourGrowth
             labels[s.GetOptionGroupLocaleID(GPTStuntGrowthSettings.TargetGroup)] = "Maximize Targets";
             labels[s.GetOptionGroupLocaleID(GPTStuntGrowthSettings.BulkGroup)] = "All Options";
             labels[s.GetOptionGroupLocaleID(GPTStuntGrowthSettings.CheckboxGroup)] = "Checkbox Selections";
-            void Add(string name, string title, string description)
+            void Add(string name, string title, params string[] points)
             {
                 labels[s.GetOptionLabelLocaleID(name)] = title;
-                labels[s.GetOptionDescLocaleID(name)] = description;
+                labels[s.GetOptionDescLocaleID(name)] = "\u2022 " + string.Join("\n\n\u2022 ", points);
             }
-            Add(nameof(GPTStuntGrowthSettings.EnableAllCheckboxes), "Enable All Options", "Enable Every Checkbox And Set Every Dropdown To Freeze. Includes Unlimited Utilities.");
-            Add(nameof(GPTStuntGrowthSettings.DisableAllCheckboxes), "Disable All Options", "Disable Every Checkbox And Set Every Dropdown To Normal Simulation.");
-            Add(nameof(GPTStuntGrowthSettings.Enabled), "Enable Mod", "Master Switch For All Simulation Controls. Turning This Off Preserves Your Individual Selections And Returns To Normal Simulation On Its Next Updates.");
-            Add(nameof(GPTStuntGrowthSettings.RemoveDead), "Remove the Dead & Decaying", "Automatically Remove Deceased Citizens Awaiting Pickup In Small Batches Through Native Citizen Cleanup. Living Citizens Are Untouched. Active Pickups And Citizens In Vehicles Or Deathcare Finish Normally. Does Not Empty Cemeteries Or Transfer Bodies To Another City. Removed Bodies Cannot Be Restored By Turning This Off.");
-            Add(nameof(GPTStuntGrowthSettings.BoostOutsideWorkers), "Boost Outside Worker Recruitment", "Recruit Extra Adult Commuters In Small Batches When Vacancies Exceed The Available Workforce. Keeps Native Commuter Limits, Education And Job Matching; Does Not Enable Resident Immigration. Requires Usable Outside Connections. Existing Commuters Remain When Disabled.");
-            Add(nameof(GPTStuntGrowthSettings.UnlimitedElectricity), "Unlimited Electricity", "Satisfy Building Electricity Demand Without Supply Or Network Limits. Clears Electricity Shortage Penalties. Does Not Add Power Plants Or Change Their Reported Capacity.");
-            Add(nameof(GPTStuntGrowthSettings.UnlimitedWater), "Unlimited Water", "Satisfy Building Fresh Water Demand With Clean Water Without Supply Or Pipe Limits. Sewage Is Controlled Separately.");
-            Add(nameof(GPTStuntGrowthSettings.UnlimitedSewer), "Unlimited Sewer", "Satisfy Building Sewage Disposal Demand Without Outlet Or Pipe Limits. Fresh Water Is Controlled Separately.");
-            Add(nameof(GPTStuntGrowthSettings.Growth), "Stop Population Growth", "Pause Household Immigration And Births. Maximum Building Occupancy Takes Priority For Move-Ins While Enabled; Births Remain Paused.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumOccupancy), "Maximum Building Occupancy", "Gradually Fill Eligible Empty Homes And Commercial, Industrial, Office And Warehouse Spaces With Real Native Households And Businesses. Overrides Stop Population Growth For Move-Ins. Uses Native Placement, Access And Capacity Rules; Does Not Fill Extractor Sites, Service Seats Or Hotel Guest Rooms. Pauses Recruitment When The Placement Backlog Is Full. Disabling Does Not Remove New Tenants.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumPoliceCoverage), "Maximum Police Coverage", "Provide The Strongest Loaded Prefab-Defined Police Coverage Across Road-Connected Areas, Without Enlarging Coverage Searches. Does Not Add Police Crews, Vehicles Or Reachability. Normal Coverage Recalculates After Disabling.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumFireCoverage), "Maximum Fire Coverage", "Provide The Strongest Loaded Prefab-Defined Fire Coverage Across Road-Connected Areas, Without Enlarging Coverage Searches. Does Not Extinguish Fires Or Add Fire Engines. Normal Coverage Recalculates After Disabling.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumCommunications), "Communications & Internet", "Provide Maximum Native Sampled Communications Quality Across The Map. Does Not Add Towers Or Change Their Reported Capacity. Normal Signal And Network Load Recalculate After Disabling.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumResources), "Maximum Resources Available", "Replenish Business Inputs, Shop Goods And City-Service Supplies Within Native Inventory Limits. Prevent Extraction From Depleting Existing Oil, Ore, Fertility And Fish Deposits. Money Is Unchanged; Does Not Create New Deposits Or Trees.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumStorage), "Maximum Storage", "Refill Warehouses And Cargo Storage With Their Accepted Goods Up To Their Existing Shared Capacity. Does Not Increase Capacity. Stored Goods Remain When Disabled And Resume Normal Use.");
-            Add(nameof(GPTStuntGrowthSettings.CityGrowth), "City Growth", "Freeze Pauses Immigration And Births And Unchecks The Industrial/Civic Output Controls. Population Maximizes Bounded Household Recruitment And Allows Native Births. Population And Occupancy Also Fills Commercial Premises. Occupancy Fills Existing Homes And Commercial Premises With Newcomers But Pauses Births. Native Access, Housing Capacity And Placement Backlogs Still Apply. Turn Enable Mod Off For Unmodified Growth.");
-            Add(nameof(GPTStuntGrowthSettings.MaxIndustrialOutput), "Maximize Occupancy & Production Output of Industrials Buildings", "Target Industrial Buildings' Normal Designed Staffing Capacity, Recruit Real Workers And Fill Eligible Vacant Industrial Premises. Production Uses Real Workers, Inputs, Storage And Native Processing. Does Not Invent Employees, Supplies Or Output; Staffing And Deliveries Can Delay Full Production. Uses Normal Designed Capacity, Not An Extra Arbitrary Production Cap. Separate Inventory And Utility Options Retain Their Own Effects. Takes Priority Over Employment Freeze For Targeted Workplaces. Freeze Population Growth Unchecks And Disables This Control. Choose Any Other City Growth Mode To Make It Selectable, Even With Enable Mod Off. Enable Mod Must Be On For Its Simulation Effects. Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education.");
-            Add(nameof(GPTStuntGrowthSettings.MaxCivicOutput), "Maximize Occupancy & Services Output of Civic Buildings", "Target Civic Buildings' Native Staffing Capacity, Including Upgrades And Native School Enrollment Scaling, And Recruit Real Workers. Students, Patients And Detainees Stay Normal. Services Still Require Their Real Budget, Utilities, Supplies And Access. Does Not Create Staff Or Bypass Shortages. Separate Inventory And Utility Options Retain Their Own Effects. Takes Priority Over Employment Freeze For Targeted Workplaces. Freeze Population Growth Unchecks And Disables This Control. Choose Any Other City Growth Mode To Make It Selectable, Even With Enable Mod Off. Enable Mod Must Be On For Its Simulation Effects. Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumShopping), "Maximize Shopping Activity", "Use The Native Maximum Shopping Chance Without Its Population-Based Traffic Reduction. Keeps Native Spending Limits, Existing Shopping Needs, Repeat-Purchase Reduction, Work/School/Sleep Priorities, Routing, Goods And Real Payments. Does Not Spawn Shoppers Or Money Or Guarantee Sales. Can Increase Shopping Traffic; Statistic Overrides Can Hide The Result.");
-            Add(nameof(GPTStuntGrowthSettings.PreferPublicTransportation), "Prefer Public Transportation", "Try Walking, Cycling And Available Public Transportation Before Driving Or Taxis For New Citizen Routes. If No Route Is Found, Retry With Normal Travel Choices. Existing Trips Continue.");
-            Add(nameof(GPTStuntGrowthSettings.Residents), "Protect Residents", "Pause Household Departures And Death Checks While Protected.");
-            Add(nameof(GPTStuntGrowthSettings.Age), "Freeze Citizen Age", "Hold Age In Days And Life-Stage Transitions.");
-            Add(nameof(GPTStuntGrowthSettings.Health), "Protect Health", "Prevent Decreases In Resident Health.");
-            Add(nameof(GPTStuntGrowthSettings.Wellbeing), "Protect Well-Being", "Prevent Decreases In Resident Well-Being.");
-            Add(nameof(GPTStuntGrowthSettings.Happiness), "Protect Happiness", "Protect The Average Of Resident Health And Well-Being.");
-            Add(nameof(GPTStuntGrowthSettings.Schooling), "Schooling", "Choose How Admissions And Graduation Checks Operate. Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education.");
-            Add(nameof(GPTStuntGrowthSettings.Tenants), "Protect Tenants", "Protect Occupied Properties Against Relocation And Abandonment.");
-            Add(nameof(GPTStuntGrowthSettings.Condition), "Prevent Deterioration", "Prevent Loss Of Condition From Unpaid Upkeep.");
-            Add(nameof(GPTStuntGrowthSettings.Levels), "Hold Automatic Level Changes", "Pause Automatic Transitions To A New Building Level.");
-            Add(nameof(GPTStuntGrowthSettings.Redevelopment), "Hold Automatic Redevelopment", "Suspend Automatic Zoned Construction On Vacant Lots.");
-            Add(nameof(GPTStuntGrowthSettings.Comfort), "Protect Comfort", "Protect The Native Comfort Factor At Stops, Stations And Parking Facilities.");
-            Add(nameof(GPTStuntGrowthSettings.Attractiveness), "Protect Attractiveness", "Prevent A Building's Attractiveness From Decreasing.");
-            Add(nameof(GPTStuntGrowthSettings.LandValue), "Land Value", "Hold Native Road-Edge Values And The Land-Value Map. Maximize Uses The Target Below. Reset to ZERO & Freeze Rent Also Holds Existing Lease Prices; New Leases Start At Their Native Price. Other Modes Do Not Freeze Rent.");
-            Add(nameof(GPTStuntGrowthSettings.ParkMaintenance), "Protect Park Maintenance", "Keep Each Park At Its Current Maintenance Level Or Higher. Repairs Can Still Improve It.");
-            Add(nameof(GPTStuntGrowthSettings.RoadWear), "Protect Road Condition", "Prevent Wear From Increasing On Road Segments And Car Lanes. Maintenance Vehicles Can Still Repair Them.");
-            Add(nameof(GPTStuntGrowthSettings.UpkeepCosts), "Pause City Upkeep Costs", "Waive Service Upkeep And Map Tile Upkeep At The Next City Budget Calculation. Other Expenses And Maintenance Services Continue.");
-            Add(nameof(GPTStuntGrowthSettings.Garbage), "Pause New Garbage", "Hold New Building Garbage Generation While Collection Continues.");
-            Add(nameof(GPTStuntGrowthSettings.RentAmount), "Freeze Rent Amount", "Keep Existing Rental Prices. New Leases Begin At Their Native Initial Price.");
-            Add(nameof(GPTStuntGrowthSettings.RentCollection), "Pause Rent Collection", "Pause The Periodic Rent Deduction While Tenant Housekeeping Continues.");
-            Add(nameof(GPTStuntGrowthSettings.Jobs), "Employment Levels", "Normal Lets Native Job Capacity Change. Freeze Holds Captured Capacity; Prevent Decreases Allows Increases. Boost Outside Worker Recruitment Recruits Qualified Commuters Through Native Matching Without Holding Job Capacity. Maximize And Reset to ZERO Are Removed. Frozen schooling can limit qualified workers. Recruitment cannot guarantee enough workers with the required education.");
-            Add(nameof(GPTStuntGrowthSettings.Customers), "Daily Customers", "Choose Normal Customer Statistics, Freeze, Prevent Decreases, A Maximize Statistic Target, Reset to ZERO, Or Maximize Shopping Activity. Shopping Activity Uses Real Native Purchases And Leaves The Customer Counter Unheld. It Cannot Run With A Customer Statistic Hold. Profit Controls Remain Independent And Can Mask Reported Results. Income Follows The Native Simulation.");
-            Add(nameof(GPTStuntGrowthSettings.Profit), "Profit", "Protect The Company's Reported Profit. Maximize Uses The Adjustable Target Below. Reset to ZERO Holds Zero Until You Select Another Mode.");
-            Add(nameof(GPTStuntGrowthSettings.Vacancy), "Protect Vacant Buildings", "Prevent Condition-Triggered Abandonment On Empty Properties And Freeze Their Existing Abandonment-To-Collapse Timer.");
-            Add(nameof(GPTStuntGrowthSettings.ResetVacancy), "Reset Vacant Buildings", "Clear Negative Condition And Restart Any Abandonment-To-Collapse Timer On Empty Properties Only. Runs Once Per Click; You Can Use This Button Again Whenever Needed.");
-            Add(nameof(GPTStuntGrowthSettings.ResetAbandonment), "Reset Abandonment", "Clear Negative Condition On Occupied Or Vacant Buildings And Restart The Delay On Already-Abandoned Buildings. Runs Once Per Click; You Can Use This Button Again Whenever Needed.");
-            Add(nameof(GPTStuntGrowthSettings.CustomerTarget), "Daily Customers Target", "Used Only By Maximize. Holds Each Company's Reported Customer Statistic At This Target; Does Not Generate Trips Or Sales.");
-            Add(nameof(GPTStuntGrowthSettings.LandValueTarget), "Land Value Target", "Used Only By Maximize. Sets Road-Edge Values And The Land-Value Map To This Target. A Mod Target, Not A Game-Defined Maximum.");
-            Add(nameof(GPTStuntGrowthSettings.ProfitTarget), "Profit Target", "Used Only By Maximize. Holds Company Profit Statistics At This Target; Does Not Deposit Money.");
+            Add(nameof(GPTStuntGrowthSettings.EnableAllCheckboxes), "Enable All Options",
+                "Turn the mod on and set every dropdown to Freeze.",
+                "Turn on the other checkboxes, including unlimited utilities.",
+                "The two building output options stay off because population growth is frozen.",
+                "Keep your target numbers. Do not run either reset button.");
+            Add(nameof(GPTStuntGrowthSettings.DisableAllCheckboxes), "Disable All Options",
+                "Turn the mod and all checkboxes off.",
+                "Set dropdowns to Normal where that choice exists.",
+                "City Growth still shows Freeze, but has no effect while the mod is off.",
+                "Keep your target numbers. Do not run either reset button.");
+            Add(nameof(GPTStuntGrowthSettings.Enabled), "Enable Mod",
+                "On: use the settings you choose below.",
+                "Off: stop this mod from changing the simulation.",
+                "Your choices are saved. The game takes over as it updates.",
+                "Turning this off does not undo changes already made.");
+            Add(nameof(GPTStuntGrowthSettings.RemoveDead), "Remove the Dead & Decaying",
+                "Remove dead citizens who are waiting to be picked up, a few at a time.",
+                "Leave living citizens alone.",
+                "Let current hearses and deathcare services finish their work.",
+                "Do not empty cemeteries or send bodies to another city.",
+                "Removed bodies do not come back when you turn this off.");
+            Add(nameof(GPTStuntGrowthSettings.BoostOutsideWorkers), "Boost Outside Worker Recruitment",
+                "Invite extra adult workers from other cities when jobs are open.",
+                "They need an outside connection and a suitable job.",
+                "This does not train workers or guarantee that jobs will be filled.",
+                "Turning this off stops extra invitations. Existing commuters stay in the simulation.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedElectricity), "Unlimited Electricity",
+                "Give buildings all the electricity they need.",
+                "Ignore shortages in power supply and connections.",
+                "Do not add power plants or raise their listed capacity.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedWater), "Unlimited Water",
+                "Give buildings all the clean water they need.",
+                "Ignore shortages in water supply and pipe connections.",
+                "Sewage is handled by Unlimited Sewer.");
+            Add(nameof(GPTStuntGrowthSettings.UnlimitedSewer), "Unlimited Sewer",
+                "Handle all sewage produced by buildings.",
+                "Ignore limits on sewage outlets and pipe connections.",
+                "Clean water is handled by Unlimited Water.");
+            Add(nameof(GPTStuntGrowthSettings.Growth), "Stop Population Growth",
+                "This older checkbox has been replaced by City Growth.",
+                "Use Freeze Population Growth to pause new residents and births.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumOccupancy), "Maximum Building Occupancy",
+                "This older checkbox has been replaced by City Growth.",
+                "Choose an occupancy mode to help fill empty homes and business spaces.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumPoliceCoverage), "Maximum Police Coverage",
+                "Give areas with road coverage the strongest police coverage bonus available in the game.",
+                "This does not add officers, police cars or road access.",
+                "Crimes can still happen. Police still need to reach them.",
+                "Turning this off lets the game update coverage normally.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumFireCoverage), "Maximum Fire Coverage",
+                "Give areas with road coverage the strongest fire coverage bonus available in the game.",
+                "This does not put out fires or add firefighters or fire engines.",
+                "Fire crews still need staff, vehicles and road access.",
+                "Turning this off lets the game update coverage normally.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumCommunications), "Communications & Internet",
+                "Set the map's communications and internet signal quality to 100%.",
+                "This does not add towers or raise their listed capacity.",
+                "Turning this off lets the game update signal quality normally.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumResources), "Maximum Resources Available",
+                "Refill business materials, shop goods and city-service supplies within their storage limits.",
+                "Keep existing oil, ore, fertile land and fish supplies from being used up by extraction.",
+                "Do not create new deposits, trees or money.",
+                "Extra supplies can change production, trade and traffic.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumStorage), "Maximum Storage",
+                "Refill warehouses and cargo storage with the goods they accept.",
+                "Use their existing storage space. Do not make buildings hold more.",
+                "Goods already added stay when you turn this off.",
+                "Extra goods can change trade and traffic.");
+            Add(nameof(GPTStuntGrowthSettings.CityGrowth), "City Growth",
+                "Freeze Population Growth: stop new residents moving in and pause births.",
+                "Maximize Population Growth: invite more households and allow births.",
+                "Growth and Occupancy: also help fill empty homes and shops.",
+                "Occupancy only: invite newcomers to fill existing homes and shops, but pause births.",
+                "Newcomers still need suitable buildings and access. Buildings fill gradually.",
+                "Freeze turns both building output checkboxes off. Choose another mode to unlock them.");
+            Add(nameof(GPTStuntGrowthSettings.MaxIndustrialOutput), "Maximize Occupancy & Production Output of Industrials Buildings",
+                "Help fill empty industrial buildings and warehouses, and recruit workers for their normal number of jobs.",
+                "Production still needs real workers, materials, storage and access. Full output is not guaranteed.",
+                "This takes priority over Employment Freeze for these buildings.",
+                "Separate supply and utility options still work.",
+                "Freeze Population Growth turns this off and locks it. Other growth modes unlock it.",
+                "You can choose this while Enable Mod is off, but it only works when the mod is on.",
+                "Frozen schooling can leave too few trained workers.",
+                "Recruitment cannot promise workers with the right education.");
+            Add(nameof(GPTStuntGrowthSettings.MaxCivicOutput), "Maximize Occupancy & Services Output of Civic Buildings",
+                "Help city-service buildings recruit workers for their normal number of jobs.",
+                "Do not add students, patients or prisoners. School staffing still follows enrollment.",
+                "Services still need staff, money, supplies, utilities and access. Full output is not guaranteed.",
+                "This takes priority over Employment Freeze for these buildings.",
+                "Separate supply and utility options still work.",
+                "Freeze Population Growth turns this off and locks it. Other modes unlock it.",
+                "Enable Mod must be on for it to work.",
+                "Frozen schooling can leave too few trained workers.",
+                "Recruitment cannot promise workers with the right education.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumShopping), "Maximize Shopping Activity",
+                "Give households more chances to go shopping.",
+                "They still need goods, money, time and a route to the shop.",
+                "Purchases use real goods and payments. Sales are not guaranteed.",
+                "More shopping can create more traffic.");
+            Add(nameof(GPTStuntGrowthSettings.PreferPublicTransportation), "Prefer Public Transportation",
+                "For new trips, try public transport, walking or cycling before cars and taxis.",
+                "If no route works, try the usual travel choices.",
+                "Existing trips continue. This does not add routes, vehicles or seats.",
+                "Service and delivery vehicles keep their normal routes.");
+            Add(nameof(GPTStuntGrowthSettings.Residents), "Protect Residents",
+                "Stop households from moving away.",
+                "Pause the game's checks that cause citizens to die.",
+                "This does not revive people who are already dead.");
+            Add(nameof(GPTStuntGrowthSettings.Age), "Freeze Citizen Age",
+                "Keep citizens at their current age.",
+                "Stop them from moving into the next age group.",
+                "This can limit the number of children who grow up to become workers.");
+            Add(nameof(GPTStuntGrowthSettings.Health), "Protect Health",
+                "Keep residents' health from dropping.",
+                "Health can still improve.");
+            Add(nameof(GPTStuntGrowthSettings.Wellbeing), "Protect Well-Being",
+                "Keep residents' well-being from dropping.",
+                "Well-being can still improve.");
+            Add(nameof(GPTStuntGrowthSettings.Happiness), "Protect Happiness",
+                "Keep happiness from dropping by protecting the average of health and well-being.",
+                "This may raise health or well-being even when their own checkboxes are off.");
+            Add(nameof(GPTStuntGrowthSettings.Schooling), "Schooling",
+                "Normal Schooling: students enroll, learn and graduate as usual.",
+                "Freeze Schooling As Is: pause new admissions and progress toward graduation.",
+                "Enrollment Only: allow new students to join, but pause progress toward graduation.",
+                "Normal Schooling | No Admissions: current students can learn and graduate; no new students join.",
+                "Frozen schooling can leave too few trained workers.",
+                "Recruitment cannot promise workers with the right education.");
+            Add(nameof(GPTStuntGrowthSettings.Tenants), "Protect Tenants",
+                "Keep households and businesses from moving away.",
+                "Help protect occupied properties from abandonment.",
+                "This does not fill empty buildings.");
+            Add(nameof(GPTStuntGrowthSettings.Condition), "Prevent Deterioration",
+                "Stop a building's condition from getting worse because upkeep was not paid.",
+                "Fire, disasters and bulldozing are separate.");
+            Add(nameof(GPTStuntGrowthSettings.Levels), "Hold Automatic Level Changes",
+                "Stop buildings from automatically changing to a different building level.",
+                "This does not fill empty spaces or add workers.");
+            Add(nameof(GPTStuntGrowthSettings.Redevelopment), "Hold Automatic Redevelopment",
+                "Pause automatic construction on zoned empty lots.",
+                "Pause the game's automatic handling of condemned buildings.");
+            Add(nameof(GPTStuntGrowthSettings.Comfort), "Protect Comfort",
+                "Keep the comfort score at stops, stations and parking facilities from dropping.",
+                "This does not add seats or transport vehicles.");
+            Add(nameof(GPTStuntGrowthSettings.Attractiveness), "Protect Attractiveness",
+                "Keep a building's attractiveness score from dropping.",
+                "The score can still improve.");
+            Add(nameof(GPTStuntGrowthSettings.LandValue), "Land Value",
+                "Normal: let land value change as usual.",
+                "Freeze: hold the current value.",
+                "Prevent Decreases: allow rises, but block drops.",
+                "Maximize: use the Land Value Target below.",
+                "Reset to ZERO: keep land value at zero until you change this choice.",
+                "Reset to ZERO & Freeze Rent: also hold current rent prices. New leases start at the game's normal price.",
+                "Other choices do not freeze rent. Changing land value can affect the city's economy.");
+            Add(nameof(GPTStuntGrowthSettings.ParkMaintenance), "Protect Park Maintenance",
+                "Keep parks from falling below their current maintenance level.",
+                "Repairs can still improve them.");
+            Add(nameof(GPTStuntGrowthSettings.RoadWear), "Protect Road Condition",
+                "Stop roads and car lanes from wearing out further.",
+                "Maintenance vehicles can still repair existing wear.");
+            Add(nameof(GPTStuntGrowthSettings.UpkeepCosts), "Pause City Upkeep Costs",
+                "Stop city-service and map-tile upkeep charges at the next budget update.",
+                "Other expenses continue.",
+                "Maintenance services still do their work.");
+            Add(nameof(GPTStuntGrowthSettings.Garbage), "Pause New Garbage",
+                "Stop buildings from creating new garbage.",
+                "Garbage trucks can still collect garbage that is already there.");
+            Add(nameof(GPTStuntGrowthSettings.RentAmount), "Freeze Rent Amount",
+                "This older checkbox has been replaced by a Land Value choice.",
+                "Use Reset to ZERO & Freeze Rent to hold existing rents while keeping land value at zero.");
+            Add(nameof(GPTStuntGrowthSettings.RentCollection), "Pause Rent Collection",
+                "Stop regular rent payments from being taken from tenants.",
+                "This does not change the listed rent price.");
+            Add(nameof(GPTStuntGrowthSettings.Jobs), "Employment Levels",
+                "This controls the number of jobs offered, not how many people are hired.",
+                "Normal: let job numbers change as usual.",
+                "Freeze: hold the current number.",
+                "Prevent Decreases: allow more jobs, but block cuts.",
+                "Boost Outside Worker Recruitment: invite extra commuters to fill open jobs. It does not freeze job numbers.",
+                "Workers need an outside connection, a suitable job and the right education.",
+                "Frozen schooling can leave too few trained workers.",
+                "Recruitment cannot promise workers with the right education.");
+            Add(nameof(GPTStuntGrowthSettings.Customers), "Daily Customers",
+                "Normal: let the daily customer count change as usual.",
+                "Freeze: hold the count.",
+                "Prevent Decreases: allow rises, but block drops.",
+                "Maximize: use the Daily Customers Target below.",
+                "Reset to ZERO: keep the count at zero.",
+                "Those choices change the recorded count. They do not create shoppers, sales or money.",
+                "Maximize Shopping Activity: give households more chances to shop, using real goods and money. More traffic is possible.",
+                "Shopping Activity lets the customer count change normally. A Profit override can still hide changes in reported profit.");
+            Add(nameof(GPTStuntGrowthSettings.Profit), "Profit",
+                "This changes the reported profit number, not the money a company actually has.",
+                "Normal: let profit change as usual.",
+                "Freeze: hold the number.",
+                "Prevent Decreases: allow rises, but block drops.",
+                "Maximize: use the Profit Target below.",
+                "Reset to ZERO: keep the number at zero.",
+                "Holding profit can hide gains or losses from real sales.");
+            Add(nameof(GPTStuntGrowthSettings.Vacancy), "Protect Vacant Buildings",
+                "Help keep empty buildings from becoming abandoned because their condition is too low.",
+                "For empty buildings already abandoned, pause the countdown to collapse.",
+                "This does not reopen abandoned buildings or protect them from every disaster.");
+            Add(nameof(GPTStuntGrowthSettings.ResetVacancy), "Reset Vacant Buildings",
+                "Clear poor condition on empty buildings and restart any abandonment-to-collapse countdown.",
+                "Run one reset each time you click. You can click again later.",
+                "This does not reopen abandoned buildings.",
+                "Enable Mod must be on, and the simulation must run to apply the reset.");
+            Add(nameof(GPTStuntGrowthSettings.ResetAbandonment), "Reset Abandonment",
+                "Clear poor condition on occupied and empty buildings.",
+                "Restart the collapse countdown on buildings already abandoned. This does not reopen them.",
+                "Run one reset each time you click. You can click again later.",
+                "Enable Mod must be on, and the simulation must run to apply the reset.");
+            Add(nameof(GPTStuntGrowthSettings.CustomerTarget), "Daily Customers Target",
+                "Choose the recorded daily customer count for each company.",
+                "Only works when Daily Customers is set to Maximize and the mod is on.",
+                "This does not create shoppers or sales.");
+            Add(nameof(GPTStuntGrowthSettings.LandValueTarget), "Land Value Target",
+                "Choose the land value used by Maximize.",
+                "Only works when Land Value is set to Maximize and the mod is on.",
+                "This is a number you choose, not an official maximum set by the game.");
+            Add(nameof(GPTStuntGrowthSettings.ProfitTarget), "Profit Target",
+                "Choose the reported profit number for each company.",
+                "Only works when Profit is set to Maximize and the mod is on.",
+                "This does not put money into company accounts.");
             labels[s.GetEnumValueLocaleID(CityGrowthMode.Freeze)] = "Freeze Population Growth";
             labels[s.GetEnumValueLocaleID(CityGrowthMode.Population)] = "Maximize Population Growth";
             labels[s.GetEnumValueLocaleID(CityGrowthMode.PopulationAndOccupancy)] = "Maximize Population Growth and Occupancy of All Commercial & Residential Buildings";
