@@ -16,7 +16,7 @@ namespace StuntYourGrowth
         internal const string Id = "GPTStuntYourGrowth";
         internal const string Title = "GPT's Stunt My Growth by X_Bean_X";
         internal const string OptionsTitle = "GPT's Stunt My Growth";
-        internal static Settings Options;
+        internal static GPTStuntGrowthSettings Options;
         internal static bool Disposed { get; private set; }
         internal static readonly ILog Log = LogManager.GetLogger(Id);
         static Harmony patches;
@@ -24,11 +24,29 @@ namespace StuntYourGrowth
         internal static bool Playing => Options?.Enabled == true && GameManager.instance != null &&
             GameManager.instance.gameMode == GameMode.Game && !GameManager.instance.isGameLoading;
 
+        public sealed class SavedSettingsSchema
+        {
+            public int DefaultsVersion { get; set; }
+        }
+
         internal static void Start(IMod mod, UpdateSystem update)
         {
             Disposed = false;
-            Options = new Settings(mod);
-            AssetDatabase.global.LoadSettings(Id, Options, new Settings(mod));
+            Options = new GPTStuntGrowthSettings(mod);
+            // CS2 stores differences from defaults, so omitted old false toggles must stay false.
+            bool existing = false;
+            int savedVersion = 0;
+            AssetDatabase.global.LoadSettings<SavedSettingsSchema>(Id, (saved, source) =>
+            {
+                existing = true;
+                savedVersion = saved.DefaultsVersion;
+            });
+            if (existing && savedVersion == 0) Options.UseLegacyDefaults();
+            if (existing && savedVersion < 2) Options.MaximumCustomers = Options.PreferPublicTransportation = false;
+            if (existing && savedVersion < 2) Options.MaximumResources = Options.MaximumStorage = false;
+            // A zero baseline forces the version marker to be saved even with default selections.
+            AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
+            Options.DefaultsVersion = 2;
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);
@@ -47,6 +65,10 @@ namespace StuntYourGrowth
                 RegisterGate<CondemnedBuildingSystem>();
                 RegisterGate<CompanyMoveAwaySystem>();
                 NativeHooks.Register(patches);
+                UtilityHooks.Register(patches);
+                CustomerHooks.Register(patches);
+                TransitHooks.Register(patches);
+                ResourceHooks.Register(patches);
                 GameManager.instance.onWorldReady += OnWorldReady;
                 update.UpdateBefore<ProtectionSystem>(SystemUpdatePhase.GameSimulation);
                 update.UpdateAt<ToolbarSystem>(SystemUpdatePhase.UIUpdate);
@@ -61,6 +83,7 @@ namespace StuntYourGrowth
         static void OnWorldReady()
         {
             if(patches!=null) NativeHooks.RegisterIntegrations(patches);
+            if(patches!=null) CustomerHooks.RegisterIntegrations(patches);
         }
         static void RegisterGate<T>() where T : GameSystemBase
         {

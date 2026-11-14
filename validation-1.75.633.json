@@ -1,0 +1,857 @@
+{
+  "version": "1.75.633",
+  "targetGame": "1.6.4f1",
+  "verifiedAtUtc": "2026-11-14T05:42:24.660178+00:00",
+  "build": "C# and official IL/Burst postprocessing passed; zero compiler warnings",
+  "offlineChecks": 951,
+  "policyChecks": 131,
+  "maintenanceRegression": "Passed independent toggles, bulk actions, park/lane/road clamps, all 15 expense categories",
+  "nativeFixtures": {
+    "UtilityTrials": {
+      "passed": true,
+      "cases": [
+        {
+          "supply": -1,
+          "mask": 0,
+          "master": true,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 2,
+          "master": true,
+          "power": 0,
+          "fresh": 100,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 4,
+          "master": true,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 0,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 6,
+          "master": true,
+          "power": 0,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": -1,
+          "mask": 8,
+          "master": false,
+          "power": 0,
+          "fresh": 0,
+          "sewer": 0,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 0,
+          "master": true,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 2,
+          "master": true,
+          "power": 25,
+          "fresh": 100,
+          "sewer": 25,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 25,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 4,
+          "master": true,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 25,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 6,
+          "master": true,
+          "power": 25,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 25,
+          "mask": 8,
+          "master": false,
+          "power": 25,
+          "fresh": 25,
+          "sewer": 25,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 0,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 1,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 2,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 3,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 4,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 5,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 6,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 7,
+          "master": true,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 0.0,
+          "passed": true
+        },
+        {
+          "supply": 100,
+          "mask": 8,
+          "master": false,
+          "power": 100,
+          "fresh": 100,
+          "sewer": 100,
+          "pollution": 1.0,
+          "passed": true
+        }
+      ],
+      "frame": 4206791,
+      "scope": "Native patched dispatch and Burst jobs with isolated fixture query; disconnected, constrained and sufficient flow; independent controls and master bypass; timers, efficiency and ordered icon commands"
+    },
+    "DomainTrials": {
+      "passed": true,
+      "checks": 20,
+      "frame": 4206791,
+      "scope": "Native ECS stock fixtures and patched transit queue lifecycle; isolated from city entities and restored"
+    },
+    "NativeExtractionTrial": {
+      "passed": true,
+      "cases": [
+        {
+          "enabled": false,
+          "on": false,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": false,
+          "on": true,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": false,
+          "oreUsed": 10,
+          "extractionDebt": 0.0,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": true,
+          "oreUsed": 0,
+          "extractionDebt": 0.0,
+          "passed": true
+        }
+      ],
+      "scope": "Real native ExtractResourcesJob scheduled through production hook against isolated area, deposit map and city modifiers"
+    },
+    "ExtractionTrials": {
+      "passed": true,
+      "cases": [
+        {
+          "enabled": false,
+          "on": false,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": false,
+          "on": true,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": false,
+          "production": 1,
+          "oreUsed": 5,
+          "oilUsed": 7,
+          "passed": true
+        },
+        {
+          "enabled": true,
+          "on": true,
+          "production": 1,
+          "oreUsed": 0,
+          "oilUsed": 0,
+          "passed": true
+        }
+      ],
+      "scope": "Real Unity job scheduler through production extraction wrapper; map-copy isolation, output continuity and master/individual bypass. Deterministic probe job, not real extractor production."
+    }
+  },
+  "coreRegression": {
+    "39346b9d3d974b39b8856e68f644959b": {
+      "checks": [
+        {
+          "option": "Health",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Wellbeing",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Happiness",
+          "passed": true,
+          "m_Health": 62,
+          "m_WellBeing": 58,
+          "Happiness": 60
+        },
+        {
+          "option": "Comfort",
+          "mode": null,
+          "before": 10,
+          "down": 10,
+          "up": 11,
+          "off": 9,
+          "passed": true
+        },
+        {
+          "option": "LandValue",
+          "mode": "PreventDecreases",
+          "before": 79,
+          "down": 79,
+          "up": 80,
+          "off": 78,
+          "passed": true
+        },
+        {
+          "option": "Attractiveness",
+          "mode": null,
+          "before": 11,
+          "down": 11,
+          "up": 12,
+          "off": 10,
+          "passed": true
+        },
+        {
+          "option": "Jobs",
+          "mode": "Freeze",
+          "before": 24,
+          "down": 24,
+          "up": 24,
+          "off": 23,
+          "passed": true
+        },
+        {
+          "option": "Jobs",
+          "mode": "PreventDecreases",
+          "before": 24,
+          "down": 24,
+          "up": 25,
+          "off": 23,
+          "passed": true
+        },
+        {
+          "option": "Profit",
+          "mode": "Freeze",
+          "before": -5343,
+          "down": -5343,
+          "up": -5343,
+          "off": -5344,
+          "passed": true
+        },
+        {
+          "option": "Income",
+          "mode": "PreventDecreases",
+          "before": 0,
+          "down": 0,
+          "up": 1,
+          "off": -1,
+          "passed": true
+        },
+        {
+          "option": "Customers",
+          "mode": "Freeze",
+          "lower": 16,
+          "higher": 16,
+          "passed": true
+        },
+        {
+          "option": "Customers",
+          "mode": "PreventDecreases",
+          "lower": 16,
+          "higher": 22,
+          "passed": true
+        }
+      ]
+    },
+    "62de55b5382b4fc2965c0d80dea2468e": {
+      "checks": [
+        {
+          "option": "Condition",
+          "held": true,
+          "after": 0,
+          "passed": true
+        },
+        {
+          "option": "Condition",
+          "held": false,
+          "after": -4,
+          "passed": true
+        },
+        {
+          "option": "Levels",
+          "held": true,
+          "after": 100,
+          "pending": true,
+          "passed": true
+        },
+        {
+          "option": "Levels",
+          "held": false,
+          "after": 0,
+          "pending": false,
+          "passed": true
+        },
+        {
+          "option": "Redevelopment",
+          "held": true,
+          "deleted": 0,
+          "passed": true
+        },
+        {
+          "option": "Redevelopment",
+          "held": false,
+          "deleted": 13,
+          "passed": true
+        }
+      ]
+    },
+    "1cf80d362724427792f2640162f4a32d": {
+      "checks": [
+        {
+          "option": "Growth",
+          "held": true,
+          "before": 1,
+          "after": 1,
+          "passed": true
+        },
+        {
+          "option": "Growth",
+          "held": false,
+          "before": 1,
+          "after": 2,
+          "passed": true
+        },
+        {
+          "option": "Tenants",
+          "held": true,
+          "moved": false,
+          "passed": true
+        },
+        {
+          "option": "Tenants",
+          "held": false,
+          "moved": true,
+          "passed": true
+        }
+      ]
+    },
+    "1f0ad5af86764a80b4e6fc8b63765a22": {
+      "checks": [
+        {
+          "key": "Staff",
+          "mode": "Freeze",
+          "employer": 87047,
+          "restored": true,
+          "hired": false,
+          "passed": true
+        },
+        {
+          "key": "Staff",
+          "mode": "PreventDecreases",
+          "employer": 87047,
+          "restored": true,
+          "hired": true,
+          "passed": true
+        },
+        {
+          "key": "Staff",
+          "mode": "Normal",
+          "employer": 87047,
+          "restored": false,
+          "hired": true,
+          "passed": true
+        },
+        {
+          "key": "Employees",
+          "mode": "Freeze",
+          "employer": 93822,
+          "restored": true,
+          "hired": false,
+          "passed": true
+        },
+        {
+          "key": "Employees",
+          "mode": "PreventDecreases",
+          "employer": 93822,
+          "restored": true,
+          "hired": true,
+          "passed": true
+        },
+        {
+          "key": "Employees",
+          "mode": "Normal",
+          "employer": 93822,
+          "restored": false,
+          "hired": true,
+          "passed": true
+        },
+        {
+          "option": "Residents",
+          "passed": true
+        },
+        {
+          "option": "Efficiency",
+          "held": 1.0,
+          "normal": 0.5,
+          "passed": true
+        },
+        {
+          "option": "Lifespan",
+          "held": true,
+          "dead": false,
+          "forcedRate": 1,
+          "system": "Time2Work.Systems.Time2WorkDeathCheckSystem",
+          "enabled": true,
+          "healthcareLocked": false,
+          "passed": true
+        },
+        {
+          "option": "Lifespan",
+          "held": false,
+          "dead": true,
+          "forcedRate": 1,
+          "system": "Time2Work.Systems.Time2WorkDeathCheckSystem",
+          "enabled": true,
+          "healthcareLocked": false,
+          "passed": true
+        },
+        {
+          "option": "Age",
+          "first": 18,
+          "second": 18,
+          "resumed": 19,
+          "passed": true
+        }
+      ]
+    },
+    "d6cf74707a04481fb1b0c2fa6bf949d4": {
+      "checks": [
+        {
+          "option": "RentCollection",
+          "held": true,
+          "before": 25000,
+          "after": 25000,
+          "passed": true
+        },
+        {
+          "option": "RentCollection",
+          "held": false,
+          "before": 25000,
+          "after": 24000,
+          "passed": true
+        },
+        {
+          "option": "RentAmount",
+          "held": true,
+          "before": 16000,
+          "after": 16000,
+          "passed": true
+        },
+        {
+          "option": "RentAmount",
+          "held": false,
+          "before": 16000,
+          "after": 859,
+          "passed": true
+        },
+        {
+          "option": "Garbage",
+          "held": true,
+          "before": 100,
+          "after": 100,
+          "passed": true
+        },
+        {
+          "option": "Garbage",
+          "held": false,
+          "before": 100,
+          "after": 1100,
+          "passed": true
+        }
+      ]
+    },
+    "e85cddb1518a4ae08bae813855808d8c": {
+      "school": 129051,
+      "level": 2,
+      "checks": [
+        {
+          "mode": "Freeze",
+          "admitted": false,
+          "graduated": false,
+          "passed": true
+        },
+        {
+          "mode": "Normal",
+          "admitted": true,
+          "graduated": true,
+          "passed": true
+        },
+        {
+          "mode": "EnrollmentOnly",
+          "admitted": true,
+          "graduated": false,
+          "passed": true
+        },
+        {
+          "mode": "NoAdmissions",
+          "admitted": false,
+          "graduated": true,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "ui": {
+    "passed": true,
+    "toolbarOpensOptions": true,
+    "masterFirst": true,
+    "growthSecond": true,
+    "dropdownsAlphabetical": true,
+    "bulkButtons": {
+      "checkboxes": 30,
+      "dropdowns": 8,
+      "enable": "all true and Freeze",
+      "disable": "all false and Normal",
+      "simulationPaused": true
+    },
+    "labels": [
+      "Maximum Customers",
+      "Maximum Resources Available",
+      "Maximum Storage",
+      "Prefer Public Transportation",
+      "Unlimited Electricity",
+      "Unlimited Sewer",
+      "Unlimited Water"
+    ],
+    "vacancySectionLast": true,
+    "repeatableResetLabels": [
+      "Reset Vacant Buildings",
+      "Reset Abandonment"
+    ],
+    "screenshots": [
+      "options-1.png",
+      "options-2.png",
+      "options-3.png"
+    ],
+    "finalBuildToolbarOpened": true,
+    "finalBuildPausedFrame": 4206791
+  },
+  "settingsPersistence": {
+    "passed": true,
+    "version": "1.75.633",
+    "settingsType": "StuntYourGrowth.GPTStuntGrowthSettings",
+    "verifiedAtUtc": "2026-11-14T05:41:49.321062+00:00",
+    "coldStartPreservedAllSelections": true,
+    "checks": [
+      {
+        "enabled": false,
+        "savedWhileGameRunning": true,
+        "elapsedSeconds": 0.266,
+        "receipt": "532660b9733c4e058aaaa7eb8f3f540d"
+      },
+      {
+        "enabled": true,
+        "savedWhileGameRunning": true,
+        "elapsedSeconds": 0.265,
+        "receipt": "d7e66f2c24a94a11868480970fb270d5"
+      }
+    ],
+    "restoredUserSelections": true,
+    "frame": 4206791,
+    "pid": 2736,
+    "runtimeSha256": "8d0952eb835e8be5d4676c1f6e627e80d674fc5d0cc5a9c6e46506c6f8024eda"
+  },
+  "travel": {
+    "citizens": 981,
+    "preferred": 575,
+    "preferredSuccess": 243,
+    "preferredFailure": 166,
+    "fallbackSuccess": 22,
+    "fallbackFailure": 144
+  },
+  "travelBaselineCitizenRequests": 406,
+  "performance": [
+    {
+      "newControlsEnabled": false,
+      "speed": 1.0,
+      "initial": 4206791,
+      "first": 4207940,
+      "last": 4210510,
+      "seconds": 45.015564,
+      "count": 1875,
+      "median": 21.97265625,
+      "p95": 35.7666015625,
+      "p99": 70.49560546875,
+      "worst": 94.29931640625,
+      "over50": 26,
+      "over100": 0,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControlsEnabled": true,
+      "speed": 1.0,
+      "initial": 4206791,
+      "first": 4207939,
+      "last": 4210514,
+      "seconds": 45.0013428,
+      "count": 1917,
+      "median": 21.30126953125,
+      "p95": 34.72900390625,
+      "p99": 64.697265625,
+      "worst": 94.6044921875,
+      "over50": 31,
+      "over100": 0,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControlsEnabled": false,
+      "speed": 4.0,
+      "initial": 4206791,
+      "first": 4209601,
+      "last": 4216027,
+      "seconds": 45.0179443,
+      "count": 1390,
+      "median": 29.4189453125,
+      "p95": 56.45751953125,
+      "p99": 90.63720703125,
+      "worst": 116.02783203125,
+      "over50": 91,
+      "over100": 5,
+      "source": "Unity rendered coroutine intervals"
+    },
+    {
+      "newControlsEnabled": true,
+      "speed": 4.0,
+      "initial": 4206791,
+      "first": 4209904,
+      "last": 4216704,
+      "seconds": 45.01538,
+      "count": 1399,
+      "median": 30.09033203125,
+      "p95": 58.28857421875,
+      "p99": 92.8955078125,
+      "worst": 101.62353515625,
+      "over50": 87,
+      "over100": 4,
+      "source": "Unity rendered coroutine intervals"
+    }
+  ],
+  "performanceScope": "One 45-second measurement per configuration after 20-second warmup; same QA save reloaded. The four new customer, transit and inventory controls were the variable. Other protections, including utilities, retained the user baseline. The 4x runs retained the dismissed-later QA error overlay; only simulation progress is interpreted. Render intervals are not a graphics benchmark or simulation-frame latency. This sparse city does not establish performance in large populated cities. Measurements predate the settings-class naming fix, which changes no simulation policy.",
+  "limitations": [
+    "No guaranteed full shops, sales increase or transit ridership percentage. Existing native eligibility, destination access and schedules still matter.",
+    "Native ore extraction was directly exercised; oil, fertility and fish had dispatch/isolation checks. No long-duration industrial economy test.",
+    "New-install defaults and old sparse-setting migration had offline tests; the existing user settings also survived the actual cold start."
+  ],
+  "testTooling": "Discarded one 4x timing run. QA driver now requires completion receipt and returns rejected commands without game error dialogs. This driver is not included in the mod.",
+  "files": {
+    "0Harmony.dll": "d04ec5b2590dd1bbb57f0f11dc417b1a5bebbb36b1f97006d35f2d87c3a2a69f",
+    "ChicagoPopulationHold20261007.dll": "8d0952eb835e8be5d4676c1f6e627e80d674fc5d0cc5a9c6e46506c6f8024eda",
+    "ChicagoPopulationHold20261007_win_x86_64.dll": "05d439a0fd609406b3ed3baa5a00f41e62756b4a1cec6cf32c5972baaac03c6b",
+    "GPTStuntGrowthSkyline.svg": "094255214bf438128d8f6175a4ee4fef2140e40f96bfbc85554687a53b2e1f17",
+    "GPTStuntYourGrowth.mjs": "a2cd65ec8a8367bc831e00cfe203c062e0c882389f40bd1622e7574f960c1a09",
+    "Harmony-LICENSE.txt": "407ddd98200c9f17f49942b5a7791e288a2bd553b59bf2f462db87dbb21c50bc"
+  }
+}

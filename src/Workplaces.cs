@@ -18,7 +18,7 @@ namespace StuntYourGrowth
         int selected;
         public RosterGuard(EntityManager em, EntityQuery providers) { this.em=em; this.providers=providers; }
         public void Clear() { members.Clear(); selected=0; }
-        internal static ValueMode Mode(EntityManager em, Entity employer, Settings s)
+        internal static ValueMode Mode(EntityManager em, Entity employer, GPTStuntGrowthSettings s)
         {
             bool service=em.HasComponent<PrefabRef>(employer) && em.HasComponent<ServiceObjectData>(em.GetComponentData<PrefabRef>(employer).m_Prefab);
             return service && s.Staff!=ValueMode.Normal ? s.Staff : s.Employees;
@@ -29,7 +29,7 @@ namespace StuntYourGrowth
             if (em.HasComponent<HealthProblem>(e) && (em.GetComponentData<HealthProblem>(e).m_Flags & HealthProblemFlags.Dead)!=0) return false;
             return em.GetComponentData<Citizen>(e).GetAge()!=CitizenAge.Elderly;
         }
-        public void Tick(Settings s,bool prune)
+        public void Tick(GPTStuntGrowthSettings s,bool prune)
         {
             int code=(int)s.Employees+4*(int)s.Staff;
             if(code==0) {if(selected!=0) Clear(); return;}

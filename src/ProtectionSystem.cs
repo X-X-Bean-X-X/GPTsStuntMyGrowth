@@ -14,19 +14,19 @@ using Unity.Entities;
 
 namespace StuntYourGrowth
 {
-    internal delegate void ProtectValue<T>(ref T current, T previous, Settings settings);
-    internal interface ITrackedFields { void Tick(Settings s, bool prune); void Clear(); }
+    internal delegate void ProtectValue<T>(ref T current, T previous, GPTStuntGrowthSettings settings);
+    internal interface ITrackedFields { void Tick(GPTStuntGrowthSettings s, bool prune); void Clear(); }
 
     // Baselines use the full Entity, including its generation. Only changed chunks are revisited.
     internal sealed class TrackedFields<T> : ITrackedFields where T : unmanaged, IComponentData
     {
         readonly EntityManager manager;
         readonly EntityQuery query;
-        readonly Func<Settings,int> selection;
+        readonly Func<GPTStuntGrowthSettings,int> selection;
         readonly ProtectValue<T> protect;
         readonly Dictionary<Entity,T> previous = new Dictionary<Entity,T>();
         int mode;
-        public TrackedFields(EntityManager manager, EntityQuery query, Func<Settings,int> selection, ProtectValue<T> protect)
+        public TrackedFields(EntityManager manager, EntityQuery query, Func<GPTStuntGrowthSettings,int> selection, ProtectValue<T> protect)
         {
             this.manager = manager;
             this.query = query;
@@ -34,7 +34,7 @@ namespace StuntYourGrowth
             this.protect = protect;
         }
         public void Clear() { mode = 0; previous.Clear(); }
-        public void Tick(Settings s, bool prune)
+        public void Tick(GPTStuntGrowthSettings s, bool prune)
         {
             int selected = selection(s);
             if (selected == 0) { if (mode != 0) Clear(); return; }
@@ -72,6 +72,7 @@ namespace StuntYourGrowth
         EntityQuery time, citizens, abandoned, conditions, garbage, rentalBuildings, departingResidents, departingTenants;
         RosterGuard roster;
         EfficiencyGuard efficiency;
+        ResourceStockGuard stocks;
         int? lastAgeDay;
         bool resetAll, resetVacant, wasActive;
         uint? lastClock;
@@ -86,14 +87,14 @@ namespace StuntYourGrowth
             garbage = FrameQuery<GarbageProducer>();
             rentalBuildings = FrameQuery<Renter>();
             Track<Citizen>(s => (s.Happiness?4:0) | (s.Health?2:0) | (s.Wellbeing?1:0), ProtectCitizen);
-            Track<AttractivenessProvider>(s => s.Attractiveness?1:0, (ref AttractivenessProvider v, AttractivenessProvider p, Settings s) => v.m_Attractiveness = Math.Max(v.m_Attractiveness,p.m_Attractiveness));
-            Track<TransportStop>(s => s.Comfort?1:0, (ref TransportStop v, TransportStop p, Settings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
-            Track<TransportStation>(s => s.Comfort?1:0, (ref TransportStation v, TransportStation p, Settings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
-            Track<ParkingFacility>(s => s.Comfort?1:0, (ref ParkingFacility v, ParkingFacility p, Settings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
-            Track<Game.Net.LandValue>(s => (int)s.LandValue, (ref Game.Net.LandValue v, Game.Net.LandValue p, Settings s) => v.m_LandValue = Policy.Protect(p.m_LandValue,v.m_LandValue,s.LandValue));
-            Track<WorkProvider>(s => (int)s.Jobs, (ref WorkProvider v, WorkProvider p, Settings s) => v.m_MaxWorkers = Policy.Protect(p.m_MaxWorkers,v.m_MaxWorkers,s.Jobs));
-            Track<Household>(s => (int)s.Income, (ref Household v, Household p, Settings s) => v.m_Income = Policy.Protect(p.m_Income,v.m_Income,s.Income));
-            Track<CompanyStatisticData>(s => (int)s.Customers + 4*(int)s.Income + 16*(int)s.Profit, ProtectCompany);
+            Track<AttractivenessProvider>(s => s.Attractiveness?1:0, (ref AttractivenessProvider v, AttractivenessProvider p, GPTStuntGrowthSettings s) => v.m_Attractiveness = Math.Max(v.m_Attractiveness,p.m_Attractiveness));
+            Track<TransportStop>(s => s.Comfort?1:0, (ref TransportStop v, TransportStop p, GPTStuntGrowthSettings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
+            Track<TransportStation>(s => s.Comfort?1:0, (ref TransportStation v, TransportStation p, GPTStuntGrowthSettings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
+            Track<ParkingFacility>(s => s.Comfort?1:0, (ref ParkingFacility v, ParkingFacility p, GPTStuntGrowthSettings s) => v.m_ComfortFactor = Math.Max(v.m_ComfortFactor,p.m_ComfortFactor));
+            Track<Game.Net.LandValue>(s => (int)s.LandValue, (ref Game.Net.LandValue v, Game.Net.LandValue p, GPTStuntGrowthSettings s) => v.m_LandValue = Policy.Protect(p.m_LandValue,v.m_LandValue,s.LandValue));
+            Track<WorkProvider>(s => (int)s.Jobs, (ref WorkProvider v, WorkProvider p, GPTStuntGrowthSettings s) => v.m_MaxWorkers = Policy.Protect(p.m_MaxWorkers,v.m_MaxWorkers,s.Jobs));
+            Track<Household>(s => (int)s.Income, (ref Household v, Household p, GPTStuntGrowthSettings s) => v.m_Income = Policy.Protect(p.m_Income,v.m_Income,s.Income));
+            Track<CompanyStatisticData>(s => (int)s.CustomerMode + 4*(int)s.Income + 16*(int)s.Profit, ProtectCompany);
             Track<Game.Buildings.Park>(s => s.ParkMaintenance ? 1 : 0, ProtectPark);
             var carLanes = GetEntityQuery(ComponentType.ReadWrite<Game.Net.LaneCondition>(), ComponentType.ReadOnly<Game.Net.CarLane>(), ComponentType.Exclude<Temp>(), ComponentType.Exclude<Deleted>());
             fields.Add(new TrackedFields<Game.Net.LaneCondition>(EntityManager, carLanes, s => s.RoadWear ? 1 : 0, ProtectLane));
@@ -101,6 +102,7 @@ namespace StuntYourGrowth
             fields.Add(new TrackedFields<Game.Net.NetCondition>(EntityManager, roads, s => s.RoadWear ? 1 : 0, ProtectRoad));
             roster = new RosterGuard(EntityManager, QueryBuffer<Employee>());
             efficiency = new EfficiencyGuard(EntityManager, QueryBuffer<Efficiency>());
+            stocks = new ResourceStockGuard(EntityManager, World.GetOrCreateSystemManaged<Game.Prefabs.ResourceSystem>());
             departingResidents = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<Household>(),ComponentType.Exclude<TouristHousehold>(),ComponentType.Exclude<CommuterHousehold>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
             departingTenants = GetEntityQuery(ComponentType.ReadOnly<Game.Agents.MovingAway>(),ComponentType.ReadOnly<PropertyRenter>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
             Current = this;
@@ -108,35 +110,35 @@ namespace StuntYourGrowth
         EntityQuery Query<T>() where T : unmanaged,IComponentData => GetEntityQuery(ComponentType.ReadWrite<T>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
         EntityQuery QueryBuffer<T>() where T : unmanaged,IBufferElementData => GetEntityQuery(ComponentType.ReadWrite<T>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Deleted>());
         EntityQuery FrameQuery<T>() => GetEntityQuery(ComponentType.ReadOnly<T>(),ComponentType.ReadOnly<UpdateFrame>(),ComponentType.Exclude<Deleted>(),ComponentType.Exclude<Temp>());
-        void Track<T>(Func<Settings,int> selection, ProtectValue<T> protect) where T : unmanaged,IComponentData =>
+        void Track<T>(Func<GPTStuntGrowthSettings,int> selection, ProtectValue<T> protect) where T : unmanaged,IComponentData =>
             fields.Add(new TrackedFields<T>(EntityManager, Query<T>(), selection, protect));
 
-        static void ProtectPark(ref Game.Buildings.Park current, Game.Buildings.Park previous, Settings settings) =>
+        static void ProtectPark(ref Game.Buildings.Park current, Game.Buildings.Park previous, GPTStuntGrowthSettings settings) =>
             current.m_Maintenance = Math.Max(current.m_Maintenance, previous.m_Maintenance);
 
-        static void ProtectLane(ref Game.Net.LaneCondition current, Game.Net.LaneCondition previous, Settings settings) =>
+        static void ProtectLane(ref Game.Net.LaneCondition current, Game.Net.LaneCondition previous, GPTStuntGrowthSettings settings) =>
             current.m_Wear = Math.Min(current.m_Wear, previous.m_Wear);
 
-        static void ProtectRoad(ref Game.Net.NetCondition current, Game.Net.NetCondition previous, Settings settings) =>
+        static void ProtectRoad(ref Game.Net.NetCondition current, Game.Net.NetCondition previous, GPTStuntGrowthSettings settings) =>
             current.m_Wear = Unity.Mathematics.math.min(current.m_Wear, previous.m_Wear);
 
-        static void ProtectCitizen(ref Citizen v, Citizen p, Settings s)
+        static void ProtectCitizen(ref Citizen v, Citizen p, GPTStuntGrowthSettings s)
         {
             if ((v.m_State & (CitizenFlags.Tourist | CitizenFlags.Commuter)) != 0) return;
             if (s.Health) v.m_Health = Math.Max(p.m_Health,v.m_Health);
             if (s.Wellbeing) v.m_WellBeing = Math.Max(p.m_WellBeing,v.m_WellBeing);
             if (s.Happiness) Policy.ProtectHappiness(p.Happiness,ref v.m_Health,ref v.m_WellBeing);
         }
-        static void ProtectCompany(ref CompanyStatisticData v, CompanyStatisticData p, Settings s)
+        static void ProtectCompany(ref CompanyStatisticData v, CompanyStatisticData p, GPTStuntGrowthSettings s)
         {
             v.m_Income = Policy.Protect(p.m_Income, v.m_Income, s.Income);
             v.m_Profit = Policy.Protect(p.m_Profit, v.m_Profit, s.Profit);
-            if (s.Customers != ValueMode.Normal)
+            if (s.CustomerMode != ValueMode.Normal)
             {
                 var clock = Current.World.GetExistingSystemManaged<TimeSystem>();
                 float t = clock.normalizedTime;
                 int reported(CompanyStatisticData data) => (int)Math.Round(data.m_MonthlyCustomerCount*(1.0-t)+data.m_CurrentNumberOfCustomers*t);
-                int held = Policy.Protect(reported(p),reported(v),s.Customers);
+                int held = Policy.Protect(reported(p),reported(v),s.CustomerMode);
                 // The displayed count interpolates these counters; keep the protected result time-independent.
                 v.m_MonthlyCustomerCount = held;
                 v.m_CurrentNumberOfCustomers = held;
@@ -155,10 +157,11 @@ namespace StuntYourGrowth
                 EntityManager.RemoveComponent<Game.Agents.MovingAway>(departingTenants);
             roster.Tick(s,prune);
             efficiency.Tick(s.Efficiency,prune);
+            stocks.Tick(s, sim.frameIndex);
             UpdateBirthdays(s);
             UpdateClocks(s);
         }
-        void UpdateBirthdays(Settings s)
+        void UpdateBirthdays(GPTStuntGrowthSettings s)
         {
             if (!s.Age || time.IsEmptyIgnoreFilter) { lastAgeDay = null; return; }
             int day = TimeSystem.GetDay(sim.frameIndex,time.GetSingleton<TimeData>());
@@ -187,7 +190,7 @@ namespace StuntYourGrowth
             }
             return true;
         }
-        void UpdateClocks(Settings s)
+        void UpdateClocks(GPTStuntGrowthSettings s)
         {
             uint now=sim.frameIndex;
             if (!(s.Abandonment || s.Vacancy || resetAll || resetVacant)) { lastClock=null; return; }
@@ -216,12 +219,13 @@ namespace StuntYourGrowth
         {
             foreach (var f in fields) f.Clear();
             roster?.Clear(); efficiency?.Clear();
+            stocks?.Clear();
             lastClock=null; lastAgeDay=null; resetAll=resetVacant=wasActive=false;
         }
         protected override void OnGamePreload(Colossal.Serialization.Entities.Purpose purpose, GameMode mode)
         { ClearState(); base.OnGamePreload(purpose,mode); }
         protected override void OnDestroy()
-        { ClearState(); if (Current==this) Current=null; base.OnDestroy(); }
+        { ClearState(); stocks?.Dispose(); if (Current==this) Current=null; base.OnDestroy(); }
 
         static ProtectionSystem Owner(GameSystemBase system) => system.World.GetExistingSystemManaged<ProtectionSystem>();
         static void SetFrame(EntityQuery q, GameSystemBase system, int updates)
