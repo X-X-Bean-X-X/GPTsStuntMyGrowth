@@ -205,6 +205,18 @@ class Offline633
             Check(pending>=0 && pending<pair[1] && free>pending ? count<=free-pending && count<=pair[1]-pending : count==0,"Occupancy reserves pending tenants and stops at capacity/backlog");
         }
         var states=NewSettings();
+        foreach(bool master in new[]{false,true})
+        foreach(CityGrowthMode growth in Enum.GetValues(typeof(CityGrowthMode)))
+        {
+            states.Enabled=master;states.CityGrowth=growth;
+            Check(states.OutputControlsDisabled()==(growth==CityGrowthMode.Freeze),"Output choices remain configurable with master off: "+growth);
+            states.MaxIndustrialOutput=states.MaxCivicOutput=true;
+            states.CityGrowth=CityGrowthMode.Freeze;
+            Check(!states.MaxIndustrialOutput && !states.MaxCivicOutput && states.OutputControlsDisabled(),"Freeze clears and disables output with either master state");
+            states.CityGrowth=CityGrowthMode.Occupancy;
+            Check(!states.MaxIndustrialOutput && !states.MaxCivicOutput && !states.OutputControlsDisabled(),"Leaving Freeze permits selection with either master state");
+        }
+        states.Enabled=true;
         foreach(CityGrowthMode growth in Enum.GetValues(typeof(CityGrowthMode)))
         {
             states.CityGrowth=growth;states.MaxIndustrialOutput=states.MaxCivicOutput=true;

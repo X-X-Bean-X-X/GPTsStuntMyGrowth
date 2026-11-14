@@ -111,6 +111,14 @@ namespace ChicagoBuildExtensions
                 Check((bool)settings.GetType().GetMethod("OutputControlsDisabled").Invoke(settings,null),"Freeze disables output selections");
                 Set("CityGrowth","Occupancy");
                 Check(!(bool)settings.GetType().GetMethod("OutputControlsDisabled").Invoke(settings,null) && !(bool)settings.GetType().GetProperty("MaxCivicOutput").GetValue(settings),"Leaving Freeze enables selection without rechecking");
+                Set("Enabled",false);
+                Check(!(bool)settings.GetType().GetMethod("OutputControlsDisabled").Invoke(settings,null),"Master off still permits output configuration outside Freeze");
+                Set("MaxIndustrialOutput",true);Set("MaxCivicOutput",true);
+                em.SetComponentData(industry,new WorkProvider{m_MaxWorkers=3});controller.Update();
+                Check(em.GetComponentData<WorkProvider>(industry).m_MaxWorkers==3,"Master off blocks output simulation even when options are checked");
+                Set("CityGrowth","Freeze");
+                Check(!(bool)settings.GetType().GetProperty("MaxIndustrialOutput").GetValue(settings) && !(bool)settings.GetType().GetProperty("MaxCivicOutput").GetValue(settings) && (bool)settings.GetType().GetMethod("OutputControlsDisabled").Invoke(settings,null),"Freeze clears and disables both even with master off");
+                Set("CityGrowth","Occupancy");Set("Enabled",true);
                 Set("Customers","Shopping");
                 Check((int)settings.GetType().GetProperty("CustomerControl",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(settings)==0,"Shopping leaves customer statistics native");
                 Check(settings.GetType().GetProperty("Income")==null && settings.GetType().GetProperty("Efficiency")==null,"Removed controls absent in loaded assembly");

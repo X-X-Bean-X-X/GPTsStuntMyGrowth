@@ -14,7 +14,7 @@ The **Vacancy And Abandonment** section appears at the bottom of the Options pag
 
 City Growth offers Freeze Population Growth, Maximize Population Growth, Maximize Population Growth and Occupancy of All Commercial & Residential Buildings, and Maximize Occupancy of All Commercial & Residential Buildings. Occupancy-only admits newcomers to fill existing homes and commercial premises but pauses births; combined mode also uses the larger ongoing immigration batch and permits native births. Population-only recruits households without the commercial filling pass. These modes do not construct buildings or bypass housing capacity.
 
-Freeze Population Growth unchecks and disables both industrial and civic output checkboxes, including their runtime functions. Any other growth mode makes them selectable again without automatically rechecking them. Turning Enable Mod off suspends all mod controls and permits native growth.
+Freeze Population Growth unchecks and disables both industrial and civic output checkboxes, including their runtime functions. Any other growth mode makes them selectable again without automatically rechecking them, including while Enable Mod is off. The master switch still stops all simulation effects. Turning Enable Mod off suspends all mod controls and permits native growth.
 
 First-install/reset defaults select Freeze in all six dropdowns. Of the 30 visible checkboxes (including Enable Mod), all are enabled except the two output checkboxes disabled by Freeze Population Growth. Enable All Options applies these same defaults while preserving target values. Disable All Options turns the master and checkboxes off and selects Normal where available; City Growth retains Freeze because it has no Normal choice. Reset buttons are never triggered by bulk actions.
 
@@ -40,7 +40,7 @@ At most 16 extra adult workers are recruited per 256 simulation frames. The boos
 
 Freeze Population Growth can remain selected because commuters are separate from resident immigration. The recruitment mode does not modify residents, schooling, offered job capacity, employee rosters or efficiency factors. Native routing and job matching still decide hires. The removed City-Service Staffing control no longer blocks service hires. Added commuters can increase traffic and simulation work. Disabling the boost stops new extra batches; existing commuters remain in normal simulation. An already scheduled batch can finish.
 
-Fresh defaults and Enable All Options select Freeze for Employment, so recruitment is not enabled at the same time. Native recruitment/hiring was tested in the prior 1.75.637 release; this revised dropdown wiring still requires its own live release check.
+Fresh defaults and Enable All Options select Freeze for Employment, so recruitment is not enabled at the same time. Native recruitment/hiring was tested in the prior 1.75.637 release. The revised dropdown wiring and staffing scopes passed the 1.75.639 offline and live fixture checks; actual hires remain subject to native qualifications and access.
 
 ## Customers, travel and resources
 
@@ -102,9 +102,13 @@ The old city-specific hold option and its automatic configuration-file controlle
 
 ## Release validation status
 
-The City Growth / Daily Customers reorganization, industrial/civic output controls, and removal of Income and Protect Efficiency are implemented. Offline verification passed 4,830 checks, maintenance regression, 365 policy cases and the toolbar contract. The installed candidate passed 41 live fixture assertions and visible Options checks. Real initialized households and companies acquired leases in the QA city, and native purchases continued with Shopping Activity enabled.
+Version 1.75.639 passed 4,854 offline checks, the maintenance regression, 365 policy cases and the toolbar contract. The installed release DLL passed 44 live fixture assertions and visible Options checks, including output checkbox transitions with Enable Mod off. Income and Protect Efficiency are absent. Schooling and output limitations are shown in Options.
 
-The revised 1.75.639 build is installed locally for QA and is not published. Final matched performance verification remains pending: interrupted runs are excluded. See validation-1.75.639.json for exact scope, measurements and limitations. Compatibility testing against the user's other mods is deferred until after release and a separate handoff.
+Matched runs reloaded the same populated QA checkpoint, warmed up for 20 seconds and measured 45 seconds at 1x and 4x with unchanged camera, playset, resolution and foreground state. At 1x, off/on p99 intervals were 56.58/55.54 ms; at 4x, 92.22/85.69 ms. The enabled 1x run had one isolated 103.52 ms interval. At 4x, intervals over 100 ms fell from 10 to 2, while measured simulation frames increased from 6,648 to 7,410; median intervals increased from 27.83 to 31.86 ms. No recurring long-frame regression was observed in this comparison. These are native coroutine intervals, not displayed-frame measurements, and short runs in this QA city do not establish large-city or long-duration performance.
+
+With growth/output and Shopping Activity enabled, 168 newly observed households and 85 newly observed companies acquired leases; 245 existing households recorded increased purchased value and changed cash. These observations establish native activity, not an isolated causal estimate of the boost or guaranteed purchases/full occupancy. No new exceptions appeared in the reviewed mod, simulation and QA-bridge logs. Original user settings were restored, and the protected original checkpoint was reloaded paused without overwriting the main save.
+
+See validation-1.75.639.json for exact scope and remaining interactions. Compatibility testing against other mods remains deferred until after publication and a separate user handoff. Public download verification is recorded separately from these local checks.
 
 ## Build
 

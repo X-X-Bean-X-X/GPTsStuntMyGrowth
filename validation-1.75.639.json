@@ -1,13 +1,13 @@
 {
   "version": "1.75.639",
   "title": "GPT's Puppet Master by X_Bean_X",
-  "recordedUtc": "2026-11-14T18:44:57.510213+00:00",
-  "status": "Installed candidate; offline and functional live checks passed within recorded scope; final matched performance verification pending; not published",
-  "candidateDllSha256": "476c2841f728f87c58ee6f8107b2221d9eccc51d52939a6a24eab153d5ac13b7",
+  "recordedUtc": "2026-11-14T19:06:17.271686+00:00",
+  "status": "Release checks passed within documented QA scope; publication verified separately in release records",
+  "candidateDllSha256": "930aa201339bfa4eb1df012281609293922ce3b4ba092d54745a6501a56a06f0",
   "offline": {
     "compiled": true,
     "officialPostprocessor": true,
-    "checks": 4830,
+    "checks": 4854,
     "policyCases": 365,
     "maintenanceRegression": true,
     "toolbarContract": true,
@@ -16,7 +16,7 @@
   },
   "liveIcon": {
     "passed": true,
-    "scope": "Approved toolbar icon opens the named Options page; six dropdowns, Income absent, schooling warning readable; Freeze disables output checkboxes, another growth mode enables them unchecked; both can be selected.",
+    "scope": "Approved toolbar icon opens the named Options page; six dropdowns, Income absent, schooling warning readable; Freeze disables output checkboxes, another growth mode enables them unchecked; both can be selected. Master-off configuration was tested through actual UI: both outputs selectable outside Freeze, and cleared/disabled by Freeze; master-off still blocks effects.",
     "screenshots": [
       "options-schooling-warning.png",
       "options-output-disabled.png",
@@ -26,14 +26,14 @@
   },
   "numericFixture": {
     "passed": true,
-    "checks": 41,
-    "receipt": "validation/command-6eb4929aa8f240059ff07876dc68a654.json",
+    "checks": 44,
+    "receipt": "validation/command-748459f32ab84a4397e53dfd9c47156b.json",
     "scope": "Numeric zero/targets, income untouched, native staffing scopes/upgrades/school enrollment, growth interlocks, combined zero land and rent hold, master-off and Normal behavior."
   },
   "coverageFixture": {
     "passed": true,
     "scope": "Synthetic road buffers verified independent police/fire definitions, other slots untouched, off permits native writes; telecom map endpoints verified full quality and off leaves writes alone. Actual emergency response and full other-mod compatibility are not certified.",
-    "receipt": "validation/command-6eb4929aa8f240059ff07876dc68a654.json"
+    "receipt": "validation/command-748459f32ab84a4397e53dfd9c47156b.json"
   },
   "occupancyRuntime": {
     "passed": true,
@@ -41,43 +41,45 @@
     "observed": {
       "homes": {
         "before": 1082,
-        "after": 1244,
-        "new": 175,
-        "newLeased": 165,
+        "after": 1250,
+        "new": 181,
+        "newLeased": 168,
         "newEmpty": 0
       },
       "shopping": {
-        "householdsWithIncreasedShoppedValue": 248,
-        "increasedShoppedValue": 36766,
-        "cashChangedAmongThem": 247
+        "householdsWithIncreasedShoppedValue": 245,
+        "cashChangedAmongThem": 245
       },
       "companies": {
         "before": 455,
-        "after": 539,
-        "new": 84,
-        "newLeased": 84,
-        "newEmpty": 0
+        "after": 540,
+        "new": 85,
+        "newLeased": 85
       },
-      "beforeReceipt": "command-e5242bcfc02f439abcb10387a93c0ba7.json",
-      "afterReceipt": "command-be1d118ec5a14140a8bf3d62d072c93b.json"
+      "beforeReceipt": "command-a7833bbd11b74dc49615296a802d775c.json",
+      "afterReceipt": "command-fdd43a2b73fc48089367856176b66e73.json",
+      "householdSystemEnabled": true,
+      "shoppingTranspilers": [
+        "GPTStuntYourGrowth:StuntYourGrowth.ShoppingHooks"
+      ]
     }
   },
   "shoppingRuntime": {
     "passed": true,
     "scope": "Native household system enabled with shopping transpiler installed; shopping mode leaves statistics native; existing households recorded purchases and changed cash during normal simulation. This is not an isolated measurement of the shopping boost or a guarantee of sales.",
-    "householdsWithIncreasedShoppedValue": 248,
-    "cashChangedAmongThem": 247
+    "householdsWithIncreasedShoppedValue": 245,
+    "cashChangedAmongThem": 245,
+    "beforeReceipt": "command-a7833bbd11b74dc49615296a802d775c.json",
+    "afterReceipt": "command-fdd43a2b73fc48089367856176b66e73.json"
   },
-  "simulationRunsPassed": false,
+  "simulationRunsPassed": true,
   "compatibilityAudit": {
     "status": "deferred",
     "instruction": "Ask user to begin only after implementation, release tests and both uploads are complete."
   },
   "gameControl": "User explicitly handed over paused CS2 on November 14; original preserved in separate checkpoint before restart.",
   "publication": {
-    "github": false,
-    "paradox": false,
-    "publishingIdentity": "Publisher account check currently does not match X_Bean_X; no upload attempted."
+    "verification": "Separate github-release.json and paradox-verification.json record remote status; this file records the tested package."
   },
   "interactions": [
     "Freeze growth clears and disables both output controls",
@@ -93,7 +95,8 @@
     "Native industrial/civic staffing capacity using real workers and supplies",
     "Income and Protect Efficiency removed from UI and runtime",
     "Employment Zero removed",
-    "Schooling workforce warning in all four relevant descriptions"
+    "Schooling workforce warning in all four relevant descriptions",
+    "Output options configurable outside Freeze even while Enable Mod is off; master-off still blocks runtime effects"
   ],
   "checkpoint": {
     "name": "Chicago GPT - Stunt Growth QA 20261114-182033-da669889",
@@ -101,7 +104,7 @@
     "frame": 4235241
   },
   "performance": {
-    "status": "pending repeat",
+    "status": "Passed within this matched QA comparison; no recurring long-frame regression observed",
     "resolution": [
       3840,
       2160
@@ -109,7 +112,7 @@
     "warmupSeconds": 20,
     "measurementSeconds": 45,
     "recorder": "Unity coroutine intervals, not presented frames",
-    "runs": [
+    "priorCandidateRuns": [
       {
         "label": "baseline 1x",
         "receipt": "validation/c83da31b0a334b18bb1394e39f1dba09.json",
@@ -244,6 +247,149 @@
         "requested": 4.0,
         "actual": 0.0
       }
-    ]
+    ],
+    "runs": [
+      {
+        "enabled": false,
+        "speed": 1,
+        "session": "5578c642fb4144e4961e1ed49759bf69",
+        "loadReceipt": "b3bb64f3dbeb450d8749124cb3813868",
+        "settingsReceipt": "bb8114f7429b4d26ad0450b6cb1ecf85",
+        "receipt": "a4e439242e89447b80d504f2456aab7d",
+        "before": null,
+        "after": null,
+        "valid": true,
+        "measurement": {
+          "initialFocus": true,
+          "focusChanges": 0,
+          "width": 3840,
+          "height": 2160,
+          "speed": 1.0,
+          "initial": 4507530,
+          "first": 4508624,
+          "last": 4511212,
+          "seconds": 45.0095825,
+          "count": 2212,
+          "median": 18.6767578125,
+          "p95": 31.55517578125,
+          "p99": 56.57958984375,
+          "worst": 92.6513671875,
+          "over50": 32,
+          "over100": 0,
+          "source": "Unity rendered coroutine intervals"
+        }
+      },
+      {
+        "enabled": true,
+        "speed": 1,
+        "session": "5069a82beac04dca995bd6f8801ae37d",
+        "loadReceipt": "7be3405db3834ec8b7cd5f6408760e6d",
+        "settingsReceipt": "5bd2a4bea1fa47828f8edae60e77c3fd",
+        "receipt": "dbc55165277f420f8bc8dff1bdcdd9e8",
+        "before": null,
+        "after": null,
+        "valid": true,
+        "measurement": {
+          "initialFocus": true,
+          "focusChanges": 0,
+          "width": 3840,
+          "height": 2160,
+          "speed": 1.0,
+          "initial": 4507530,
+          "first": 4508682,
+          "last": 4511296,
+          "seconds": 45.00946,
+          "count": 2172,
+          "median": 19.4091796875,
+          "p95": 29.11376953125,
+          "p99": 55.5419921875,
+          "worst": 103.515625,
+          "over50": 26,
+          "over100": 1,
+          "source": "Unity rendered coroutine intervals"
+        }
+      },
+      {
+        "enabled": false,
+        "speed": 4,
+        "session": "bbd1890e4f364de38f5af89d98632930",
+        "loadReceipt": "57f02962bfc64f3586e1dff2e6ebdb4b",
+        "settingsReceipt": "b69efbf7df1c471b96ca7a821ec8b640",
+        "receipt": "5cdbeab364874af3b947eb7ab1b2501b",
+        "before": null,
+        "after": null,
+        "valid": true,
+        "measurement": {
+          "initialFocus": true,
+          "focusChanges": 0,
+          "width": 3840,
+          "height": 2160,
+          "speed": 4.0,
+          "initial": 4507530,
+          "first": 4510359,
+          "last": 4517007,
+          "seconds": 45.0505371,
+          "count": 1351,
+          "median": 27.83203125,
+          "p95": 70.9228515625,
+          "p99": 92.22412109375,
+          "worst": 134.21630859375,
+          "over50": 179,
+          "over100": 10,
+          "source": "Unity rendered coroutine intervals"
+        }
+      },
+      {
+        "enabled": true,
+        "speed": 4,
+        "session": "b3a87b93f7cd4c54839ef17d6e758b76",
+        "loadReceipt": "ea7d2eb4aa8c419d9a69b49432b1d1fd",
+        "settingsReceipt": "9f019aeff69f4d50b2e09cfc6ceb3ff9",
+        "receipt": "efbbceb1530740509bdaa5d04aaff271",
+        "before": "a7833bbd11b74dc49615296a802d775c",
+        "after": "fdd43a2b73fc48089367856176b66e73",
+        "valid": true,
+        "measurement": {
+          "initialFocus": true,
+          "focusChanges": 0,
+          "width": 3840,
+          "height": 2160,
+          "speed": 4.0,
+          "initial": 4507530,
+          "first": 4510669,
+          "last": 4518079,
+          "seconds": 45.0224,
+          "count": 1327,
+          "median": 31.8603515625,
+          "p95": 64.27001953125,
+          "p99": 85.693359375,
+          "worst": 103.33251953125,
+          "over50": 83,
+          "over100": 2,
+          "source": "Unity rendered coroutine intervals"
+        }
+      }
+    ],
+    "candidateDllSha256": "930aa201339bfa4eb1df012281609293922ce3b4ba092d54745a6501a56a06f0",
+    "scope": "Same populated checkpoint, camera, playset, 3840x2160, foreground throughout. Native coroutine intervals, not presented-frame times. Small-city short-duration evidence does not establish long-term or large-city performance.",
+    "assessment": "1x off/on p99 56.58/55.54 ms; >50 ms 32/26; >100 ms 0/1. The isolated enabled interval was 103.52 ms. 4x off/on p99 92.22/85.69 ms; >50 ms 179/83; >100 ms 10/2. Median 4x increased 27.83 to 31.86 ms while measured simulation frames increased 6648 to 7410. No repeated long-pause regression in this comparison."
+  },
+  "restoration": {
+    "settingsRestored": true,
+    "masterEnabled": false,
+    "checkpoint": "Chicago GPT - Stunt Growth QA 20261114-182033-da669889",
+    "frame": 4235241,
+    "paused": true,
+    "receipt": "validation/command-8042b8018dc34932a373132577f4669d.json",
+    "mainSaveOverwritten": false
+  },
+  "logs": {
+    "reviewed": [
+      "GPTStuntYourGrowth.log",
+      "Simulation.log",
+      "ChicagoBuildBridge.log"
+    ],
+    "newErrorsOrExceptions": false,
+    "scope": "Current game process and completed QA; unrelated asset and other-mod warnings are outside this release check."
   }
 }
