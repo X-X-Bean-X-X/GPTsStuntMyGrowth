@@ -1,16 +1,16 @@
 GPT's Puppet Master by X_Bean_X
 
-Take control of growth, buildings, services and everyday city life in Cities: Skylines II. Click the colorful Puppet Master riverfront icon in the upper-left toolbar to open GPT's Puppet Master in Options.
+Control growth, buildings, services and city life. Click the riverfront toolbar icon to open GPT's Puppet Master in Options.
 
-For Windows. Version 1.75.640 supports Cities: Skylines II 1.6.4f1.
+For Windows. Version 1.75.641 supports Cities: Skylines II 1.6.4f1.
 
 GETTING STARTED
 
 • Enable Mod is the master switch. Turn it off to stop all mod effects and return control to the normal simulation.
-• Six dropdowns appear alphabetically: City Growth, Daily Customers, Employment Levels, Land Value, Profit and Schooling.
+• Six dropdowns control growth, customers, employment, land value, profit and schooling.
 • Target sliders work only with Maximize selected and the mod enabled.
 • First-install defaults set all dropdowns to Freeze. All visible checkboxes are on except the two building output controls, which Freeze Population Growth disables.
-• Enable All Options applies the defaults and keeps your targets. Disable All Options turns the mod and checkboxes off and selects Normal where available. City Growth stays on Freeze, but master-off allows normal growth. Neither button runs a reset.
+• Enable All Options applies defaults and keeps your targets. Disable All Options turns the mod off and selects Normal where available. Master-off allows normal growth. Neither button runs a reset.
 
 CITY GROWTH
 
@@ -21,7 +21,7 @@ Choose one mode:
 • Maximize Population Growth and Occupancy of All Commercial & Residential Buildings: also help fill empty homes and commercial premises.
 • Maximize Occupancy of All Commercial & Residential Buildings: admit newcomers to fill existing homes and commercial premises, while pausing births.
 
-These are gradual recruitment attempts, not instant full occupancy. Suitable buildings, access and available space still matter. The mod does not construct buildings or invent renter lists. Hotels, service users and extractor sites are not filled by these modes.
+Recruitment is gradual and needs suitable buildings, access and space. It does not build homes or fill hotels, service users or extractor sites.
 
 Freeze Population Growth unchecks and disables both output controls. Other growth modes unlock them without rechecking them. Their effects require Enable Mod to be on.
 
@@ -41,7 +41,7 @@ Default targets and ranges:
 • Land Value: 100; adjustable from 1 to 10,000.
 • Profit: 10,000; adjustable from 1 to 1,000,000.
 
-These are mod targets, not official game maxima. Normal or master-off ends the override. Normal updates resume on the game's schedule; earlier consequences are not automatically undone.
+These are mod targets, not game maxima. Normal or master-off ends overrides; earlier consequences are not undone.
 
 Land Value also offers Reset to ZERO & Freeze Rent. It holds land value at zero and freezes existing lease prices. New leases start at the game's normal price. Other land-value choices do not freeze rent.
 
@@ -58,7 +58,9 @@ Select this under Daily Customers to give households more chances to shop. It re
 
 EMPLOYMENT AND OUTSIDE WORKERS
 
-Employment Levels offers Normal, Freeze, Prevent Decreases and Boost Outside Worker Recruitment. The first three control offered job capacity, not the number of people actually hired.
+Employment Levels offers Normal, Freeze, Prevent Decreases and Boost Outside Worker Recruitment. Job capacity is separate from actual hiring.
+
+Change Company custom job counts take priority, including reductions and zero. Removing an override lets Puppet Master manage that employer again, starting a fresh Freeze baseline.
 
 Boost Outside Worker Recruitment invites extra commuters to fill vacancies across all five education levels. Workers can fill jobs below their qualifications, but not above them.
 
@@ -99,13 +101,15 @@ These controls do not reopen abandoned buildings. Fire, disasters and manual bul
 
 TRAVEL, RESOURCES AND STORAGE
 
-Prefer Public Transportation tries public transport, walking and cycling before driving or taxis for new citizen routes. If that fails, the original travel choices are tried once. Existing trips and service/freight vehicle requests are unchanged. It adds no routes, vehicles or seats, and failed searches can add routing work.
+Prefer Public Transportation tries transit, walking and cycling before driving or taxis on new citizen routes, then retries normal choices if needed. Existing trips and service/freight requests stay unchanged. It adds no routes or vehicles; failed searches add routing work.
+
+Unlimited Public Transport Vehicles supplies passenger-line requests for buses, trains, trams, subways, ships, ferries and planes. It keeps line targets and schedules. Working providers, suitable vehicles and access are required; servicing continues. Shared cargo providers and vehicle-making upgrades keep native limits. Extra vehicles can increase traffic and simulation cost. Turning it off restores native limits and may withdraw surplus vehicles. It starts off for existing users; fresh defaults and Enable All Options turn it on.
 
 Maximum Resources Available replenishes business materials, shop goods and city-service supplies within normal inventory limits. Industrial inputs leave room for output. It also prevents extraction from depleting existing oil, ore, fertile land and fish resources. It does not add money, create deposits, regrow trees or remove pollution effects.
 
 Maximum Storage refills warehouses and cargo storage with accepted goods up to their existing shared capacity, including applicable upgrades. It does not enlarge storage.
 
-Turning replenishment off leaves goods already added in place. Extra goods can change production, imports, exports and traffic.
+Switching off leaves added goods in place. Extra goods affect production, trade and traffic.
 
 CITYWIDE COVERAGE
 
@@ -113,7 +117,7 @@ Maximum Police Coverage and Maximum Fire Coverage give existing road coverage ar
 
 Communications & Internet sets the shared telecommunications coverage map to 100% signal quality. It does not increase tower capacity or hardware statistics.
 
-Turning these switches off returns coverage to normal updates on the game's schedule.
+Switching off restores normal coverage updates.
 
 REMOVE THE DEAD & DECAYING
 
@@ -136,6 +140,6 @@ Unlimited utilities bypass supply and network limits for building consumers. The
 
 EXISTING SAVES AND COMPATIBILITY
 
-Existing settings are migrated. Retired controls no longer apply. Worker training and a workforce panel are not included. City Growth replaces the old city-specific hold.
+Existing settings are preserved through migration. Retired controls, worker training and a workforce panel are not included.
 
-Other mods that write the same values can compete with these controls. Frozen schooling can limit staffing; resource shortages can limit output; Profit overrides can hide real trading results. Compatibility with a particular mod combination requires testing. See GitHub for source, build instructions, validation and remaining interactions.
+Other mods can compete for the same values. Frozen schooling can limit staffing; supplies can limit output; Profit overrides can hide trading results. See GitHub for source, validation and compatibility limits.

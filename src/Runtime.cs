@@ -44,7 +44,7 @@ namespace StuntYourGrowth
             if (existing) Options.PrepareUpgrade(savedVersion);
             // A zero baseline forces the version marker to be saved even with default selections.
             AssetDatabase.global.LoadSettings(Id, Options, new GPTStuntGrowthSettings(mod) { DefaultsVersion = 0 });
-            Options.FinishUpgrade(existing ? savedVersion : 7);
+            Options.FinishUpgrade(existing ? savedVersion : 8);
             Options.RegisterInOptionsUI();
             locale = new Locale(Options);
             GameManager.instance.localizationManager.AddSource("en-US", locale);
@@ -65,6 +65,7 @@ namespace StuntYourGrowth
                 NativeHooks.Register(patches);
                 UtilityHooks.Register(patches);
                 TransitHooks.Register(patches);
+                PublicTransportFleet.Register(patches);
                 ResourceHooks.Register(patches);
                 CommuterHooks.Register(patches);
                 CoverageHooks.Register(patches);
@@ -86,6 +87,7 @@ namespace StuntYourGrowth
         static void OnWorldReady()
         {
             if(patches!=null) NativeHooks.RegisterIntegrations(patches);
+            ProtectionSystem.Current?.ResolveWorkplaceIntegrations();
         }
         static void RegisterGate<T>() where T : GameSystemBase
         {

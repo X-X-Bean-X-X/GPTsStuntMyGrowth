@@ -1,1 +1,11 @@
 Numeric639.cs is the in-game QA fixture for the private ChicagoBuildBridge test harness. It runs only in a paused disposable QA save, restores option selections, and deletes its synthetic entities. It is not part of the subscriber mod or an additional runtime dependency. See the release validation JSON for observed results.
+
+ChangeCompany641.cs tests the 1.75.641 optional integration using the installed Change Company assembly. Build it with BuildChangeCompany641.ps1 and explicit compiler/ChangeCompanyPath arguments. It is compiled separately and is not a subscriber dependency.
+
+Run only after a fresh game-control handoff, verified pause, separate recovery checkpoint, candidate restart and QA-save reload. The bridge client must verify the loaded save and session, then supply qaCheckpoint and expectedFrame. The fixture checks the installed version and automatic integration detection. It temporarily isolates the workplace query to synthetic Temp employers, refuses to start if temporary employers already exist, restores the original query/baselines, and deletes its synthetic entities in finally. It calls Change Company's real commercial override writer; that writer may also update real custom employers on its normal frame. Reload the QA checkpoint afterward. User settings are not changed by this fixture.
+
+Cases: ordinary Freeze/Prevent Decreases; custom counts above/below baseline and zero; override removal and fresh hold; Normal employment; industrial native capacity with/without an override and after override removal. Compilation alone is not a live pass.
+
+Transit641.cs checks reserve preparation against synthetic native ECS depots for all seven supported passenger modes, cargo guards, manufacturing-upgrade guards, and preserved maintenance/type data. It does not by itself prove actual passenger vehicle dispatch. Follow it with real-line runs, original-depot-data comparisons and matched performance checks.
+
+BuildFleet641.ps1 compiles Transit641.cs and the read-only ObserveFleet641.cs observer. The observer captures depot capacity, production, maintenance, owned/disabled vehicles, and line vehicle counts. These helpers stay outside the subscriber package. Compare matching QA-save reloads at normal and maximum simulation speed with the fleet switch off/on; restore the QA baseline and user settings afterward.

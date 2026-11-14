@@ -131,7 +131,8 @@ Protect Efficiency and its weather/bonus baseline writer have been removed. Effi
 ## Remaining Interactions
 
 - Freeze Population Growth clears and disables industrial/civic output; leaving Freeze makes them selectable but leaves them unchecked.
-- Industrial/civic native staffing targets take priority over Employment Freeze for their scoped employers. Production and services still depend on workers, qualifications, supplies, budget and access. Separate utility and inventory switches can relieve their corresponding shortages.
+- Change Company custom job counts take priority over Employment Freeze, Prevent Decreases and industrial/civic staffing targets for employers with a custom override. Other employers keep the usual Puppet Master controls.
+- Industrial/civic native staffing targets take priority over Employment Freeze for their scoped employers without a Change Company override. Production and services still depend on workers, qualifications, supplies, budget and access. Separate utility and inventory switches can relieve their corresponding shortages.
 - Frozen schooling and age can restrict the future qualified workforce. Recruitment is not training and cannot guarantee the required skill mix.
 - Shopping Activity is exclusive with customer-statistic overrides. Profit overrides remain independent and can mask reported trading changes. Income overrides are removed.
 - Coverage benefits do not provide response vehicles, staffing or road access.
@@ -139,8 +140,29 @@ Protect Efficiency and its weather/bonus baseline writer have been removed. Effi
 - Protect Happiness can raise health or well-being to maintain happiness even if their individual protections are off.
 - Building-level, tenant, deterioration and vacancy safeguards overlap. Repeatable resets remain; they do not restore already-abandoned buildings to operation.
 - Resource/storage replenishment can change production, trade and traffic.
-- Other mods may write the same values. A separate compatibility audit remains deferred until after publication and a new user handoff; no universal compatibility claim is made.
+- Other mods may write the same values. The current playset audit identified the Change Company job-count overlap addressed in 1.75.641. This is not a universal compatibility claim.
 
 ## 1.75.640 description update
 
 Rebuilt from verified 1.75.639 source (458a043). Only Options description strings and release version metadata changed. Labels, defaults, option behavior and simulation code are unchanged. Descriptions use plain language and separate bullets. The candidate is installed locally. Cold-start, live text audit (132 entries and 48 descriptions), visible bullet spacing, longest-description fit, and closing/reopening Options passed. User settings and the paused simulation frame were unchanged. Publication was approved by the user after reviewing the changes.
+
+## 1.75.641 Change Company compatibility
+
+- Companies with a custom job count in Change Company keep that count, including reductions and zero. Employment Freeze, Prevent Decreases and building output targets leave these companies alone.
+- Removing a custom override lets Puppet Master manage that employer again. Freeze starts from its current job count, rather than restoring an old saved count. Output targeting can resume its normal capacity target.
+- Change Company is optional. Employers without a custom override keep the same behavior as before. This does not create or train workers.
+- Employment Levels and industrial output help now explain this priority. Existing settings and defaults are unchanged.
+- Live checks with Change Company 4.2.2 passed ordinary holds, custom counts above and below the baseline, zero, override removal, and industrial output targeting. The integration has no hard dependency on Change Company.
+
+## Unlimited Public Transport Vehicles (1.75.641)
+
+- Supplies the fleet requested by passenger lines for buses, trains, trams, subways, ships, ferries and planes. Line targets, intervals, ticket prices, and job counts stay unchanged.
+- Uses native vehicle dispatch and vehicle models. It does not invent routes or put vehicles on disconnected tracks, roads, waterways or runways. Working providers and access are still required.
+- Gives working depots dispatch room beyond their existing vehicles and servicing reserve. Vehicle servicing still runs. Extra parked manufacturing is suppressed during the native dispatch calculation.
+- Shared providers carrying cargo or handling cargo requests retain native limits. Providers with upgrades that add a vehicle-manufacturing loop also retain native limits. This protects cargo behavior and prevents an expanding parked fleet.
+- Prefer Public Transportation still affects travel choices separately. Frozen jobs or schooling can limit staffing; the fleet switch does not override them. Change Company retains priority over custom job counts.
+- The new checkbox is off when upgrading an existing installation. Fresh defaults and Enable All Options turn it on; Disable All Options and Enable Mod off disable its effect.
+- Turning it off restores native fleet limits on subsequent updates; surplus vehicles may be withdrawn. More active vehicles can increase congestion and simulation cost.
+- Implementation temporarily adjusts depot data only while its native job completes and restores the original data immediately, including exception paths. No permanent prefab edits or shared vehicle capacity edits are saved. Completing this job synchronously can add simulation cost; see the release validation record for measured performance and its limits.
+
+The seven transport types are covered by native-ECS preparation fixtures. Real city runs cover the existing bus, train and subway services. Separate end-to-end tram, ship, ferry and airplane trips are not claimed. Release validation and publication records distinguish tested local files from verified public downloads.

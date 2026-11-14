@@ -16,8 +16,27 @@ namespace StuntYourGrowth
         EntityQuery workplaces;
         readonly Dictionary<Entity,(int mode,int count)> workplaceBaseline=new Dictionary<Entity,(int,int)>();
         int workplaceMode=-1;
-        void InitWorkplaces() => workplaces=GetEntityQuery(ComponentType.ReadWrite<WorkProvider>(),
-            ComponentType.Exclude<Deleted>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Destroyed>(),ComponentType.Exclude<Game.Objects.OutsideConnection>());
+        ComponentType? changeCompanyWorkplacesOverride;
+        internal void ResolveWorkplaceIntegrations()
+        {
+            // Optional integration: resolve at initialization/world readiness, never per employer.
+            changeCompanyWorkplacesOverride=null;
+            foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if(assembly.GetName().Name!="ChangeCompany")continue;
+                var type=assembly.GetType("ChangeCompany.WorkplacesOverride",false);
+                if(type!=null && type.IsValueType && typeof(IComponentData).IsAssignableFrom(type))
+                    changeCompanyWorkplacesOverride=ComponentType.ReadOnly(type);
+                break;
+            }
+            ClearWorkplaces();
+        }
+        void InitWorkplaces()
+        {
+            workplaces=GetEntityQuery(ComponentType.ReadWrite<WorkProvider>(),
+                ComponentType.Exclude<Deleted>(),ComponentType.Exclude<Temp>(),ComponentType.Exclude<Destroyed>(),ComponentType.Exclude<Game.Objects.OutsideConnection>());
+            ResolveWorkplaceIntegrations();
+        }
         void ClearWorkplaces() { workplaceBaseline.Clear();workplaceMode=-1; }
         void UpdateWorkplaces(GPTStuntGrowthSettings s,bool prune)
         {
@@ -29,6 +48,13 @@ namespace StuntYourGrowth
             if(refresh)workplaces.ResetFilter();else workplaces.SetChangedVersionFilter(ComponentType.ReadWrite<WorkProvider>());
             using(var entities=workplaces.ToEntityArray(Allocator.Temp)) foreach(var e in entities)
             {
+                if(changeCompanyWorkplacesOverride.HasValue && EntityManager.HasComponent(e,changeCompanyWorkplacesOverride.Value))
+                {
+                    // Change Company owns this employer, including zero and reduced job counts.
+                    // Forget our hold so removing the override starts a fresh baseline.
+                    workplaceBaseline.Remove(e);
+                    continue;
+                }
                 var current=EntityManager.GetComponentData<WorkProvider>(e);
                 int target=current.m_MaxWorkers;
                 if(TargetedWorkplace(e,s) && TryNativeCapacity(e,out var capacity))

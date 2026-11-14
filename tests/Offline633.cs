@@ -50,8 +50,9 @@ class Offline633
     public static void Run()
     {
         var asm=typeof(GPTStuntGrowthSettings).Assembly;
+        Check(!asm.GetReferencedAssemblies().Any(a=>a.Name=="ChangeCompany"),"Change Company stays optional; no assembly dependency");
         Check(typeof(GPTStuntGrowthSettings).Name=="GPTStuntGrowthSettings","Unique native settings save lookup key");
-        Check(asm.GetName().Version.ToString()=="1.75.640.0","Assembly version");
+        Check(asm.GetName().Version.ToString()=="1.75.641.0","Assembly version");
         foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff","Income","IncomeTarget","Efficiency"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(removed)==null,"Retired setting absent: "+removed);
         Check(asm.GetType("StuntYourGrowth.CustomerHooks")==null && asm.GetType("StuntYourGrowth.HiringGuard")==null,"Retired simulation hooks absent");
@@ -80,7 +81,7 @@ class Offline633
         var toggles=Controls.Where(p=>p.CanRead && p.PropertyType==typeof(bool)).ToArray();
         var modes=Controls.Where(p=>p.PropertyType.IsEnum).ToArray();
         Check(modes.Length==6,"Six dropdowns after Income removal");
-        Check(toggles.Length==30,"30 checkboxes after efficiency removal");
+        Check(toggles.Length==31,"31 checkboxes including public transport fleet");
         foreach(var p in toggles) Check((bool)p.GetValue(s)==(p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"First-load toggle with freeze-growth interlock "+p.Name);
         foreach(var p in modes) Check(p.GetValue(s).ToString()=="Freeze","First-load dropdown "+p.Name);
         Check(typeof(GPTStuntGrowthSettings).GetProperty("LegacyHold")==null,"Retired city hold still exposed");
@@ -153,7 +154,7 @@ class Offline633
             var expectedJob=jobs==4?EmploymentMode.Normal:boost?EmploymentMode.BoostOutsideWorkers:jobs==3?EmploymentMode.Normal:(EmploymentMode)jobs;
             Check(old.Jobs==expectedJob,"Removed employment Zero migrates to Normal");
             Check(old.LandValue==(rent && land==4?LandValueMode.ZeroFreezeRent:(LandValueMode)land),"Rent migration preserves land choice without silently zeroing it");
-            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==7,"Legacy switches cannot remain active");
+            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==8,"Legacy switches cannot remain active");
         }
         foreach(var mode in Enum.GetValues(typeof(ValueMode)).Cast<ValueMode>())
         {
@@ -188,6 +189,9 @@ class Offline633
         Func<string,string> label=n=>labels[s.GetOptionLabelLocaleID(n)];
         foreach(string option in new[]{"Schooling","Jobs","MaxIndustrialOutput","MaxCivicOutput"})
             Check(labels[s.GetOptionDescLocaleID(option)].Contains("Recruitment cannot promise workers with the right education."),"Schooling warning visible in "+option);
+
+        foreach(string option in new[]{"Jobs","MaxIndustrialOutput"})
+            Check(labels[s.GetOptionDescLocaleID(option)].Contains("Custom job counts from Change Company take priority."),"Change Company priority explained in "+option);
 
         Check(label("Enabled")=="Enable Mod","Master label");
         Check(label("ResetVacancy")=="Reset Vacant Buildings" && label("ResetAbandonment")=="Reset Abandonment","Repeatable reset labels");
@@ -366,6 +370,27 @@ class Offline633
             Check(changed[indexes[0].i-1].opcode==System.Reflection.Emit.OpCodes.Ldarg_0,"Scheduler receives owning system");
             var replaced=(MethodInfo)indexes[0].x.operand;
             Check(replaced.GetParameters().Length==4 && replaced.ReturnType.FullName=="Unity.Jobs.JobHandle","Scheduler stack signature");
+        }
+        var fleet=asm.GetType("StuntYourGrowth.PublicTransportFleet",true);
+        var supports=(Func<TransportType,bool>)Delegate.CreateDelegate(typeof(Func<TransportType,bool>),fleet.GetMethod("Supported",hidden));
+        foreach(TransportType kind in Enum.GetValues(typeof(TransportType)))
+            Check(supports(kind)==new[]{TransportType.Bus,TransportType.Train,TransportType.Tram,TransportType.Subway,TransportType.Ship,TransportType.Ferry,TransportType.Airplane}.Contains(kind),"Passenger fleet type "+kind);
+        var reserve=(Func<int,int,float,float,int>)Delegate.CreateDelegate(typeof(Func<int,int,float,float,int>),fleet.GetMethod("ReserveCapacity",hidden));
+        foreach(int owned in new[]{0,1,20,1000}) foreach(float maintenance in new[]{0f,0.5f,20f}) foreach(float efficiency in new[]{0.01f,0.25f,1f,2f})
+        {
+            int capacity=reserve(10,owned,maintenance,efficiency);
+            Check(capacity>=10 && BuildingUtils.GetVehicleCapacity(efficiency,capacity)>owned+(int)Math.Ceiling(maintenance),"Fleet reserve covers existing vehicles and servicing without cutting native capacity");
+        }
+        Check(reserve(10,20,0,0)==10 && reserve(10,20,0,float.NaN)==10 && reserve(10,20,0,float.PositiveInfinity)==10,"Fleet does not bypass closed or invalid depot efficiency");
+        Check(reserve(10,int.MaxValue,0,1)==10 && reserve(10,0,float.PositiveInfinity,1)==10,"Invalid fleet arithmetic stays native");
+        var depotUpdate=AccessTools.DeclaredMethod(typeof(TransportDepotAISystem),"OnUpdate");
+        var fleetIL=((IEnumerable<CodeInstruction>)fleet.GetMethod("ModifyDispatch",hidden).Invoke(null,new object[]{ReadIL(depotUpdate)})).ToArray();
+        Check(fleetIL.Count(x=>(x.operand as MethodInfo)?.DeclaringType==fleet)==1,"Exactly one native depot job scheduler hook");
+        foreach(int version in new[]{0,1,5,6,7})
+        {
+            var upgrade=NewSettings();
+            typeof(GPTStuntGrowthSettings).GetMethod("PrepareUpgrade",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(upgrade,new object[]{version});
+            Check(!upgrade.UnlimitedPublicTransportVehicles,"Existing users opt into fleet control, schema "+version);
         }
         var transit=asm.GetType("StuntYourGrowth.TransitHooks");
         var prefer=transit.GetMethod("TryPrefer",hidden);

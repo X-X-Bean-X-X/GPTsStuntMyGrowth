@@ -1,0 +1,261 @@
+{
+  "version": "1.75.641",
+  "passed": true,
+  "candidateSha256": "bca6649a819c3a6d5cfe29a7929a3120eeaa36a3cc79c7e53e3bfb406d068845",
+  "gameVersion": "1.6.4f1",
+  "offline": {
+    "compile": true,
+    "officialPostprocessor": true,
+    "regressionChecks": 4936,
+    "maintenanceRegression": true,
+    "policyCases": 365
+  },
+  "changeCompany": {
+    "version": "4.2.2",
+    "liveAssertions": 30,
+    "cases": [
+      "Freeze still protects ordinary employers",
+      "Change Company applied 25",
+      "Freeze yields to custom count 25",
+      "Change Company applied 5",
+      "Freeze yields to custom count 5",
+      "Change Company applied 0",
+      "Freeze yields to custom count 0",
+      "Change Company applied 40",
+      "Freeze yields to custom count 40",
+      "Freeze starts fresh after override removal",
+      "PreventDecreases still protects ordinary employers",
+      "Change Company applied 25",
+      "PreventDecreases yields to custom count 25",
+      "Change Company applied 5",
+      "PreventDecreases yields to custom count 5",
+      "Change Company applied 0",
+      "PreventDecreases yields to custom count 0",
+      "Change Company applied 40",
+      "PreventDecreases yields to custom count 40",
+      "PreventDecreases starts fresh after override removal",
+      "Normal leaves jobs alone",
+      "Native industrial capacity available",
+      "Industrial target still works without override",
+      "Change Company applied 47",
+      "Industrial output yields to custom count 47",
+      "Change Company applied 1",
+      "Industrial output yields to custom count 1",
+      "Change Company applied 0",
+      "Industrial output yields to custom count 0",
+      "Industrial targeting resumes after override removal"
+    ],
+    "optionalDependency": true
+  },
+  "transport": {
+    "livePreparationAssertions": 49,
+    "supportedTypes": [
+      "Bus",
+      "Train",
+      "Tram",
+      "Subway",
+      "Ship",
+      "Ferry",
+      "Airplane"
+    ],
+    "realCityModes": [
+      "Bus",
+      "Train",
+      "Subway"
+    ],
+    "allDepotPrefabsRestoredEachRun": true,
+    "lineTargetsNotWritten": true,
+    "cargoAndManufacturingUpgradesLeftNative": true
+  },
+  "ui": {
+    "checkboxAndHelpVisible": true,
+    "helpFits": true,
+    "changeCompanyPriorityVisible": true,
+    "upgradedExistingSettingsPreserved": true,
+    "newCheckboxOffForExistingUsers": true
+  },
+  "performance": [
+    {
+      "speed": 1,
+      "fleetEnabled": false,
+      "receipt": "35145ee897bb4c9daf1bdc8c27a97617",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4235241,
+        "first": 4236389,
+        "last": 4239022,
+        "seconds": 45.0049744,
+        "count": 2091,
+        "median": 20.08056640625,
+        "p95": 28.99169921875,
+        "p99": 57.6171875,
+        "worst": 89.17236328125,
+        "over50": 28,
+        "over100": 0,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    },
+    {
+      "speed": 1,
+      "fleetEnabled": true,
+      "receipt": "c9e38cef52ee45efa5dfc00e50631c46",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4235241,
+        "first": 4236405,
+        "last": 4239020,
+        "seconds": 45.008728,
+        "count": 2056,
+        "median": 20.1416015625,
+        "p95": 29.9072265625,
+        "p99": 59.87548828125,
+        "worst": 128.84521484375,
+        "over50": 34,
+        "over100": 2,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    },
+    {
+      "speed": 4,
+      "fleetEnabled": false,
+      "receipt": "b529ec4ab70a46e29c9c52f431297141",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4235241,
+        "first": 4238490,
+        "last": 4245776,
+        "seconds": 45.01367,
+        "count": 1313,
+        "median": 30.82275390625,
+        "p95": 67.626953125,
+        "p99": 109.86328125,
+        "worst": 119.44580078125,
+        "over50": 101,
+        "over100": 29,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    },
+    {
+      "speed": 4,
+      "fleetEnabled": true,
+      "receipt": "2ee2845e8bf44f969a9d2f8660204b30",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 4.0,
+        "initial": 4235241,
+        "first": 4238449,
+        "last": 4245856,
+        "seconds": 45.03717,
+        "count": 1316,
+        "median": 31.18896484375,
+        "p95": 68.603515625,
+        "p99": 105.52978515625,
+        "worst": 155.1513671875,
+        "over50": 89,
+        "over100": 24,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    },
+    {
+      "speed": 1,
+      "fleetEnabled": false,
+      "receipt": "21b465fe1b034e6888b5686f08ad5df6",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4235241,
+        "first": 4236381,
+        "last": 4238994,
+        "seconds": 45.010437,
+        "count": 2066,
+        "median": 20.08056640625,
+        "p95": 30.8837890625,
+        "p99": 55.84716796875,
+        "worst": 89.78271484375,
+        "over50": 30,
+        "over100": 0,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    },
+    {
+      "speed": 1,
+      "fleetEnabled": true,
+      "receipt": "f5184d1977f9438cafd79784d4b46059",
+      "timing": {
+        "initialFocus": true,
+        "focusChanges": 0,
+        "width": 3840,
+        "height": 2160,
+        "speed": 1.0,
+        "initial": 4235241,
+        "first": 4236400,
+        "last": 4239013,
+        "seconds": 45.01477,
+        "count": 2049,
+        "median": 20.1416015625,
+        "p95": 30.33447265625,
+        "p99": 58.349609375,
+        "worst": 94.29931640625,
+        "over50": 37,
+        "over100": 0,
+        "source": "Unity rendered coroutine intervals"
+      },
+      "prefabsRestored": true
+    }
+  ],
+  "performanceAssessment": {
+    "result": "passed with measured overhead and limitations",
+    "normalRepeat": "Fleet off/on each advanced 2613 simulation frames. Neither repeat had intervals over 100 ms. Median 20.08/20.14 ms; p99 55.85/58.35 ms. Initial enabled run had two isolated intervals over 100 ms, not reproduced.",
+    "maximumSpeed": "Off/on advanced 7286/7407 frames; p99 109.86/105.53 ms; intervals over 100 ms 29/24. Both modes retain existing maximum-speed hitching.",
+    "notClaimed": "Zero overhead, perfect smoothness or long-duration stability."
+  },
+  "logs": {
+    "checked": [
+      "GPTStuntYourGrowth.log",
+      "Simulation.log",
+      "ChicagoBuildBridge.log"
+    ],
+    "noErrorsOrCritical": true,
+    "unrelatedExistingError": "ChicagoCoverageCache disables itself because it requires ServiceCoverageFix 0.3.2.0. Left unchanged."
+  },
+  "verifiedAtUtc": "2026-11-14T21:48:20.136514+00:00",
+  "restored": {
+    "separateQA": true,
+    "frame": 4235241,
+    "paused": true,
+    "userSettingsPreserved": true
+  },
+  "limits": [
+    "No universal compatibility claim. Tested with the current playset including Change Company 4.2.2.",
+    "Seven modes passed native-ECS preparation fixtures; actual city runs cover existing bus, train and subway services. Tram, ship, ferry and plane trips were not separately driven end to end.",
+    "More vehicles can increase traffic and simulation cost. Short matched runs are not a long-duration or every-city guarantee.",
+    "Shared cargo providers and vehicle-manufacturing upgrades retain native fleet limits."
+  ],
+  "publication": {
+    "authorized": true,
+    "status": "ready; remote verification recorded separately"
+  }
+}
