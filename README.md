@@ -56,7 +56,7 @@ The Employee Count, Maximum Customers, Hire All Available Jobs, Protect Lifespan
 
 **Maximum Police Coverage** and **Maximum Fire Coverage** provide the strongest finite coverage magnitude found in the loaded service prefab definitions across existing road coverage buffers. They do not inflate provider ranges or add coverage path searches. Higher existing coverage is retained, and unrelated service types are untouched. These are citywide road-coverage benefits, not instant police/fire response, immunity to crime/fire, or added staff/vehicles. Areas without a road coverage buffer are not given fake roads.
 
-**Communications & Internet** sets the native telecommunications map to its maximum sampled quality (100%). Internet and telecom use this same coverage map. It does not fabricate tower capacity or change their reported hardware statistics. All coverage switches resume native recalculation when disabled; restoration occurs on the respective native system's update schedule.
+**Unlimited Communications & Internet** sets the native telecommunications map to its maximum sampled quality (100%). Internet and telecom use this same coverage map. It does not fabricate tower capacity or change their reported hardware statistics. All coverage switches resume native recalculation when disabled; restoration occurs on the respective native system's update schedule.
 
 ## Maximize Shopping Activity
 
@@ -167,3 +167,9 @@ Rebuilt from verified 1.75.639 source (458a043). Only Options description string
 - Implementation temporarily adjusts depot data only while its native job completes and restores the original data immediately, including exception paths. No permanent prefab edits or shared vehicle capacity edits are saved. Completing this job synchronously can add simulation cost; see the release validation record for measured performance and its limits.
 
 The seven transport types are covered by native-ECS preparation fixtures. Real city runs cover the existing bus, train and subway services. Separate end-to-end tram, ship, ferry and airplane trips are not claimed. Release validation and publication records distinguish tested local files from verified public downloads.
+
+## Communications label update (1.75.643)
+
+- Rename Communications & Internet to Unlimited Communications & Internet and place it alphabetically among the Unlimited controls.
+- Keep the existing setting key, saved choice, help text and simulation behavior unchanged.
+- Refresh the matching documentation. Build and source-scope verification only; gameplay and performance results remain those of 1.75.642.

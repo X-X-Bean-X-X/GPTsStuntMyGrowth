@@ -2,7 +2,7 @@ GPT's Puppet Master by X_Bean_X
 
 Control your city. Open Options with the riverfront icon.
 
-For Windows. Version 1.75.642 supports Cities: Skylines II 1.6.4f1.
+For Windows. Version 1.75.643 supports Cities: Skylines II 1.6.4f1.
 
 GETTING STARTED
 
@@ -115,7 +115,7 @@ CITYWIDE COVERAGE
 
 Maximum Police Coverage and Maximum Fire Coverage give existing road coverage areas the strongest available coverage bonus. They do not extend provider ranges, add crews or vehicles, guarantee responses or prevent all crime and fires.
 
-Communications & Internet sets the shared telecommunications coverage map to 100% signal quality. It does not increase tower capacity or hardware statistics.
+Unlimited Communications & Internet sets the shared telecommunications coverage map to 100% signal quality. It does not increase tower capacity or hardware statistics.
 
 Switching off restores normal coverage updates.
 

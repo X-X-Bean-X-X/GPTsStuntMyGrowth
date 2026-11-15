@@ -1,0 +1,25 @@
+{
+  "version": "1.75.643",
+  "passed": true,
+  "buildPassed": true,
+  "sourceScopeVerified": true,
+  "verifiedAtUtc": "2026-11-15T08:46:08.313472+00:00",
+  "candidateSha256": "d2ff51da2fb8038a886d6a6cae533289dc3af589a08d273a2544568f8515d6dc",
+  "changes": [
+    "Label renamed to Unlimited Communications & Internet",
+    "Checkbox moved alphabetically between Unlimited Buses and Unlimited Electricity",
+    "Matching documentation and version metadata updated"
+  ],
+  "preserved": [
+    "Saved setting key and value",
+    "Help text",
+    "Simulation code and behavior"
+  ],
+  "validation": [
+    "Compilation and official postprocessor passed",
+    "Exact Settings.cs comparison against v1.75.642",
+    "All other simulation source files unchanged"
+  ],
+  "inGameTest": "Not repeated for this label-only update. No game input, restart, save or settings change performed.",
+  "priorGameplayValidation": "validation-1.75.642.json; results are prior evidence, not fresh 1.75.643 gameplay tests."
+}

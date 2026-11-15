@@ -69,7 +69,6 @@ namespace StuntYourGrowth
 
         [SettingsUIHidden] public bool Growth { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool RemoveDead { get; set; }
-        [SettingsUISection(CheckboxGroup)] public bool MaximumCommunications { get; set; }
         [SettingsUIHidden] public bool BoostOutsideWorkers { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool Age { get; set; }
         [SettingsUIHidden] public bool RentAmount { get; set; }
@@ -102,6 +101,7 @@ namespace StuntYourGrowth
         [SettingsUIHidden] public bool UnlimitedPublicTransportVehicles { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedAirlines { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedBuses { get; set; }
+        [SettingsUISection(CheckboxGroup)] public bool MaximumCommunications { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedElectricity { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedFerries { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool UnlimitedSewer { get; set; }
@@ -273,7 +273,7 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.MaximumOccupancy), "Maximum Building Occupancy", "\u2022 This older checkbox has been replaced by City Growth.\n\n\u2022 Choose an occupancy mode to help fill empty homes and business spaces.");
             Add(nameof(GPTStuntGrowthSettings.MaximumPoliceCoverage), "Maximum Police Coverage", "\u2022 Give areas with road coverage the strongest police coverage bonus available in the game.\n\n\u2022 This does not add officers, police cars or road access.\n\n\u2022 Crimes can still happen. Police still need to reach them.\n\n\u2022 Turning this off lets the game update coverage normally.");
             Add(nameof(GPTStuntGrowthSettings.MaximumFireCoverage), "Maximum Fire Coverage", "\u2022 Give areas with road coverage the strongest fire coverage bonus available in the game.\n\n\u2022 This does not put out fires or add firefighters or fire engines.\n\n\u2022 Fire crews still need staff, vehicles and road access.\n\n\u2022 Turning this off lets the game update coverage normally.");
-            Add(nameof(GPTStuntGrowthSettings.MaximumCommunications), "Communications & Internet", "\u2022 Set the map's communications and internet signal quality to 100%.\n\n\u2022 This does not add towers or raise their listed capacity.\n\n\u2022 Turning this off lets the game update signal quality normally.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumCommunications), "Unlimited Communications & Internet", "\u2022 Set the map's communications and internet signal quality to 100%.\n\n\u2022 This does not add towers or raise their listed capacity.\n\n\u2022 Turning this off lets the game update signal quality normally.");
             Add(nameof(GPTStuntGrowthSettings.MaximumResources), "Maximum Resources Available", "\u2022 Refill business materials, shop goods and city-service supplies within their storage limits.\n\n\u2022 Keep existing oil, ore, fertile land and fish supplies from being used up by extraction.\n\n\u2022 Do not create new deposits, trees or money.\n\n\u2022 Extra supplies can change production, trade and traffic.");
             Add(nameof(GPTStuntGrowthSettings.MaximumStorage), "Maximum Storage", "\u2022 Refill warehouses and cargo storage with the goods they accept.\n\n\u2022 Use their existing storage space. Do not make buildings hold more.\n\n\u2022 Goods already added stay when you turn this off.\n\n\u2022 Extra goods can change trade and traffic.");
             Add(nameof(GPTStuntGrowthSettings.CityGrowth), "City Growth", "\u2022 Freeze Population Growth: stop new residents moving in and pause births.\n\n\u2022 Maximize Population Growth: invite more households and allow births.\n\n\u2022 Growth and Occupancy: also help fill empty homes and shops.\n\n\u2022 Occupancy only: invite newcomers to fill existing homes and shops, but pause births.\n\n\u2022 Newcomers still need suitable buildings and access. Buildings fill gradually.\n\n\u2022 Freeze turns both building output checkboxes off. Choose another mode to unlock them.");
