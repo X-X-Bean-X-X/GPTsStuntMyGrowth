@@ -22,6 +22,8 @@ namespace StuntYourGrowth
         internal static int Budget(int vacant,int pending,int batch,int backlog) =>
             vacant<=0 || pending<0 || pending>=backlog ? 0 : (int)Math.Max(0,Math.Min(batch,Math.Min((long)vacant-pending,(long)backlog-pending)));
         internal static int HouseholdLimit(CityGrowthMode mode) => mode==CityGrowthMode.Freeze ? 0 : mode==CityGrowthMode.Occupancy ? HouseholdBatch : GrowthBatch;
+        internal static int HouseholdRecruitmentLimit(CityGrowthMode mode,bool maximize) =>
+            mode==CityGrowthMode.Freeze ? 0 : maximize ? GrowthBatch : HouseholdLimit(mode);
     }
 
     // Create real native tenants, then let native initialization and property search place them.
@@ -61,7 +63,7 @@ namespace StuntYourGrowth
             if(demands.CalculateEntityCount()!=1 || houses.IsEmptyIgnoreFilter || connections.IsEmptyIgnoreFilter) return;
             int3 free=residentialCount.FreeProperties;
             int vacant=(int)Math.Min(int.MaxValue,(long)Math.Max(0,free.x)+Math.Max(0,free.y)+Math.Max(0,free.z));
-            int budget=OccupancyPolicy.Budget(vacant,waitingHomes.CalculateEntityCount(),OccupancyPolicy.HouseholdLimit(Runtime.Options.CityGrowth),OccupancyPolicy.HouseholdBacklog);
+            int budget=OccupancyPolicy.Budget(vacant,waitingHomes.CalculateEntityCount(),OccupancyPolicy.HouseholdRecruitmentLimit(Runtime.Options.CityGrowth,Runtime.Options.MaximumHouseholds),OccupancyPolicy.HouseholdBacklog);
             if(budget==0) return;
             using(var choices=houses.ToEntityArray(Allocator.Temp))
             using(var external=new NativeList<Entity>(Allocator.Temp))

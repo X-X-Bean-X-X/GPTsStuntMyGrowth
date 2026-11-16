@@ -25,7 +25,7 @@ namespace StuntYourGrowth
         [SettingsUISection(MasterGroup)] public bool Enabled { get; set; }
 
         private CityGrowthMode cityGrowth;
-        private bool industrialOutput, civicOutput;
+        private bool industrialOutput, civicOutput, maximumHouseholds;
         [SettingsUISection(ModeGroup)]
         public CityGrowthMode CityGrowth
         {
@@ -33,7 +33,7 @@ namespace StuntYourGrowth
             set
             {
                 cityGrowth = (uint)(int)value <= 3u ? value : CityGrowthMode.Freeze;
-                if (cityGrowth == CityGrowthMode.Freeze) industrialOutput = civicOutput = false;
+                if (cityGrowth == CityGrowthMode.Freeze) industrialOutput = civicOutput = maximumHouseholds = false;
             }
         }
         [SettingsUISection(ModeGroup)] public CustomerMode Customers { get; set; }
@@ -52,6 +52,7 @@ namespace StuntYourGrowth
         public bool LandValueTargetDisabled() => !Enabled || LandValue != LandValueMode.Maximize;
         public bool ProfitTargetDisabled() => !Enabled || Profit != ValueMode.Maximize;
         public bool OutputControlsDisabled() => CityGrowth == CityGrowthMode.Freeze;
+        public bool DemandControlsDisabled() => DemandCompatibility.Active;
         internal bool FreezeGrowth => CityGrowth == CityGrowthMode.Freeze;
         internal bool GrowPopulation => CityGrowth == CityGrowthMode.Population || CityGrowth == CityGrowthMode.PopulationAndOccupancy;
         internal bool FillCommercial => CityGrowth == CityGrowthMode.PopulationAndOccupancy || CityGrowth == CityGrowthMode.Occupancy;
@@ -80,7 +81,21 @@ namespace StuntYourGrowth
         public bool MaxCivicOutput { get => !FreezeGrowth && civicOutput; set => civicOutput = !FreezeGrowth && value; }
         [SettingsUIHidden] public bool MaximumShopping { get; set; }
         [SettingsUIHidden] public bool MaximumOccupancy { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumCommercialDemand { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumFireCoverage { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumHighResidentialDemand { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(OutputControlsDisabled))]
+        public bool MaximumHouseholds { get => !FreezeGrowth && maximumHouseholds; set => maximumHouseholds = !FreezeGrowth && value; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumIndustrialDemand { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumLowResidentialDemand { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumMediumResidentialDemand { get; set; }
+        [SettingsUISection(CheckboxGroup), SettingsUIDisableByCondition(typeof(GPTStuntGrowthSettings), nameof(DemandControlsDisabled))]
+        public bool MaximumOfficeDemand { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumPoliceCoverage { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumResources { get; set; }
         [SettingsUISection(CheckboxGroup)] public bool MaximumStorage { get; set; }
@@ -139,6 +154,8 @@ namespace StuntYourGrowth
             MaximumResources = MaximumStorage = enabled;
             MaximumShopping = false;
             MaxIndustrialOutput = MaxCivicOutput = enabled;
+            MaximumHouseholds = enabled;
+            SetDemandControls(enabled);
             MaximumCommunications = MaximumFireCoverage = MaximumPoliceCoverage = enabled;
             MaximumOccupancy = false;
             Growth = enabled;
@@ -188,11 +205,18 @@ namespace StuntYourGrowth
             CustomerTarget = 1000;
             ProfitTarget = 10000;
             LandValueTarget = 100;
-            DefaultsVersion = 9;
+            DefaultsVersion = 10;
+        }
+
+        internal void SetDemandControls(bool enabled)
+        {
+            MaximumLowResidentialDemand = MaximumMediumResidentialDemand = MaximumHighResidentialDemand = enabled;
+            MaximumCommercialDemand = MaximumIndustrialDemand = MaximumOfficeDemand = enabled;
         }
 
         internal void PrepareUpgrade(int savedVersion)
         {
+            if (savedVersion < 10) { SetDemandControls(false); MaximumHouseholds=false; }
             if (savedVersion == 0) UseLegacyDefaults();
             // Schema 8 omitted true because the combined switch defaulted to true.
             // Earlier versions did not have fleet control. Read the legacy value before splitting it.
@@ -225,12 +249,12 @@ namespace StuntYourGrowth
                 if (MaximumShopping) Customers = CustomerMode.Shopping;
             }
             if (!Enum.IsDefined(typeof(CustomerMode), Customers)) Customers = CustomerMode.Normal;
-            if (FreezeGrowth) industrialOutput = civicOutput = false;
+            if (FreezeGrowth) industrialOutput = civicOutput = maximumHouseholds = false;
             MaximumOccupancy = MaximumShopping = false;
             if (!Enum.IsDefined(typeof(EmploymentMode), Jobs)) Jobs = EmploymentMode.Normal;
             if (!Enum.IsDefined(typeof(LandValueMode), LandValue)) LandValue = LandValueMode.Normal;
             BoostOutsideWorkers = RentAmount = false;
-            DefaultsVersion = 9;
+            DefaultsVersion = 10;
         }
 
     }
@@ -254,7 +278,7 @@ namespace StuntYourGrowth
                 labels[s.GetOptionLabelLocaleID(name)] = title;
                 labels[s.GetOptionDescLocaleID(name)] = description;
             }
-            Add(nameof(GPTStuntGrowthSettings.EnableAllCheckboxes), "Enable All Options", "\u2022 Turn the mod on and set every dropdown to Freeze.\n\n\u2022 Turn on the other checkboxes, including unlimited utilities.\n\n\u2022 The two building output options stay off because population growth is frozen.\n\n\u2022 Keep your target numbers. Do not run either reset button.");
+            Add(nameof(GPTStuntGrowthSettings.EnableAllCheckboxes), "Enable All Options", "\u2022 Turn the mod on and set every dropdown to Freeze.\n\n\u2022 Turn on the other checkboxes, including unlimited utilities.\n\n\u2022 The two building output options stay off because population growth is frozen.\n\n\u2022 Keep your target numbers. Do not run either reset button.\n\n\u2022 Maximum Households also stays off while population growth is frozen. Demand controls wait while Demand+ is enabled.");
             Add(nameof(GPTStuntGrowthSettings.DisableAllCheckboxes), "Disable All Options", "\u2022 Turn the mod and all checkboxes off.\n\n\u2022 Set dropdowns to Normal where that choice exists.\n\n\u2022 City Growth still shows Freeze, but has no effect while the mod is off.\n\n\u2022 Keep your target numbers. Do not run either reset button.");
             Add(nameof(GPTStuntGrowthSettings.Enabled), "Enable Mod", "\u2022 On: use the settings you choose below.\n\n\u2022 Off: stop this mod from changing the simulation.\n\n\u2022 Your choices are saved. The game takes over as it updates.\n\n\u2022 Turning this off does not undo changes already made.");
             Add(nameof(GPTStuntGrowthSettings.RemoveDead), "Remove the Dead & Decaying", "\u2022 Remove dead citizens who are waiting to be picked up, a few at a time.\n\n\u2022 Leave living citizens alone.\n\n\u2022 Let current hearses and deathcare services finish their work.\n\n\u2022 Do not empty cemeteries or send bodies to another city.\n\n\u2022 Removed bodies do not come back when you turn this off.");
@@ -274,9 +298,16 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.MaximumPoliceCoverage), "Maximum Police Coverage", "\u2022 Give areas with road coverage the strongest police coverage bonus available in the game.\n\n\u2022 This does not add officers, police cars or road access.\n\n\u2022 Crimes can still happen. Police still need to reach them.\n\n\u2022 Turning this off lets the game update coverage normally.");
             Add(nameof(GPTStuntGrowthSettings.MaximumFireCoverage), "Maximum Fire Coverage", "\u2022 Give areas with road coverage the strongest fire coverage bonus available in the game.\n\n\u2022 This does not put out fires or add firefighters or fire engines.\n\n\u2022 Fire crews still need staff, vehicles and road access.\n\n\u2022 Turning this off lets the game update coverage normally.");
             Add(nameof(GPTStuntGrowthSettings.MaximumCommunications), "Unlimited Communications & Internet", "\u2022 Set the map's communications and internet signal quality to 100%.\n\n\u2022 This does not add towers or raise their listed capacity.\n\n\u2022 Turning this off lets the game update signal quality normally.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumCommercialDemand), "Maximum Commercial Demand", "\u2022 Keep commercial building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Frozen schooling can leave too few trained workers. Recruitment cannot promise workers with the right education.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumHighResidentialDemand), "Maximum High Density Residential Demand", "\u2022 Keep high density residential building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Freeze Population Growth still blocks new residents. High demand does not override it.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumIndustrialDemand), "Maximum Industrial Demand", "\u2022 Keep industrial building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Frozen schooling can leave too few trained workers. Recruitment cannot promise workers with the right education.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumLowResidentialDemand), "Maximum Low Density Residential Demand", "\u2022 Keep low density residential building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Freeze Population Growth still blocks new residents. High demand does not override it.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumMediumResidentialDemand), "Maximum Medium Density Residential Demand", "\u2022 Keep medium density residential building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Freeze Population Growth still blocks new residents. High demand does not override it.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumOfficeDemand), "Maximum Office Demand", "\u2022 Keep office building demand at 100%.\n\n\u2022 This encourages development. It does not guarantee occupied buildings, workers or customers.\n\n\u2022 Too much building can leave empty homes or businesses short of workers and customers. More growth can add traffic.\n\n\u2022 Frozen schooling can leave too few trained workers. Recruitment cannot promise workers with the right education.\n\n\u2022 Turn off Hold Automatic Redevelopment to allow construction on empty zoned lots.\n\n\u2022 Demand+ takes priority while its master switch is on. Turn it off to use these demand controls.\n\n\u2022 Turning this off lets the game recalculate demand on its next demand update. Buildings already built stay.");
+            Add(nameof(GPTStuntGrowthSettings.MaximumHouseholds), "Maximum Households", "\u2022 Help fill existing homes up to their normal household capacity. Do not add more household slots.\n\n\u2022 Share one recruitment system with City Growth. This speeds up occupancy-only mode; growth modes already use that faster rate. It does not recruit a second batch of households.\n\n\u2022 New households arrive gradually. Suitable empty homes and outside connections are still needed.\n\n\u2022 Extra residents need jobs and services and can add traffic. This option does not train workers or guarantee full homes.\n\n\u2022 Freeze Population Growth unchecks and disables this option. Leaving Freeze unlocks it without rechecking it.\n\n\u2022 Turning this off stops the extra recruitment boost. Households already admitted stay.");
             Add(nameof(GPTStuntGrowthSettings.MaximumResources), "Maximum Resources Available", "\u2022 Refill business materials, shop goods and city-service supplies within their storage limits.\n\n\u2022 Keep existing oil, ore, fertile land and fish supplies from being used up by extraction.\n\n\u2022 Do not create new deposits, trees or money.\n\n\u2022 Extra supplies can change production, trade and traffic.");
             Add(nameof(GPTStuntGrowthSettings.MaximumStorage), "Maximum Storage", "\u2022 Refill warehouses and cargo storage with the goods they accept.\n\n\u2022 Use their existing storage space. Do not make buildings hold more.\n\n\u2022 Goods already added stay when you turn this off.\n\n\u2022 Extra goods can change trade and traffic.");
-            Add(nameof(GPTStuntGrowthSettings.CityGrowth), "City Growth", "\u2022 Freeze Population Growth: stop new residents moving in and pause births.\n\n\u2022 Maximize Population Growth: invite more households and allow births.\n\n\u2022 Growth and Occupancy: also help fill empty homes and shops.\n\n\u2022 Occupancy only: invite newcomers to fill existing homes and shops, but pause births.\n\n\u2022 Newcomers still need suitable buildings and access. Buildings fill gradually.\n\n\u2022 Freeze turns both building output checkboxes off. Choose another mode to unlock them.");
+            Add(nameof(GPTStuntGrowthSettings.CityGrowth), "City Growth", "\u2022 Freeze Population Growth: stop new residents moving in and pause births.\n\n\u2022 Maximize Population Growth: invite more households and allow births.\n\n\u2022 Growth and Occupancy: also help fill empty homes and shops.\n\n\u2022 Occupancy only: invite newcomers to fill existing homes and shops, but pause births.\n\n\u2022 Newcomers still need suitable buildings and access. Buildings fill gradually.\n\n\u2022 Freeze turns both building output checkboxes and Maximum Households off. Choose another mode to unlock them.");
             Add(nameof(GPTStuntGrowthSettings.MaxIndustrialOutput), "Maximize Occupancy & Production Output of Industrials Buildings", "\u2022 Help fill empty industrial buildings and warehouses, and recruit workers for their normal number of jobs.\n\n\u2022 Production still needs real workers, materials, storage and access. Full output is not guaranteed.\n\n\u2022 This takes priority over Employment Freeze for these buildings.\n\n\u2022 Separate supply and utility options still work.\n\n\u2022 Freeze Population Growth turns this off and locks it. Other growth modes unlock it.\n\n\u2022 You can choose this while Enable Mod is off, but it only works when the mod is on.\n\n\u2022 Custom job counts from Change Company take priority.\n\n\u2022 Frozen schooling can leave too few trained workers.\n\n\u2022 Recruitment cannot promise workers with the right education.");
             Add(nameof(GPTStuntGrowthSettings.MaxCivicOutput), "Maximize Occupancy & Services Output of Civic Buildings", "\u2022 Help city-service buildings recruit workers for their normal number of jobs.\n\n\u2022 Do not add students, patients or prisoners. School staffing still follows enrollment.\n\n\u2022 Services still need staff, money, supplies, utilities and access. Full output is not guaranteed.\n\n\u2022 This takes priority over Employment Freeze for these buildings.\n\n\u2022 Separate supply and utility options still work.\n\n\u2022 Freeze Population Growth turns this off and locks it. Other modes unlock it.\n\n\u2022 Enable Mod must be on for it to work.\n\n\u2022 Frozen schooling can leave too few trained workers.\n\n\u2022 Recruitment cannot promise workers with the right education.");
             Add(nameof(GPTStuntGrowthSettings.MaximumShopping), "Maximize Shopping Activity", "\u2022 Give households more chances to go shopping.\n\n\u2022 They still need goods, money, time and a route to the shop.\n\n\u2022 Purchases use real goods and payments. Sales are not guaranteed.\n\n\u2022 More shopping can create more traffic.");
@@ -286,11 +317,11 @@ namespace StuntYourGrowth
             Add(nameof(GPTStuntGrowthSettings.Health), "Protect Health", "\u2022 Keep residents' health from dropping.\n\n\u2022 Health can still improve.");
             Add(nameof(GPTStuntGrowthSettings.Wellbeing), "Protect Well-Being", "\u2022 Keep residents' well-being from dropping.\n\n\u2022 Well-being can still improve.");
             Add(nameof(GPTStuntGrowthSettings.Happiness), "Protect Happiness", "\u2022 Keep happiness from dropping by protecting the average of health and well-being.\n\n\u2022 This may raise health or well-being even when their own checkboxes are off.");
-            Add(nameof(GPTStuntGrowthSettings.Schooling), "Schooling", "\u2022 Normal Schooling: students enroll, learn and graduate as usual.\n\n\u2022 Freeze Schooling As Is: pause new admissions and progress toward graduation.\n\n\u2022 Enrollment Only: allow new students to join, but pause progress toward graduation.\n\n\u2022 Normal Schooling | No Admissions: current students can learn and graduate; no new students join.\n\n\u2022 Frozen schooling can leave too few trained workers.\n\n\u2022 Recruitment cannot promise workers with the right education.");
+            Add(nameof(GPTStuntGrowthSettings.Schooling), "Schooling", "\u2022 Normal Schooling: students enroll, learn and graduate as usual.\n\n\u2022 Freeze Schooling As Is: pause new admissions and progress toward graduation.\n\n\u2022 Enrollment Only: allow new students to join, but pause progress toward graduation.\n\n\u2022 Normal Schooling | No Admissions: current students can learn and graduate; no new students join.\n\n\u2022 Frozen schooling can leave too few trained workers.\n\n\u2022 Recruitment cannot promise workers with the right education.\n\n\u2022 Maximum demand and Maximum Households do not bypass frozen education or train new workers.");
             Add(nameof(GPTStuntGrowthSettings.Tenants), "Protect Tenants", "\u2022 Keep households and businesses from moving away.\n\n\u2022 Help protect occupied properties from abandonment.\n\n\u2022 This does not fill empty buildings.");
             Add(nameof(GPTStuntGrowthSettings.Condition), "Prevent Deterioration", "\u2022 Stop a building's condition from getting worse because upkeep was not paid.\n\n\u2022 Fire, disasters and bulldozing are separate.");
             Add(nameof(GPTStuntGrowthSettings.Levels), "Hold Automatic Level Changes", "\u2022 Stop buildings from automatically changing to a different building level.\n\n\u2022 This does not fill empty spaces or add workers.");
-            Add(nameof(GPTStuntGrowthSettings.Redevelopment), "Hold Automatic Redevelopment", "\u2022 Pause automatic construction on zoned empty lots.\n\n\u2022 Pause the game's automatic handling of condemned buildings.");
+            Add(nameof(GPTStuntGrowthSettings.Redevelopment), "Hold Automatic Redevelopment", "\u2022 Pause automatic construction on zoned empty lots.\n\n\u2022 Pause the game's automatic handling of condemned buildings.\n\n\u2022 Maximum demand does not override this construction hold.");
             Add(nameof(GPTStuntGrowthSettings.Comfort), "Protect Comfort", "\u2022 Keep the comfort score at stops, stations and parking facilities from dropping.\n\n\u2022 This does not add seats or transport vehicles.");
             Add(nameof(GPTStuntGrowthSettings.Attractiveness), "Protect Attractiveness", "\u2022 Keep a building's attractiveness score from dropping.\n\n\u2022 The score can still improve.");
             Add(nameof(GPTStuntGrowthSettings.LandValue), "Land Value", "\u2022 Normal: let land value change as usual.\n\n\u2022 Freeze: hold the current value.\n\n\u2022 Prevent Decreases: allow rises, but block drops.\n\n\u2022 Maximize: use the Land Value Target below.\n\n\u2022 Reset to ZERO: keep land value at zero until you change this choice.\n\n\u2022 Reset to ZERO & Freeze Rent: also hold current rent prices. New leases start at the game's normal price.\n\n\u2022 Other choices do not freeze rent. Changing land value can affect the city's economy.");

@@ -1,0 +1,187 @@
+{
+  "version": "1.75.644",
+  "passed": true,
+  "buildPassed": true,
+  "officialPostprocessorPassed": true,
+  "sourceScopeVerified": true,
+  "candidateSha256": "465d51f032f1cc9217e2d31a61a11568df3d9b72dd6c7fcafd5917e923dbc847",
+  "verifiedAtUtc": "2026-11-16T03:17:48.029327+00:00",
+  "gameVersion": "1.6.4f1",
+  "offline": {
+    "checks": 9870,
+    "policyCases": 365,
+    "maintenanceRegressionPassed": true
+  },
+  "live": {
+    "passed": true,
+    "checks": 9935,
+    "demands": [
+      {
+        "mask": 1,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 2,
+        "residential": [
+          100,
+          100,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 4,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 8,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 16,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 100,
+        "office": 100
+      },
+      {
+        "mask": 32,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 21,
+        "residential": [
+          100,
+          0,
+          100
+        ],
+        "commercial": 100,
+        "industry": 100,
+        "office": 100
+      },
+      {
+        "mask": 42,
+        "residential": [
+          100,
+          100,
+          100
+        ],
+        "commercial": 100,
+        "industry": 0,
+        "office": 100
+      },
+      {
+        "mask": 63,
+        "residential": [
+          100,
+          100,
+          100
+        ],
+        "commercial": 100,
+        "industry": 100,
+        "office": 100
+      }
+    ],
+    "households": [
+      {
+        "boost": false,
+        "available": 2502,
+        "waiting": 106,
+        "expectedMaximum": 0,
+        "added": 0
+      },
+      {
+        "boost": true,
+        "available": 2502,
+        "waiting": 106,
+        "expectedMaximum": 0,
+        "added": 0
+      },
+      {
+        "boost": false,
+        "isolatedEmptyQueue": true,
+        "added": 4
+      },
+      {
+        "boost": true,
+        "isolatedEmptyQueue": true,
+        "added": 5
+      }
+    ],
+    "demandPlusLoaded": false,
+    "demandPlusOriginalEnabled": false,
+    "frame": 10892027
+  },
+  "normalSimulation": {
+    "startFrame": 10892027,
+    "endFrame": 10892657,
+    "advancedFrames": 630,
+    "allSevenEnabled": true,
+    "observedDemand": {
+      "residential": [
+        100,
+        100,
+        100
+      ],
+      "commercial": 100,
+      "industry": 100,
+      "office": 100
+    },
+    "redevelopmentHoldRespected": true,
+    "newErrorsAfterHelperCorrection": 0
+  },
+  "ui": {
+    "allSevenLabelsVisible": true,
+    "alphabeticalOrder": true,
+    "bulletDescriptionsVisibleAndFit": true
+  },
+  "restoration": {
+    "checkpointReloaded": true,
+    "userSettingsRestored": true,
+    "stablePausedFrame": 10892027,
+    "cityCountsMatchBaseline": true,
+    "originalSaveOverwritten": false
+  },
+  "limitations": [
+    "Demand+ was absent from the live playset. Offline ownership-policy cases passed; simultaneous live Demand+ operation is not claimed.",
+    "Native demand had some categories already at 100; offline varied inputs supplement live isolation checks.",
+    "Actual waiting queue had 106 households, so the 64-household guard blocked extra recruitment. An isolated empty-queue fixture created 4 normally and 5 with the boost; native outside-connection selection stopped below the 16-household ceiling.",
+    "Household fixtures preserve building capacity and remove only their newly created test households. Guaranteed full occupancy and long-term city growth are not claimed.",
+    "One QA report serialization error was corrected in the test-only helper. Subscriber runtime files were unaffected.",
+    "Focused runtime verification only. Prior unchanged transit and maintenance tests retain their original release scope. Other demand mods are not universally audited."
+  ]
+}

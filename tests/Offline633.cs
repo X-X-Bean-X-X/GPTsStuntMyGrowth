@@ -52,7 +52,7 @@ class Offline633
         var asm=typeof(GPTStuntGrowthSettings).Assembly;
         Check(!asm.GetReferencedAssemblies().Any(a=>a.Name=="ChangeCompany"),"Change Company stays optional; no assembly dependency");
         Check(typeof(GPTStuntGrowthSettings).Name=="GPTStuntGrowthSettings","Unique native settings save lookup key");
-        Check(asm.GetName().Version.ToString()=="1.75.642.0","Assembly version");
+        Check(asm.GetName().Version.ToString()=="1.75.644.0","Assembly version");
         foreach(string removed in new[]{"Employees","MaximumCustomers","HireAllAvailableJobs","Lifespan","Abandonment","Staff","Income","IncomeTarget","Efficiency"})
             Check(typeof(GPTStuntGrowthSettings).GetProperty(removed)==null,"Retired setting absent: "+removed);
         Check(asm.GetType("StuntYourGrowth.CustomerHooks")==null && asm.GetType("StuntYourGrowth.HiringGuard")==null,"Retired simulation hooks absent");
@@ -81,8 +81,8 @@ class Offline633
         var toggles=Controls.Where(p=>p.CanRead && p.PropertyType==typeof(bool)).ToArray();
         var modes=Controls.Where(p=>p.PropertyType.IsEnum).ToArray();
         Check(modes.Length==6,"Six dropdowns after Income removal");
-        Check(toggles.Length==37,"37 checkboxes including seven independent transport fleets");
-        foreach(var p in toggles) Check((bool)p.GetValue(s)==(p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"First-load toggle with freeze-growth interlock "+p.Name);
+        Check(toggles.Length==44,"44 checkboxes including demand and household controls");
+        foreach(var p in toggles) Check((bool)p.GetValue(s)==(p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput" && p.Name!="MaximumHouseholds"),"First-load toggle with freeze-growth interlock "+p.Name);
         foreach(var p in modes) Check(p.GetValue(s).ToString()=="Freeze","First-load dropdown "+p.Name);
         Check(typeof(GPTStuntGrowthSettings).GetProperty("LegacyHold")==null,"Retired city hold still exposed");
         var ordered=Controls.ToArray();
@@ -96,7 +96,7 @@ class Offline633
         foreach(bool enabled in new[]{false,true,false,true})
         {
             SetAll(s,enabled);
-            foreach(var p in toggles) Check((bool)p.GetValue(s)==(enabled && p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput"),"Bulk toggles respect freeze-growth interlocks "+p.Name);
+            foreach(var p in toggles) Check((bool)p.GetValue(s)==(enabled && p.Name!="MaxIndustrialOutput" && p.Name!="MaxCivicOutput" && p.Name!="MaximumHouseholds"),"Bulk toggles respect freeze-growth interlocks "+p.Name);
             foreach(var p in modes) Check(p.GetValue(s).ToString()==(p.Name=="CityGrowth" || enabled?"Freeze":"Normal"),"Bulk mode "+p.Name);
         }
         var values=Controls.Where(p=>p.CanRead && p.Name!="Enabled").ToDictionary(p=>p.Name,p=>p.GetValue(s));
@@ -154,7 +154,7 @@ class Offline633
             var expectedJob=jobs==4?EmploymentMode.Normal:boost?EmploymentMode.BoostOutsideWorkers:jobs==3?EmploymentMode.Normal:(EmploymentMode)jobs;
             Check(old.Jobs==expectedJob,"Removed employment Zero migrates to Normal");
             Check(old.LandValue==(rent && land==4?LandValueMode.ZeroFreezeRent:(LandValueMode)land),"Rent migration preserves land choice without silently zeroing it");
-            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==9,"Legacy switches cannot remain active");
+            Check(!old.BoostOutsideWorkers && !old.RentAmount && old.DefaultsVersion==10,"Legacy switches cannot remain active");
         }
         foreach(var mode in Enum.GetValues(typeof(ValueMode)).Cast<ValueMode>())
         {
@@ -415,13 +415,61 @@ class Offline633
             JSON.WriteInto(JSON.Load(legacy),ref migrated);finishUpgrade.Invoke(migrated,new object[]{version});
             bool expected=version==8 && !legacy.Contains("false");
             foreach(string name in fleetNames)Check((bool)typeof(GPTStuntGrowthSettings).GetProperty(name).GetValue(migrated)==expected,"Split migration "+version+" "+legacy+" "+name);
-            Check(!migrated.UnlimitedPublicTransportVehicles && migrated.DefaultsVersion==9,"Legacy fleet switch cleared after migration");
+            Check(!migrated.UnlimitedPublicTransportVehicles && migrated.DefaultsVersion==10,"Legacy fleet switch cleared after migration");
         }
         var reloaded=NewSettings();prepareUpgrade.Invoke(reloaded,new object[]{9});
         JSON.WriteInto(JSON.Load("{\"UnlimitedBuses\":false,\"UnlimitedFerries\":false,\"UnlimitedPublicTransportVehicles\":true}"),ref reloaded);
         finishUpgrade.Invoke(reloaded,new object[]{9});
         Check(!reloaded.UnlimitedBuses && !reloaded.UnlimitedFerries && reloaded.UnlimitedTrains && reloaded.UnlimitedAirlines,"New schema preserves separate choices and omitted true defaults");
         Check(!reloaded.UnlimitedPublicTransportVehicles,"Old key cannot reactivate a new-schema switch");
+        var demandPolicy=asm.GetType("StuntYourGrowth.DemandPolicy",true);
+        var demandNames=new[]{"MaximumLowResidentialDemand","MaximumMediumResidentialDemand","MaximumHighResidentialDemand","MaximumCommercialDemand","MaximumIndustrialDemand","MaximumOfficeDemand"};
+        var demandMask=(Func<GPTStuntGrowthSettings,bool,int>)Delegate.CreateDelegate(typeof(Func<GPTStuntGrowthSettings,bool,int>),demandPolicy.GetMethod("Mask",hidden));
+        var residentialDemand=(Func<Unity.Mathematics.int3,int,Unity.Mathematics.int3>)Delegate.CreateDelegate(typeof(Func<Unity.Mathematics.int3,int,Unity.Mathematics.int3>),demandPolicy.GetMethod("Residential",hidden));
+        var resourceDemand=(Func<ResourceData,int,bool>)Delegate.CreateDelegate(typeof(Func<ResourceData,int,bool>),demandPolicy.GetMethod("IndustrialResource",hidden));
+        for(int mask=0;mask<64;mask++)
+        {
+            var chosen=NewSettings();
+            for(int i=0;i<6;i++)typeof(GPTStuntGrowthSettings).GetProperty(demandNames[i]).SetValue(chosen,(mask&(1<<i))!=0);
+            foreach(bool master in new[]{false,true}) foreach(bool demandPlus in new[]{false,true})
+            {
+                chosen.Enabled=master;
+                int active=demandMask(chosen,demandPlus);
+                Check(active==(master&&!demandPlus?mask:0),"Demand master/ownership selection");
+                var output=residentialDemand(new Unity.Mathematics.int3(12,34,56),active);
+                Check(output.x==((active&1)!=0?100:12) && output.y==((active&2)!=0?100:34) && output.z==((active&4)!=0?100:56),"Independent residential density selection");
+                foreach(bool produceable in new[]{false,true}) foreach(bool material in new[]{false,true}) foreach(float weight in new[]{0f,1f})
+                    Check(resourceDemand(new ResourceData{m_IsProduceable=produceable,m_IsMaterial=material,m_Weight=weight},active)==(produceable&&!material&&(active&(weight==0f?32:16))!=0),"Industry/office separation excludes extractors and non-producible resources");
+            }
+        }
+        for(int version=0;version<10;version++)
+        {
+            var upgrade=NewSettings();prepareUpgrade.Invoke(upgrade,new object[]{version});finishUpgrade.Invoke(upgrade,new object[]{version});
+            foreach(string name in demandNames)Check(!(bool)typeof(GPTStuntGrowthSettings).GetProperty(name).GetValue(upgrade),"Old settings do not opt into demand override");
+            Check(!upgrade.MaximumHouseholds,"Old settings do not opt into household boost");
+        }
+        var household=NewSettings();
+        foreach(var mode in new[]{CityGrowthMode.Population,CityGrowthMode.PopulationAndOccupancy,CityGrowthMode.Occupancy})
+        {
+            household.CityGrowth=mode;household.MaximumHouseholds=true;
+            Check(household.MaximumHouseholds&&!household.OutputControlsDisabled(),"Household option available outside Freeze");
+            household.CityGrowth=CityGrowthMode.Freeze;
+            Check(!household.MaximumHouseholds&&household.OutputControlsDisabled(),"Freeze clears and locks household option");
+            household.MaximumHouseholds=true;Check(!household.MaximumHouseholds,"Setter cannot bypass population freeze");
+            household.CityGrowth=mode;Check(!household.MaximumHouseholds,"Leaving Freeze does not recheck households");
+        }
+        var reloadDemand=NewSettings();prepareUpgrade.Invoke(reloadDemand,new object[]{10});
+        JSON.WriteInto(JSON.Load("{\"CityGrowth\":3,\"MaximumHouseholds\":true,\"MaximumCommercialDemand\":false}"),ref reloadDemand);finishUpgrade.Invoke(reloadDemand,new object[]{10});
+        Check(reloadDemand.MaximumHouseholds&&!reloadDemand.MaximumCommercialDemand&&reloadDemand.MaximumLowResidentialDemand,"New demand and household choices persist");
+        var recruitment=(Func<CityGrowthMode,bool,int>)Delegate.CreateDelegate(typeof(Func<CityGrowthMode,bool,int>),asm.GetType("StuntYourGrowth.OccupancyPolicy").GetMethod("HouseholdRecruitmentLimit",hidden));
+        Check(recruitment(CityGrowthMode.Freeze,true)==0&&recruitment(CityGrowthMode.Occupancy,false)==4&&recruitment(CityGrowthMode.Occupancy,true)==16,"Household boost retains freeze guard and bounded recruitment");
+        Check(recruitment(CityGrowthMode.Population,true)==16&&recruitment(CityGrowthMode.PopulationAndOccupancy,true)==16,"Growth modes do not double recruit");
+        var demandHooks=asm.GetType("StuntYourGrowth.DemandHooks",true);
+        foreach(var type in new[]{typeof(ResidentialDemandSystem),typeof(CommercialDemandSystem),typeof(IndustrialDemandSystem)})
+        {
+            var changed=((IEnumerable<CodeInstruction>)demandHooks.GetMethod("ModifyDispatch",hidden).Invoke(null,new object[]{ReadIL(AccessTools.DeclaredMethod(type,"OnUpdate"))})).ToArray();
+            Check(changed.Count(x=>(x.operand as MethodInfo)?.DeclaringType==demandHooks)==1,"One compatible demand scheduler hook: "+type.Name);
+        }
         var transit=asm.GetType("StuntYourGrowth.TransitHooks");
         var prefer=transit.GetMethod("TryPrefer",hidden);
         foreach(PathMethod time in new[]{PathMethod.PublicTransportDay,PathMethod.PublicTransportNight})

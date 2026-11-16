@@ -173,3 +173,14 @@ The seven transport types are covered by native-ECS preparation fixtures. Real c
 - Rename Communications & Internet to Unlimited Communications & Internet and place it alphabetically among the Unlimited controls.
 - Keep the existing setting key, saved choice, help text and simulation behavior unchanged.
 - Refresh the matching documentation. Build and source-scope verification only; gameplay and performance results remain those of 1.75.642.
+
+## Demand and household controls (1.75.644)
+
+- Six independent Maximum Demand checkboxes cover low-, medium- and high-density residential, commercial, industrial and office buildings. Selected categories use 100% building demand, including the matching per-resource building-demand results used for commercial and industrial/office zone selection. Company demand, storage/extractor demand and demand-factor explanations remain native.
+- Demand+ retains ownership while its master switch is enabled. Puppet Master disables its demand checkboxes and suspends their effects until Demand+ is turned off. The saved choices are retained. Unknown Demand+ API layouts also disable our overrides. Other demand mods still require compatibility testing.
+- Hold Automatic Redevelopment still blocks construction on zoned empty lots. Demand does not bypass access, zoning, unlocking or native site selection. Freeze Population Growth still blocks new households; high residential demand does not override it.
+- Maximum Households fills normal residential capacity gradually through the existing recruitment system, never a second spawner. It raises occupancy-only recruitment from 4 to 16 households per update. Population growth modes already use 16. The 64-household waiting limit and available-home limit remain. It does not raise building capacity or guarantee full occupancy.
+- Freeze Population Growth unchecks and disables Maximum Households. Leaving Freeze unlocks it without selecting it. Master-off suspends all effects. Turning an option off does not remove buildings or households already created. Native demand values resume on the next demand update.
+- Demand is an override of development pressure, not proof that new businesses have workers, supplies or customers. Frozen schooling can limit qualified workers; recruitment is not training. More development and households can increase traffic and simulation cost.
+- Existing users start the seven new options off. New-install and Enable All Options defaults select demand controls, with Maximum Households off because City Growth defaults to Freeze.
+- Focused live demand, household, Options display and normal-speed checks passed on CS2 1.6.4f1. Demand+ was absent from the live playset; simultaneous live Demand+ operation is not claimed. See validation-1.75.644.json for results and limits.
